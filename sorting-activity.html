@@ -563,7 +563,7 @@ function showSummary() {
   document.getElementById('reflection-questions').innerHTML=[
     `ถ้าบัตรมี ${n*2} ใบ ต้องใช้กี่ครั้งในกรณีที่แย่ที่สุด? (ตอบ: ${worstCase(n*2)} ครั้ง)`,
     'ขั้นตอนที่คุณใช้วันนี้ ชัดเจนพอให้คนอื่นทำตามได้โดยไม่ถามเพิ่มหรือเปล่า?',
-    'มี algorithm การเรียงลำดับที่ดีกว่า Bubble Sort ไหม? (힌트: Merge Sort, Quick Sort)',
+    'มี algorithm การเรียงลำดับที่ดีกว่า Bubble Sort ไหม? (คำใบ้: Merge Sort, Quick Sort)',
   ].map((q,i)=>`<div style="display:flex;gap:8px;font-size:14px;color:var(--text2)"><span style="color:var(--purple);font-weight:600;flex-shrink:0">Q${i+1}.</span><span>${q}</span></div>`).join('');
   document.getElementById('summary-history-label').textContent=`${total} ครั้ง`;
   document.getElementById('summary-history-list').innerHTML=h.map((e,i)=>{
