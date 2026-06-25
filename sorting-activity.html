@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>จัดเรียงบัตรแบบไม่จำ — Algorithmic Thinking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#181c27;--bg3:#1e2333;--card:#232840;
+  --border:#2e3450;--border2:#3d4468;
+  --text:#eef0f8;--text2:#9ba3c4;--text3:#5c6490;
+  --teal:#2dd4bf;--teal-dim:#1a7a72;--teal-bg:#0d3632;
+  --amber:#fbbf24;--amber-dim:#92690e;--amber-bg:#2d1f06;
+  --green:#4ade80;--green-dim:#1a6b3a;--green-bg:#0a2318;
+  --red:#f87171;--red-dim:#7a2e2e;--red-bg:#2a0f0f;
+  --purple:#a78bfa;--purple-dim:#4c3a8a;--purple-bg:#1a1230;
+  --r:10px;--rl:16px;
+  --font:'Sarabun',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html.light{
+  --bg:#f5f6fa;--bg2:#ffffff;--bg3:#eef0f6;--card:#ffffff;
+  --border:#dde0ef;--border2:#c5cade;
+  --text:#1a1d2e;--text2:#4a5075;--text3:#8b92b8;
+  --teal:#0d9488;--teal-dim:#99d6d1;--teal-bg:#e6f7f6;
+  --amber:#d97706;--amber-dim:#fcd97d;--amber-bg:#fef9ec;
+  --green:#16a34a;--green-dim:#86efac;--green-bg:#f0fdf4;
+  --red:#dc2626;--red-dim:#fca5a5;--red-bg:#fef2f2;
+  --purple:#7c3aed;--purple-dim:#c4b5fd;--purple-bg:#f5f3ff;
+}
+#theme-toggle{position:fixed;top:14px;right:14px;z-index:999;width:40px;height:40px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+#theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none;transition:all .15s}
+button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.screen{display:none;flex-direction:column;align-items:center;padding:1.5rem 1rem;min-height:100vh}
+.screen.active{display:flex}
+.tag{display:inline-block;border-radius:6px;padding:3px 12px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.75rem}
+.card-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;width:100%;max-width:600px;margin-bottom:1rem}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;width:100%;max-width:600px;margin-bottom:1rem}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1rem}
+.btn-primary{background:var(--teal);color:#0a1f1e;border:none;border-radius:10px;padding:.9rem 2rem;font-size:16px;font-weight:700}
+.btn-primary:hover:not(:disabled){transform:scale(1.03)}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:10px;padding:.85rem 1.5rem;font-size:15px}
+.btn-secondary:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.cards-row{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;margin:1.5rem 0}
+.card-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+.playing-card{width:68px;height:92px;border-radius:12px;border:2px solid var(--border2);background:var(--card);color:var(--text);font-family:var(--mono);font-size:26px;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;user-select:none;transition:all .18s}
+.playing-card.selecting:hover{border-color:var(--teal);background:var(--teal-bg);transform:translateY(-4px)}
+.playing-card.selected{border-color:var(--teal);background:var(--teal-bg);color:var(--teal);transform:translateY(-8px) scale(1.05);box-shadow:0 0 16px rgba(45,212,191,.3)}
+.playing-card.comparing{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);transform:translateY(-8px) scale(1.05);box-shadow:0 0 16px rgba(251,191,36,.3)}
+.playing-card.done-sort{border-color:var(--green-dim);background:var(--green-bg);color:var(--green)}
+.playing-card.disabled-card{cursor:default;opacity:.7}
+.card-pos{font-family:var(--font);font-size:11px;color:var(--text3)}
+.instruction-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1.25rem;max-width:600px;width:100%;margin-bottom:1rem;min-height:48px;display:flex;align-items:center;font-size:15px}
+.progress-wrap{width:100%;max-width:600px;margin-bottom:1rem}
+.progress-bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:99px;transition:width .3s ease,background .3s}
+.action-row{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;max-width:500px;width:100%}
+.hint-box{background:var(--purple-bg);border:1px solid var(--purple-dim);border-radius:var(--r);padding:.9rem 1.25rem;max-width:520px;width:100%;margin-bottom:.75rem}
+.step-card{width:52px;height:52px;background:var(--card);border:1.5px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;font-family:var(--mono);transition:all .2s}
+.step-card.cmp-swap{background:var(--teal-bg);border-color:var(--teal);color:var(--teal)}
+.step-card.cmp-keep{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+.step-card.sorted-pos{background:var(--green-bg);border-color:var(--green-dim);color:var(--green)}
+.insight-item{margin-bottom:.9rem;padding-left:.75rem;border-left:3px solid transparent}
+@media(max-width:480px){
+  .playing-card{width:56px;height:78px;font-size:22px}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<button id="theme-toggle" onclick="toggleTheme()" aria-label="สลับธีม" title="สลับ Dark / Light">🌙</button>
+
+<!-- INTRO -->
+<div id="screen-intro" class="screen active">
+  <div style="max-width:560px;width:100%;text-align:center;margin-bottom:2rem">
+    <div class="tag" style="background:var(--teal-bg);border:1px solid var(--teal-dim);color:var(--teal)">กิจกรรมที่ 1 — Sorting Algorithm</div>
+    <h1 style="font-size:clamp(1.8rem,5vw,2.6rem);font-weight:700;line-height:1.2;margin-bottom:.75rem">จัดเรียงบัตรแบบไม่จำ</h1>
+    <p style="color:var(--text2);font-size:16px;line-height:1.7">เขียนขั้นตอนให้เครื่องทำตามได้ — ดูได้ครั้งละ 2 ใบ ห้ามจำค่าที่เห็น</p>
+  </div>
+  <div class="card-box">
+    <div style="font-size:14px;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:.9rem">กฎของเกม</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      <div style="display:flex;gap:.75rem"><span>👁️</span><span style="color:var(--text);font-size:15px">เปิดดูได้ครั้งละ 2 ใบเท่านั้น</span></div>
+      <div style="display:flex;gap:.75rem"><span>🧠</span><span style="color:var(--text);font-size:15px">หลังปิดบัตร ค่าจะหายไป (ห้ามจำ)</span></div>
+      <div style="display:flex;gap:.75rem"><span>↔️</span><span style="color:var(--text);font-size:15px">เลือกสลับหรือไม่สลับตำแหน่งก็ได้</span></div>
+      <div style="display:flex;gap:.75rem"><span>🎯</span><span style="color:var(--text);font-size:15px">เป้าหมาย: เรียงจากน้อย → มาก (ซ้ายไปขวา)</span></div>
+      <div style="display:flex;gap:.75rem"><span>📊</span><span style="color:var(--text);font-size:15px">นับจำนวนการดำเนินการ (การเปิดดูแต่ละครั้ง)</span></div>
+    </div>
+  </div>
+  <div class="card-box">
+    <div style="font-size:14px;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:.9rem">เลือกจำนวนบัตร</div>
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.75rem">
+      <button onclick="adjustCount(-1)" id="btn-minus" style="width:40px;height:40px;border-radius:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:20px;flex-shrink:0">−</button>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:40px;font-weight:700;font-family:var(--mono);color:var(--teal);line-height:1" id="count-display">6</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">ใบ</div>
+      </div>
+      <button onclick="adjustCount(1)" id="btn-plus" style="width:40px;height:40px;border-radius:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:20px;flex-shrink:0">+</button>
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:.6rem 1rem;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;color:var(--text3)">worst case สูงสุด</span>
+      <span style="font-size:13px;font-family:var(--mono);color:var(--amber)" id="worst-preview">15 ครั้ง</span>
+    </div>
+    <div style="margin-top:.6rem;font-size:12px;color:var(--text3);text-align:center" id="count-label">แนะนำ — สมดุลดี</div>
+  </div>
+  <button class="btn-primary" onclick="startGame()">เริ่มเล่น →</button>
+</div>
+
+<!-- GAME -->
+<div id="screen-game" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;max-width:600px;margin-bottom:1rem">
+    <div>
+      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em" id="round-label">รอบที่ 1</div>
+      <div style="font-size:20px;font-weight:700">จัดเรียงบัตร</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;color:var(--text3)">การดำเนินการ</div>
+      <div style="font-size:32px;font-weight:700;font-family:var(--mono);color:var(--teal)" id="ops-counter">0</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3)">
+      <span>ความคืบหน้า</span><span id="worst-label">worst case: ? ครั้ง</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%;background:var(--teal)"></div></div>
+  </div>
+  <div class="instruction-bar" id="instruction">👆 เลือกบัตรใบแรกที่ต้องการเปิดดู</div>
+  <div class="cards-row" id="cards-row"></div>
+  <div class="hint-box" id="hint-box" style="display:none">
+    <div style="font-size:12px;color:var(--purple);font-weight:600;margin-bottom:4px" id="hint-label">💡 คำใบ้</div>
+    <div style="color:var(--text2);font-size:14px" id="hint-text"></div>
+  </div>
+  <div class="action-row" id="action-row">
+    <button onclick="handleSwap(true)" id="btn-swap" style="display:none;flex:1;min-width:140px;padding:.8rem 1.5rem;background:var(--teal-bg);border:1.5px solid var(--teal);color:var(--teal);border-radius:10px;font-size:15px;font-weight:600">↔ สลับตำแหน่ง</button>
+    <button onclick="handleSwap(false)" id="btn-keep" style="display:none;flex:1;min-width:140px;padding:.8rem 1.5rem;background:var(--bg3);border:1.5px solid var(--border2);color:var(--text2);border-radius:10px;font-size:15px;font-weight:600">✓ ไม่ต้องสลับ</button>
+    <button onclick="requestHint()" id="btn-hint" style="padding:.8rem 1.25rem;background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:10px;font-size:14px">💡 คำใบ้</button>
+    <button onclick="goToSolution()" id="btn-solution" style="padding:.8rem 1.25rem;background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:10px;font-size:14px">📖 เฉลย</button>
+  </div>
+</div>
+
+<!-- SOLUTION -->
+<div id="screen-solution" class="screen">
+  <div style="max-width:600px;width:100%">
+    <div class="tag" style="background:var(--amber-bg);border:1px solid var(--amber-dim);color:var(--amber)">เฉลย — Bubble Sort</div>
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:.5rem">วิธีที่ algorithm ทำงาน</h1>
+    <p style="color:var(--text2);font-size:15px;margin-bottom:1.5rem">Bubble Sort เปรียบเทียบทีละคู่ เลื่อนค่าใหญ่ไปทางขวาทีละก้าว</p>
+    <div class="card-box" style="margin-bottom:1rem">
+      <div style="font-size:13px;color:var(--text3);margin-bottom:.5rem">ค่าเริ่มต้น</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="sol-initial"></div>
+    </div>
+    <div class="card-box" style="min-height:180px;margin-bottom:1rem">
+      <div style="color:var(--text2);font-size:15px;padding:.5rem 0" id="sol-step-content">
+        กด <strong style="color:var(--amber)">ขั้นตอนถัดไป</strong> เพื่อดู algorithm ทีละขั้น
+      </div>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-bottom:1.5rem">
+      <button onclick="solPrev()" id="sol-prev" style="padding:.75rem 1.25rem;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:10px;font-size:14px" disabled>← ย้อนกลับ</button>
+      <button onclick="solNext()" id="sol-next" style="flex:1;padding:.75rem 1.25rem;background:var(--amber-bg);border:1.5px solid var(--amber);color:var(--amber);border-radius:10px;font-size:15px;font-weight:600">ขั้นตอนถัดไป →</button>
+    </div>
+    <div style="background:var(--purple-bg);border:1px solid var(--purple-dim);border-radius:var(--r);padding:1.25rem">
+      <div style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:.5rem">💡 แนวคิดสำคัญ</div>
+      <div style="color:var(--text2);font-size:14px;line-height:1.7">Bubble Sort เรียกว่า "ฟองอากาศ" เพราะค่าที่มากจะค่อยๆ "ลอย" ไปทางขวาทีละรอบ เหมือนฟองอากาศลอยขึ้นสู่ผิวน้ำ ใช้ได้กับข้อมูลทุกชุด แต่ช้า O(n²) สำหรับข้อมูลจำนวนมาก</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div id="screen-summary" class="screen">
+  <div style="max-width:600px;width:100%">
+
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:52px;margin-bottom:.5rem" id="summary-emoji">🏆</div>
+      <h1 style="font-size:24px;font-weight:700;margin-bottom:.25rem">สรุปผลการเล่น</h1>
+      <div style="font-size:15px;color:var(--text2)" id="summary-sub">รอบที่ 1 — บัตร 6 ใบ</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div style="font-size:12px;color:var(--text3);margin-bottom:3px">การดำเนินการ</div><div style="font-size:28px;font-weight:700;font-family:var(--mono);color:var(--teal)" id="stat-ops">—</div><div style="font-size:11px;color:var(--text3)" id="stat-ops-sub">—</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text3);margin-bottom:3px">ความแม่นยำ</div><div style="font-size:28px;font-weight:700;font-family:var(--mono)" id="stat-acc">—</div><div style="font-size:11px;color:var(--text3)" id="stat-acc-sub">—</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text3);margin-bottom:3px">ประหยัดได้</div><div style="font-size:28px;font-weight:700;font-family:var(--mono);color:var(--amber)" id="stat-eff">—</div><div style="font-size:11px;color:var(--text3)">เทียบ worst case</div></div>
+      <div class="stat-card"><div style="font-size:12px;color:var(--text3);margin-bottom:3px">ตัดสินใจถูก</div><div style="font-size:28px;font-weight:700;font-family:var(--mono);color:var(--green)" id="stat-correct">—</div><div style="font-size:11px;color:var(--text3)">ครั้ง</div></div>
+    </div>
+
+    <!-- History -->
+    <div class="card-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+        <div style="font-size:14px;font-weight:600;color:var(--text2)">บันทึกการดำเนินการ</div>
+        <div style="font-size:12px;color:var(--text3)" id="summary-history-label"></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;font-family:var(--mono)">
+          <thead><tr style="color:var(--text3);border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">#</th>
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">คู่ที่เปิด</th>
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">ค่า</th>
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">การตัดสินใจ</th>
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">ผลลัพธ์</th>
+            <th style="text-align:right;padding:4px 8px 8px;font-weight:500">ถูก?</th>
+          </tr></thead>
+          <tbody id="summary-history-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pseudocode -->
+    <div class="card-box">
+      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:.9rem">📋 Pseudocode — Bubble Sort</div>
+      <div style="font-family:var(--mono);font-size:13px;line-height:2;background:var(--bg3);border-radius:8px;padding:1rem;border:1px solid var(--border)">
+        <div><span style="color:var(--purple)">procedure</span> <span style="color:var(--teal)">bubble_sort</span>(arr):</div>
+        <div style="padding-left:1.5rem"><span style="color:var(--text3)">n ← length of arr</span></div>
+        <div style="padding-left:1.5rem"><span style="color:var(--purple)">repeat</span></div>
+        <div style="padding-left:3rem"><span style="color:var(--text3)">swapped ← false</span></div>
+        <div style="padding-left:3rem"><span style="color:var(--purple)">for</span> i <span style="color:var(--purple)">from</span> 0 <span style="color:var(--purple)">to</span> n−2:</div>
+        <div style="padding-left:4.5rem"><span style="color:var(--purple)">if</span> arr[i] &gt; arr[i+1]:</div>
+        <div style="padding-left:6rem"><span style="color:var(--text3)">swap arr[i] and arr[i+1]</span></div>
+        <div style="padding-left:6rem"><span style="color:var(--text3)">swapped ← true</span></div>
+        <div style="padding-left:1.5rem"><span style="color:var(--purple)">until</span> swapped = false</div>
+      </div>
+      <div style="margin-top:.75rem;font-size:13px;color:var(--text3);line-height:1.6">
+        <span style="color:var(--amber)">สังเกต:</span> ถ้า pass ใดไม่มีการ swap เลย (<code style="background:var(--bg3);padding:1px 5px;border-radius:3px">swapped = false</code>) แปลว่าเรียงเสร็จแล้ว ออกได้เลยโดยไม่ต้องทำต่อ
+      </div>
+    </div>
+
+    <!-- Python simulation -->
+    <div class="card-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem">
+        <div style="font-size:14px;font-weight:600;color:var(--text2)">🐍 Python — ดูโค้ดทำงานทีละขั้น</div>
+        <div style="display:flex;gap:.5rem">
+          <button onclick="pyReset()" style="padding:4px 12px;background:var(--bg3);border:1px solid var(--border2);color:var(--text3);border-radius:6px;font-size:12px">รีเซต</button>
+          <button onclick="pyRun()" id="py-step-btn" style="padding:4px 14px;background:var(--teal-bg);border:1px solid var(--teal);color:var(--teal);border-radius:6px;font-size:12px;font-weight:600">▶ Run</button>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:13px;background:var(--bg3);border-radius:8px;padding:.75rem;border:1px solid var(--border);margin-bottom:.75rem;overflow-x:auto" id="py-code"></div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.75rem;margin-bottom:.75rem">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:.4rem">arr =</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="py-array-vis"></div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);min-height:20px" id="py-status"></div>
+    </div>
+
+    <!-- Big-O chart -->
+    <div class="card-box">
+      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:.25rem">📈 Big O — เปรียบเทียบ complexity</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:1rem">Linear scale — ลาก slider เพื่อเปรียบเทียบว่า O(n²) ต่างจาก O(n) มากแค่ไหน</div>
+
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.75rem">
+        <span style="font-size:13px;color:var(--text3);white-space:nowrap">n =</span>
+        <input type="range" min="2" max="100" value="6" step="1" id="chart-slider" oninput="updateChart(this.value)" style="flex:1">
+        <span style="font-family:var(--mono);font-size:15px;color:var(--teal);min-width:32px;text-align:right" id="chart-n-display">6</span>
+      </div>
+
+      <div style="position:relative;height:260px;margin-bottom:.75rem">
+        <canvas id="big-o-canvas" style="width:100%;height:100%"></canvas>
+      </div>
+
+      <div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:12px;color:var(--text3);margin-bottom:.75rem">
+        <span><span style="color:var(--teal)">─</span> O(n²) Bubble Sort</span>
+        <span><span style="color:#6366f1">─ ─</span> O(n log n)</span>
+        <span><span style="color:#64748b">─ ─</span> O(n)</span>
+        <span id="chart-your-dot" style="display:none"><span style="color:var(--amber)">●</span> ผลของคุณ</span>
+      </div>
+
+      <div style="background:var(--bg3);border-radius:8px;padding:.6rem 1rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+        <span style="font-size:13px;color:var(--text3)">n = <span id="chart-n-val" style="color:var(--text);font-family:var(--mono)">6</span></span>
+        <span style="font-size:13px;color:var(--text3)">O(n²) worst case = <span id="chart-wc-val" style="color:var(--teal);font-family:var(--mono)">15</span> ครั้ง</span>
+        <span style="font-size:13px;color:var(--text3)">O(n) = <span id="chart-n-linear" style="color:#64748b;font-family:var(--mono)">6</span> ครั้ง</span>
+      </div>
+    </div>
+
+    <!-- Reflection -->
+    <div style="background:var(--purple-bg);border:1px solid var(--purple-dim);border-radius:var(--r);padding:1.25rem;margin-bottom:1.5rem">
+      <div style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:.75rem">🤔 คำถามชวนคิดต่อ</div>
+      <div id="reflection-questions" style="display:flex;flex-direction:column;gap:.5rem"></div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2rem">
+      <button class="btn-primary" onclick="playAgain()" style="flex:1;min-width:160px">🔄 เล่นอีกรอบ (ข้อมูลใหม่)</button>
+      <button class="btn-secondary" onclick="goToIntro()">← กลับหน้าแรก</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== THEME =====
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  document.getElementById('theme-toggle').textContent = isLight ? '🌙' : '☀️';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  // redraw chart if on summary screen
+  const n = parseInt(document.getElementById('chart-slider')?.value);
+  if (n) drawChart(n);
+}
+// restore saved preference
+(function(){
+  const saved = localStorage.getItem('theme');
+  const preferLight = saved ? saved === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+  if (preferLight) {
+    document.documentElement.classList.add('light');
+    document.getElementById('theme-toggle').textContent = '🌙';
+  }
+})();
+// ===== STATE =====
+let state = {
+  cards:[], initialCards:[], phase:'select1', selected:[],
+  ops:0, history:[], hintLevel:-1, cardCount:6, roundNumber:1
+};
+let solState = { steps:[], currentStep:-1, arr:[] };
+let pyState = { arr:[], steps:[], stepIdx:-1, interval:null };
+
+// ===== UTILS =====
+function generateCards(n) {
+  const pool = Array.from({length:20},(_,i)=>i+1);
+  const picked = [];
+  while (picked.length < n) {
+    const idx = Math.floor(Math.random()*pool.length);
+    picked.push(pool.splice(idx,1)[0]);
+  }
+  let arr = [...picked], attempts = 0;
+  while (isSorted(arr) && attempts++ < 20) arr = arr.sort(()=>Math.random()-.5);
+  return arr;
+}
+function isSorted(arr) {
+  for (let i=0;i<arr.length-1;i++) if(arr[i]>arr[i+1]) return false;
+  return true;
+}
+function worstCase(n) { return (n*(n-1))/2; }
+
+function bubbleSortSteps(arr) {
+  const steps=[], a=[...arr], n=a.length;
+  let totalOps=0;
+  for (let pass=0;pass<n-1;pass++) {
+    let swapped=false;
+    for (let i=0;i<n-1-pass;i++) {
+      totalOps++;
+      const didSwap = a[i]>a[i+1];
+      if (didSwap) { [a[i],a[i+1]]=[a[i+1],a[i]]; swapped=true; }
+      steps.push({array:[...a],compared:[i,i+1],swapped:didSwap,pass,op:totalOps});
+    }
+    if (!swapped) break;
+  }
+  return steps;
+}
+
+// ===== SCREENS =====
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+}
+
+// ===== INTRO =====
+let selectedCount = 6;
+function adjustCount(delta) {
+  selectedCount = Math.min(8, Math.max(4, selectedCount+delta));
+  document.getElementById('count-display').textContent = selectedCount;
+  document.getElementById('worst-preview').textContent = worstCase(selectedCount)+' ครั้ง';
+  document.getElementById('btn-minus').disabled = selectedCount<=4;
+  document.getElementById('btn-plus').disabled = selectedCount>=8;
+  const labels = {4:'ง่าย — เหมาะสำหรับผู้เริ่มต้น',5:'ง่าย–ปานกลาง',6:'แนะนำ — สมดุลดี',7:'ปานกลาง–ยาก',8:'ท้าทาย — ยากที่สุด'};
+  document.getElementById('count-label').textContent = labels[selectedCount]||'';
+}
+function startGame() {
+  state.cardCount=selectedCount; state.ops=0; state.history=[];
+  state.hintLevel=-1; state.phase='select1'; state.selected=[];
+  state.cards=generateCards(state.cardCount);
+  state.initialCards=[...state.cards];
+  renderGame(); showScreen('game');
+}
+
+// ===== GAME =====
+function renderGame() {
+  document.getElementById('round-label').textContent=`รอบที่ ${state.roundNumber}`;
+  document.getElementById('ops-counter').textContent=state.ops;
+  const wc=worstCase(state.cardCount);
+  document.getElementById('worst-label').textContent=`worst case: ${wc} ครั้ง`;
+  const pct=Math.min(100,Math.round((state.ops/wc)*100));
+  const fill=document.getElementById('progress-fill');
+  fill.style.width=pct+'%';
+  fill.style.background=pct>80?'var(--red)':pct>50?'var(--amber)':'var(--teal)';
+  const inst=document.getElementById('instruction');
+  if (state.phase==='select1') { inst.style.color='var(--text2)'; inst.textContent='👆 เลือกบัตรใบแรกที่ต้องการเปิดดู'; }
+  else if (state.phase==='select2') { inst.style.color='var(--text2)'; inst.textContent='👆 เลือกบัตรใบที่สองที่ต้องการเปิดดูคู่กัน'; }
+  else if (state.phase==='decide') { inst.style.color='var(--amber)'; inst.textContent='↔️ ต้องการสลับตำแหน่งสองใบนี้หรือไม่?'; }
+  else if (state.phase==='done') { inst.style.color='var(--green)'; inst.textContent='🎉 เรียงสำเร็จแล้ว! กด "สรุปผล" เพื่อดูบทเรียน'; }
+  renderCards();
+  const isDecide=state.phase==='decide';
+  document.getElementById('btn-swap').style.display=isDecide?'block':'none';
+  document.getElementById('btn-keep').style.display=isDecide?'block':'none';
+  const showHint=state.phase!=='feedback'&&state.phase!=='done';
+  document.getElementById('btn-hint').style.display=showHint?'inline-block':'none';
+  document.getElementById('btn-solution').style.display=state.phase!=='done'?'inline-block':'none';
+  let doneBtn=document.getElementById('btn-done');
+  if (state.phase==='done') {
+    if (!doneBtn) {
+      doneBtn=document.createElement('button');
+      doneBtn.id='btn-done'; doneBtn.className='btn-primary';
+      doneBtn.style.cssText='flex:1;min-width:160px;padding:.85rem 1.5rem;font-size:16px';
+      doneBtn.textContent='📊 ดูสรุปผล →';
+      doneBtn.onclick=()=>showSummary();
+      document.getElementById('action-row').appendChild(doneBtn);
+    }
+  } else if (doneBtn) doneBtn.remove();
+}
+
+function renderCards() {
+  const row=document.getElementById('cards-row');
+  row.innerHTML='';
+  state.cards.forEach((val,idx)=>{
+    const wrapper=document.createElement('div');
+    wrapper.className='card-item';
+    const isSel=state.selected.includes(idx);
+    const isCmp=isSel&&(state.phase==='decide'||state.phase==='feedback');
+    const isDisabled=state.phase==='decide'||state.phase==='feedback'||state.phase==='done'||
+                     (state.phase==='select2'&&state.selected[0]===idx);
+    let cls='playing-card';
+    if (state.phase==='done') cls+=' done-sort';
+    else if (isCmp) cls+=' comparing';
+    else if (isSel) cls+=' selected';
+    else if (!isDisabled) cls+=' selecting';
+    else cls+=' disabled-card';
+    const showVal=isSel||state.phase==='done';
+    wrapper.innerHTML=`
+      <button class="${cls}" onclick="${isDisabled?'':'cardClick('+idx+')'}" aria-label="การ์ด ${showVal?val:'?'}">
+        ${showVal?val:'<span style="font-size:20px;opacity:.4">?</span>'}
+        ${state.phase==='done'?'<span style="font-size:10px;margin-top:2px;opacity:.6">✓</span>':''}
+      </button>
+      <span class="card-pos">ตำแหน่ง ${idx+1}</span>`;
+    row.appendChild(wrapper);
+  });
+}
+
+function cardClick(idx) {
+  if (state.phase==='select1') {
+    state.selected=[idx]; state.phase='select2'; state.hintLevel=-1;
+    document.getElementById('hint-box').style.display='none';
+    renderGame();
+  } else if (state.phase==='select2') {
+    if (idx===state.selected[0]) { state.selected=[]; state.phase='select1'; renderGame(); return; }
+    state.selected=[state.selected[0],idx]; state.phase='decide'; state.ops++;
+    renderGame();
+  }
+}
+
+function handleSwap(doSwap) {
+  const [i,j]=state.selected;
+  const a=[...state.cards];
+  const leftVal=a[i], rightVal=a[j];
+  const correct=doSwap===(leftVal>rightVal);
+  if (doSwap) [a[i],a[j]]=[a[j],a[i]];
+  state.cards=a;
+  state.history.push({pair:[i,j],swapped:doSwap,array:[...a],correct});
+  const inst=document.getElementById('instruction');
+  inst.style.color=correct?'var(--green)':'var(--red)';
+  if (correct) inst.textContent=doSwap?`✓ สลับถูกต้อง! ${leftVal} > ${rightVal}`:`✓ ถูกต้อง! ลำดับ OK แล้ว`;
+  else inst.textContent=doSwap?`✗ ไม่จำเป็นต้องสลับ เพราะ ${leftVal} ≤ ${rightVal}`:`✗ ควรสลับ เพราะ ${leftVal} > ${rightVal}`;
+  state.phase='feedback';
+  document.getElementById('btn-swap').style.display='none';
+  document.getElementById('btn-keep').style.display='none';
+  document.getElementById('hint-box').style.display='none';
+  renderCards();
+  setTimeout(()=>{
+    state.selected=[]; state.hintLevel=-1;
+    state.phase=isSorted(state.cards)?'done':'select1';
+    renderGame();
+  },1300);
+}
+
+function requestHint() {
+  if (state.selected.length<2) {
+    document.getElementById('hint-box').style.display='block';
+    document.getElementById('hint-label').textContent='💡 คำใบ้';
+    document.getElementById('hint-text').textContent='เลือกบัตร 2 ใบก่อน แล้วกดขอคำใบ้อีกครั้ง';
+    return;
+  }
+  state.hintLevel=Math.min(state.hintLevel+1,2);
+  const [i,j]=state.selected;
+  const hints=[
+    `เปรียบเทียบค่าที่ตำแหน่ง ${i+1} กับ ${j+1} — ค่าไหนควรอยู่ทางซ้าย?`,
+    state.cards[i]>state.cards[j]
+      ?`ค่า ${state.cards[i]} มากกว่า ${state.cards[j]} — ถ้าต้องการเรียงจากน้อยไปมาก ควรสลับหรือไม่?`
+      :`ค่า ${state.cards[i]} น้อยกว่าหรือเท่ากับ ${state.cards[j]} — ลำดับนี้ถูกต้องแล้วหรือยัง?`,
+    state.cards[i]>state.cards[j]
+      ?`ควรสลับ! เพราะ ${state.cards[i]} > ${state.cards[j]} และเราต้องการให้ค่าน้อยอยู่ก่อน`
+      :`ไม่ต้องสลับ เพราะ ${state.cards[i]} ≤ ${state.cards[j]} อยู่ในลำดับที่ถูกต้องแล้ว`,
+  ];
+  document.getElementById('hint-box').style.display='block';
+  document.getElementById('hint-label').textContent=`💡 คำใบ้ระดับ ${state.hintLevel+1}/3`;
+  document.getElementById('hint-text').textContent=hints[state.hintLevel];
+}
+
+// ===== SOLUTION =====
+function goToSolution() {
+  solState.arr=[...state.initialCards];
+  solState.steps=bubbleSortSteps(solState.arr);
+  solState.currentStep=-1;
+  document.getElementById('sol-initial').innerHTML=solState.arr.map(v=>`<div class="step-card">${v}</div>`).join('');
+  document.getElementById('sol-step-content').innerHTML='กด <strong style="color:var(--amber)">ขั้นตอนถัดไป</strong> เพื่อดู algorithm ทีละขั้น';
+  document.getElementById('sol-prev').disabled=true;
+  const nxt=document.getElementById('sol-next');
+  nxt.textContent='ขั้นตอนถัดไป →';
+  nxt.style.cssText='flex:1;padding:.75rem 1.25rem;background:var(--amber-bg);border:1.5px solid var(--amber);color:var(--amber);border-radius:10px;font-size:15px;font-weight:600';
+  showScreen('solution');
+}
+function solPrev() { solState.currentStep=Math.max(-1,solState.currentStep-1); renderSolStep(); }
+function solNext() {
+  if (solState.currentStep>=solState.steps.length-1) { showSummary(); return; }
+  solState.currentStep++; renderSolStep();
+}
+function renderSolStep() {
+  const s=solState.currentStep;
+  const step=s>=0?solState.steps[s]:null;
+  const display=s>=0?step.array:solState.arr;
+  document.getElementById('sol-prev').disabled=s===-1;
+  const isLast=s===solState.steps.length-1;
+  const nxt=document.getElementById('sol-next');
+  if (isLast) { nxt.textContent='ดูสรุป →'; nxt.style.background='var(--teal)'; nxt.style.borderColor='var(--teal)'; nxt.style.color='#0a1f1e'; }
+  else { nxt.textContent='ขั้นตอนถัดไป →'; nxt.style.background='var(--amber-bg)'; nxt.style.borderColor='var(--amber)'; nxt.style.color='var(--amber)'; }
+  if (s===-1) { document.getElementById('sol-step-content').innerHTML='กด <strong style="color:var(--amber)">ขั้นตอนถัดไป</strong> เพื่อดู algorithm ทีละขั้น'; return; }
+  const n=solState.arr.length;
+  const cardsHtml=display.map((v,i)=>{
+    const isCmp=step.compared.includes(i);
+    const isSortedPos=i>=n-1-step.pass;
+    let cls='step-card';
+    if (isCmp&&step.swapped) cls+=' cmp-swap';
+    else if (isCmp) cls+=' cmp-keep';
+    else if (isSortedPos) cls+=' sorted-pos';
+    return `<div class="${cls}">${v}</div>`;
+  }).join('');
+  const expl=step.swapped
+    ?`<div style="font-size:14px;color:var(--teal)"><strong>เปรียบเทียบ ตำแหน่ง ${step.compared[0]+1} (${display[step.compared[0]]}) กับ ${step.compared[1]+1} (${display[step.compared[1]]})</strong></div><div style="font-size:13px;color:var(--text3);margin-top:4px">→ สลับตำแหน่ง เพราะค่าซ้าย > ค่าขวา</div>`
+    :`<div style="font-size:14px;color:var(--amber)"><strong>เปรียบเทียบ ตำแหน่ง ${step.compared[0]+1} (${display[step.compared[0]]}) กับ ${step.compared[1]+1} (${display[step.compared[1]]})</strong></div><div style="font-size:13px;color:var(--text3);margin-top:4px">→ ไม่สลับ ลำดับถูกต้องแล้ว</div>`;
+  document.getElementById('sol-step-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text3);margin-bottom:.5rem">
+      <span>รอบที่ ${step.pass+1}, ขั้นที่ ${s+1}/${solState.steps.length}</span><span>การดำเนินการที่ ${step.op}</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem">${cardsHtml}</div>
+    <div style="background:${step.swapped?'var(--teal-bg)':'var(--bg3)'};border:1px solid ${step.swapped?'var(--teal-dim)':'var(--border)'};border-radius:8px;padding:.75rem 1rem">${expl}</div>`;
+}
+
+// ===== SUMMARY =====
+function showSummary() {
+  const h=state.history, wc=worstCase(state.cardCount);
+  const correct=h.filter(e=>e.correct).length, total=h.length;
+  const acc=total>0?Math.round((correct/total)*100):100;
+  const eff=Math.max(0,Math.round((1-state.ops/wc)*100));
+  const emoji=acc>=80?'🏆':acc>=60?'⭐':'💪';
+  const grade=acc>=90?'ยอดเยี่ยม':acc>=70?'ดีมาก':acc>=50?'พัฒนาต่อ':'ลองอีกครั้ง';
+  const gradeColor=acc>=90?'var(--green)':acc>=70?'var(--teal)':acc>=50?'var(--amber)':'var(--red)';
+  document.getElementById('summary-emoji').textContent=emoji;
+  document.getElementById('summary-sub').textContent=`รอบที่ ${state.roundNumber} — บัตร ${state.cardCount} ใบ`;
+  document.getElementById('stat-ops').textContent=state.ops;
+  document.getElementById('stat-ops-sub').textContent=`worst case: ${wc}`;
+  const accEl=document.getElementById('stat-acc');
+  accEl.textContent=`${acc}%`; accEl.style.color=gradeColor;
+  document.getElementById('stat-acc-sub').textContent=grade;
+  document.getElementById('stat-eff').textContent=`${eff}%`;
+  document.getElementById('stat-correct').textContent=`${correct}/${total}`;
+  const n=state.cardCount;
+  document.getElementById('reflection-questions').innerHTML=[
+    `ถ้าบัตรมี ${n*2} ใบ ต้องใช้กี่ครั้งในกรณีที่แย่ที่สุด? (ตอบ: ${worstCase(n*2)} ครั้ง)`,
+    'ขั้นตอนที่คุณใช้วันนี้ ชัดเจนพอให้คนอื่นทำตามได้โดยไม่ถามเพิ่มหรือเปล่า?',
+    'มี algorithm การเรียงลำดับที่ดีกว่า Bubble Sort ไหม? (힌트: Merge Sort, Quick Sort)',
+  ].map((q,i)=>`<div style="display:flex;gap:8px;font-size:14px;color:var(--text2)"><span style="color:var(--purple);font-weight:600;flex-shrink:0">Q${i+1}.</span><span>${q}</span></div>`).join('');
+  document.getElementById('summary-history-label').textContent=`${total} ครั้ง`;
+  document.getElementById('summary-history-list').innerHTML=h.map((e,i)=>{
+    const prevArr=i===0?state.initialCards:h[i-1].array;
+    return `<tr style="border-bottom:1px solid var(--border);color:${e.correct?'var(--text2)':'var(--red)'}">
+      <td style="padding:6px 8px;color:var(--text3)">${i+1}</td>
+      <td style="padding:6px 8px">${e.pair[0]+1} ↔ ${e.pair[1]+1}</td>
+      <td style="padding:6px 8px;color:var(--text)">${prevArr[e.pair[0]]} , ${prevArr[e.pair[1]]}</td>
+      <td style="padding:6px 8px;color:${e.swapped?'var(--teal)':'var(--text3)'}">${e.swapped?'↔ สลับ':'— ไม่สลับ'}</td>
+      <td style="padding:6px 8px;color:var(--text3);font-size:12px">[${e.array.join(', ')}]</td>
+      <td style="padding:6px 8px;text-align:right">${e.correct?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗</span>'}</td>
+    </tr>`;
+  }).join('');
+  showScreen('summary');
+  setTimeout(()=>{ pyReset(); updateChart(state.cardCount); }, 60);
+}
+
+function playAgain() {
+  state.roundNumber++; state.ops=0; state.history=[];
+  state.hintLevel=-1; state.phase='select1'; state.selected=[];
+  state.cards=generateCards(state.cardCount);
+  state.initialCards=[...state.cards];
+  const doneBtn=document.getElementById('btn-done');
+  if (doneBtn) doneBtn.remove();
+  renderGame(); showScreen('game');
+}
+function goToIntro() {
+  state.roundNumber=1;
+  const doneBtn=document.getElementById('btn-done');
+  if (doneBtn) doneBtn.remove();
+  showScreen('intro');
+}
+
+// ===== PYTHON SIMULATION =====
+const PY_LINES = [
+  'def bubble_sort(arr):',
+  '    n = len(arr)',
+  '    swapped = True',
+  '    while swapped:',
+  '        swapped = False',
+  '        for i in range(n - 1):',
+  '            if arr[i] > arr[i + 1]:',
+  '                arr[i], arr[i+1] = arr[i+1], arr[i]',
+  '                swapped = True',
+  '    return arr',
+];
+
+function buildPySteps(arr) {
+  const steps=[], a=[...arr], n=a.length;
+  steps.push({line:1,arr:[...a],i:null,desc:`n = ${n}`});
+  steps.push({line:2,arr:[...a],i:null,desc:'swapped = True → เริ่ม loop'});
+  let outerPass=0, swapped=true;
+  while (swapped) {
+    steps.push({line:3,arr:[...a],i:null,desc:`ตรวจ: swapped = ${swapped} → เข้า loop`});
+    swapped=false;
+    steps.push({line:4,arr:[...a],i:null,desc:'swapped = False'});
+    for (let i=0;i<n-1;i++) {
+      steps.push({line:5,arr:[...a],i,desc:`for i = ${i}`});
+      steps.push({line:6,arr:[...a],i,desc:`arr[${i}]=${a[i]} > arr[${i+1}]=${a[i+1]}? → ${a[i]>a[i+1]?'ใช่':'ไม่ใช่'}`});
+      if (a[i]>a[i+1]) {
+        [a[i],a[i+1]]=[a[i+1],a[i]]; swapped=true;
+        steps.push({line:7,arr:[...a],i,swapIdx:i,desc:`สลับ → arr = [${a.join(', ')}]`});
+        steps.push({line:8,arr:[...a],i,desc:'swapped = True'});
+      }
+    }
+    if (++outerPass>n) break;
+  }
+  steps.push({line:3,arr:[...a],i:null,desc:'swapped = False → ออกจาก loop'});
+  steps.push({line:9,arr:[...a],i:null,desc:`return [${a.join(', ')}]`});
+  return steps;
+}
+
+function pyReset() {
+  if (pyState.interval) { clearInterval(pyState.interval); pyState.interval=null; }
+  pyState.arr=[...state.initialCards];
+  pyState.steps=buildPySteps(pyState.arr);
+  pyState.stepIdx=-1;
+  renderPyCode(-1);
+  renderPyArray(pyState.arr,null,null);
+  document.getElementById('py-status').textContent='';
+  const btn=document.getElementById('py-step-btn');
+  btn.textContent='▶ Run';
+  btn.style.cssText='padding:4px 14px;background:var(--teal-bg);border:1px solid var(--teal);color:var(--teal);border-radius:6px;font-size:12px;font-weight:600';
+}
+
+function pyRun() {
+  const btn=document.getElementById('py-step-btn');
+  if (pyState.interval) {
+    clearInterval(pyState.interval); pyState.interval=null;
+    btn.textContent='▶ Run';
+    btn.style.cssText='padding:4px 14px;background:var(--teal-bg);border:1px solid var(--teal);color:var(--teal);border-radius:6px;font-size:12px;font-weight:600';
+    return;
+  }
+  if (pyState.stepIdx>=pyState.steps.length-1) { pyReset(); return; }
+  btn.textContent='⏸ หยุด';
+  btn.style.cssText='padding:4px 14px;background:var(--amber-bg);border:1px solid var(--amber);color:var(--amber);border-radius:6px;font-size:12px;font-weight:600';
+  pyState.interval=setInterval(()=>{
+    pyState.stepIdx++;
+    if (pyState.stepIdx>=pyState.steps.length) {
+      clearInterval(pyState.interval); pyState.interval=null;
+      btn.textContent='✓ เสร็จแล้ว — กด รีเซต เพื่อดูอีกครั้ง';
+      btn.style.cssText='padding:4px 14px;background:var(--green-bg);border:1px solid var(--green-dim);color:var(--green);border-radius:6px;font-size:12px;font-weight:600';
+      return;
+    }
+    const s=pyState.steps[pyState.stepIdx];
+    renderPyCode(s.line);
+    renderPyArray(s.arr,s.i,s.swapIdx!=null?[s.i,s.i+1]:null);
+    document.getElementById('py-status').textContent=s.desc;
+  },600);
+}
+
+function renderPyCode(activeLine) {
+  document.getElementById('py-code').innerHTML=PY_LINES.map((text,i)=>{
+    const isActive=i===activeLine;
+    const bg=isActive?'background:rgba(45,212,191,0.13);border-left:3px solid var(--teal);':'border-left:3px solid transparent;';
+    const color=isActive?'color:var(--text)':'color:var(--text3)';
+    const prefix=isActive?'<span style="color:var(--teal)">→</span> ':'  ';
+    let html=text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\b(def|while|for|if|in|return|range)\b/g,'<span style="color:var(--purple)">$1</span>')
+      .replace(/\b(True|False|None)\b/g,'<span style="color:var(--amber)">$1</span>')
+      .replace(/\b(len)\b/g,'<span style="color:var(--teal)">$1</span>');
+    return `<div style="${bg}${color};white-space:pre;font-size:13px;line-height:1.9;padding-left:6px;margin-left:-6px">${prefix}${html}</div>`;
+  }).join('');
+}
+
+function renderPyArray(arr,activeI,swapPair) {
+  document.getElementById('py-array-vis').innerHTML=arr.map((v,i)=>{
+    const isSwap=swapPair&&swapPair.includes(i);
+    const isActive=activeI!==null&&(i===activeI||i===activeI+1);
+    const border=isSwap?'border-color:var(--teal);':isActive?'border-color:var(--amber);':'';
+    const bg=isSwap?'background:var(--teal-bg);':isActive?'background:var(--amber-bg);':'';
+    const color=isSwap?'color:var(--teal);':isActive?'color:var(--amber);':'color:var(--text);';
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <div style="width:40px;height:40px;background:var(--card);border:1.5px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:16px;font-weight:500;transition:all .2s;${border}${bg}${color}">${v}</div>
+      <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">[${i}]</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== BIG-O CHART (linear scale, n=2..100, 3 curves) =====
+function updateChart(n) {
+  n = Math.max(2, Math.min(100, parseInt(n)));
+  document.getElementById('chart-slider').value = n;
+  document.getElementById('chart-n-display').textContent = n;
+  document.getElementById('chart-n-val').textContent = n;
+  document.getElementById('chart-wc-val').textContent = worstCase(n).toLocaleString();
+  document.getElementById('chart-n-linear').textContent = n;
+  drawChart(n);
+}
+
+function drawChart(highlightN) {
+  const canvas = document.getElementById('big-o-canvas');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width || 560, H = rect.height || 260;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  // read theme colors live
+  const cs = getComputedStyle(document.documentElement);
+  const cText3  = cs.getPropertyValue('--text3').trim();
+  const cBorder = cs.getPropertyValue('--border').trim();
+  const cBg     = cs.getPropertyValue('--bg').trim();
+  const cTeal   = cs.getPropertyValue('--teal').trim();
+  const cAmber  = cs.getPropertyValue('--amber').trim();
+  const isLight = document.documentElement.classList.contains('light');
+  const cNLine  = isLight ? '#8b8fa8' : '#4a5280';
+  const cNLnLog = isLight ? '#7c3aed' : '#6366f1';
+  const gridAlpha = isLight ? 'rgba(180,186,210,0.5)' : 'rgba(60,68,104,0.7)';
+
+  const PAD = { l: 52, r: 40, t: 16, b: 44 };
+  const maxN = 100, maxY = worstCase(maxN);
+  const xs = n => PAD.l + (n - 2) / (maxN - 2) * (W - PAD.l - PAD.r);
+  const ys = v => H - PAD.b - Math.min(v, maxY) / maxY * (H - PAD.t - PAD.b);
+
+  // y gridlines
+  ctx.lineWidth = 0.5; ctx.strokeStyle = gridAlpha;
+  [0, 1000, 2000, 3000, 4000, 4950].forEach(yv => {
+    const y = ys(yv);
+    ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(W - PAD.r, y); ctx.stroke();
+    ctx.fillStyle = cText3; ctx.font = '10px IBM Plex Mono,monospace'; ctx.textAlign = 'right';
+    ctx.fillText(yv >= 1000 ? (yv/1000)+'K' : yv, PAD.l - 5, y + 3);
+  });
+
+  // x gridlines + labels
+  [2, 20, 40, 60, 80, 100].forEach(xv => {
+    const x = xs(xv);
+    ctx.beginPath(); ctx.moveTo(x, PAD.t); ctx.lineTo(x, H - PAD.b); ctx.stroke();
+    ctx.fillStyle = cText3; ctx.font = '10px IBM Plex Mono,monospace'; ctx.textAlign = 'center';
+    ctx.fillText(xv, x, H - PAD.b + 13);
+  });
+
+  // axes
+  ctx.strokeStyle = isLight ? '#c5cade' : '#3d4468'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD.l, PAD.t); ctx.lineTo(PAD.l, H - PAD.b); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(PAD.l, H - PAD.b); ctx.lineTo(W - PAD.r, H - PAD.b); ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = cText3; ctx.font = '11px Sarabun,sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('จำนวนข้อมูล (n)', PAD.l + (W - PAD.l - PAD.r) / 2, H - 2);
+  ctx.save(); ctx.translate(11, H / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('จำนวนการดำเนินการ', 0, 0); ctx.restore();
+
+  function drawCurve(fn, color, dash, width) {
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = width || 2; ctx.setLineDash(dash || []);
+    for (let n = 2; n <= maxN; n++) { const x=xs(n),y=ys(fn(n)); n===2?ctx.moveTo(x,y):ctx.lineTo(x,y); }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  drawCurve(n => n,               cNLine,  [5,4], 1.5);
+  drawCurve(n => n * Math.log2(n),cNLnLog, [5,4], 1.5);
+  drawCurve(n => worstCase(n),    cTeal,   [],    2.5);
+
+  // fill under O(n²)
+  ctx.beginPath();
+  for (let n=2;n<=maxN;n++){const x=xs(n),y=ys(worstCase(n));n===2?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.lineTo(xs(maxN),H-PAD.b); ctx.lineTo(xs(2),H-PAD.b); ctx.closePath();
+  ctx.fillStyle = isLight ? 'rgba(13,148,136,0.08)' : 'rgba(45,212,191,0.07)'; ctx.fill();
+
+  // curve labels at right edge
+  const lx = xs(maxN) + 4;
+  ctx.font = '11px IBM Plex Mono,monospace'; ctx.textAlign = 'left';
+  ctx.fillStyle = cTeal;   ctx.fillText('n²',   lx, ys(worstCase(maxN)) + 4);
+  ctx.fillStyle = cNLnLog; ctx.fillText('n㏒n', lx, ys(maxN * Math.log2(maxN)) + 4);
+  ctx.fillStyle = cNLine;  ctx.fillText('n',    lx, ys(maxN) - 4);
+
+  // your result dot (amber)
+  const myN = state.cardCount, myOps = state.ops;
+  if (myN >= 2 && myN <= maxN && myOps > 0) {
+    const mx = xs(myN), my = ys(myOps);
+    ctx.beginPath(); ctx.arc(mx, my, 6, 0, Math.PI*2);
+    ctx.fillStyle = cAmber; ctx.fill();
+    ctx.strokeStyle = cBg; ctx.lineWidth = 2; ctx.stroke();
+    document.getElementById('chart-your-dot').style.display = 'inline';
+    ctx.fillStyle = cAmber; ctx.font = '11px IBM Plex Mono,monospace';
+    ctx.textAlign = mx < W-80 ? 'left' : 'right';
+    ctx.fillText(`คุณ:${myOps}`, mx < W-80 ? mx+9 : mx-9, my - 8);
+  }
+
+  // slider highlight dot + crosshairs
+  const hx = xs(highlightN), hy = ys(worstCase(highlightN));
+  ctx.beginPath(); ctx.strokeStyle = isLight ? 'rgba(13,148,136,0.3)' : 'rgba(45,212,191,0.25)';
+  ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+  ctx.moveTo(hx, H-PAD.b); ctx.lineTo(hx, hy);
+  ctx.moveTo(PAD.l, hy); ctx.lineTo(hx, hy);
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(hx, hy, 6, 0, Math.PI*2);
+  ctx.fillStyle = cTeal; ctx.fill();
+  ctx.strokeStyle = cBg; ctx.lineWidth = 2; ctx.stroke();
+}
+</script>
+</body>
+</html>
