@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closest Pair — กิจกรรมที่ 7</title>
+<style>
+  :root {
+    --navy:   #0A2342;
+    --teal:   #126872;
+    --accent: #2EC4B6;
+    --gold:   #F9A825;
+    --red:    #E84855;
+    --green:  #2D9B43;
+    --light:  #E8F4F8;
+    --gray:   #E0E8EC;
+    --white:  #F7FAFB;
+    --text:   #1A1A2E;
+    --muted:  #4A6572;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: #000;
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh; width: 100vw;
+  }
+
+  /* ── DECK CONTAINER ── */
+  #deck {
+    width: 100vw; height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1; pointer-events: all;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+    z-index: 100;
+  }
+
+  /* ── NAV ── */
+  #nav {
+    position: fixed; bottom: 1.2rem; right: 1.4rem;
+    display: flex; gap: .6rem; z-index: 100;
+  }
+  #nav button {
+    width: 2.4rem; height: 2.4rem; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.25);
+    background: rgba(10,35,66,.7);
+    color: #fff; font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, border-color .2s;
+    backdrop-filter: blur(4px);
+  }
+  #nav button:hover { background: var(--teal); border-color: var(--accent); }
+
+  #slide-counter {
+    position: fixed; bottom: 1.35rem; left: 1.4rem;
+    font-size: .75rem; color: rgba(255,255,255,.45);
+    z-index: 100; font-variant-numeric: tabular-nums;
+  }
+
+  /* ════════════════════════
+     SLIDE 1 — TITLE
+  ════════════════════════ */
+  #s1 { background: var(--navy); justify-content: center; align-items: center; gap: 0; }
+
+  .s1-eyebrow {
+    font-size: 1rem; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: .8rem;
+  }
+  .s1-title {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 800; color: #fff;
+    line-height: 1.05; text-align: center;
+    margin-bottom: .5rem;
+  }
+  .s1-sub {
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    color: var(--accent); margin-bottom: 2.8rem;
+  }
+  .s1-pills {
+    display: flex; gap: 1rem;
+  }
+  .pill {
+    background: var(--teal); border-radius: 10px;
+    padding: .7rem 1.5rem; text-align: center;
+    min-width: 9rem;
+  }
+  .pill strong { display: block; color: #fff; font-size: 1.05rem; }
+  .pill span   { color: rgba(255,255,255,.7); font-size: .8rem; }
+
+  /* ════════════════════════
+     SLIDE 2 — OVERVIEW
+  ════════════════════════ */
+  #s2 { background: var(--white); }
+
+  .slide-header {
+    background: var(--navy); color: #fff;
+    padding: .85rem 2rem;
+    font-size: 1.3rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .s2-body {
+    flex: 1; display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: 1.2rem; padding: 1.2rem 1.8rem;
+  }
+  .info-cards { display: flex; flex-direction: column; gap: .9rem; }
+  .info-card {
+    background: var(--light); border-radius: 10px;
+    padding: .8rem 1rem .8rem 1rem;
+    display: flex; align-items: flex-start; gap: .85rem;
+  }
+  .info-icon {
+    width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    background: var(--teal); display: flex;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .info-icon svg { width: 1.1rem; height: 1.1rem; fill: #fff; }
+  .info-card h4 { font-size: .75rem; color: var(--muted); font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em; margin-bottom: .2rem; }
+  .info-card p  { font-size: .95rem; color: var(--text); line-height: 1.4; }
+
+  .goal-card {
+    background: var(--navy); border-radius: 12px;
+    padding: 1.3rem 1.5rem; display: flex; flex-direction: column; gap: .7rem;
+  }
+  .goal-card h3 { color: var(--accent); font-size: 1rem; font-weight: 700; }
+  .goal-card p  { color: #fff; font-size: .95rem; line-height: 1.6; }
+  .goal-card em { color: var(--gold); font-style: normal; font-weight: 700; }
+
+  .equip-bar {
+    background: var(--gray); border-radius: 8px;
+    padding: .65rem 1.2rem; font-size: .9rem; color: var(--text);
+    margin: 0 1.8rem .9rem;
+    flex-shrink: 0;
+  }
+
+  /* ════════════════════════
+     SLIDE 3 — ACTIVITY FLOW
+  ════════════════════════ */
+  #s3 { background: var(--white); }
+
+  .steps-grid {
+    flex: 1; display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem; padding: 1.1rem 1.8rem 1rem;
+  }
+  .step-card {
+    background: var(--light); border-radius: 12px;
+    padding: 1.2rem 1.2rem 1rem;
+    display: flex; flex-direction: column; gap: .6rem;
+    position: relative;
+  }
+  .step-num {
+    width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 800; color: #fff;
+    margin-bottom: .2rem;
+  }
+  .step-card h3 { font-size: 1rem; font-weight: 700; }
+  .step-card ul {
+    padding-left: 1.1rem; font-size: .9rem;
+    line-height: 1.65; color: var(--text); flex: 1;
+  }
+  .step-arrow {
+    position: absolute; right: -1.35rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem; color: var(--teal); z-index: 2;
+  }
+
+  /* ════════════════════════
+     SLIDE 4 — WHY STRIP
+  ════════════════════════ */
+  #s4 { background: var(--white); }
+
+  .s4-body {
+    flex: 1; display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 1.2rem; padding: 1.1rem 1.8rem;
+    overflow: hidden;
+  }
+  .diagram-panel {
+    background: var(--gray); border-radius: 12px;
+    overflow: hidden; position: relative;
+  }
+  .explain-cards {
+    display: flex; flex-direction: column; gap: .85rem; justify-content: center;
+  }
+  .explain-card {
+    background: var(--light); border-radius: 10px;
+    padding: .8rem 1rem; display: flex; gap: .8rem; align-items: flex-start;
+  }
+  .explain-dot {
+    width: 2rem; height: 2rem; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem; font-weight: 700; color: #fff; margin-top: .1rem;
+  }
+  .explain-card h4 { font-size: .9rem; font-weight: 700; margin-bottom: .25rem; }
+  .explain-card p  { font-size: .85rem; line-height: 1.5; color: var(--text); }
+
+  /* ════════════════════════
+     SLIDE 5 — WHAT IS DELTA
+  ════════════════════════ */
+  #s5 { background: var(--white); }
+
+  .def-banner {
+    background: var(--navy); margin: .9rem 1.8rem 0;
+    border-radius: 10px; padding: .65rem 1.3rem;
+    font-size: .95rem; color: #fff; flex-shrink: 0;
+  }
+  .def-banner strong { color: var(--accent); }
+  .def-banner em     { color: rgba(255,255,255,.6); font-style: italic; font-size: .88rem; }
+
+  .delta-grid {
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.1rem; padding: .9rem 1.8rem .5rem;
+  }
+  .delta-panel {
+    border-radius: 12px; padding: .7rem .9rem .6rem;
+    display: flex; flex-direction: column; gap: .4rem;
+  }
+  .delta-panel.left  { background: #D4EEFF; }
+  .delta-panel.right { background: #D4FFE1; }
+  .delta-panel h3 {
+    font-size: .9rem; font-weight: 700; text-align: center; margin-bottom: .2rem;
+  }
+  .delta-panel .result-badge {
+    border-radius: 7px; padding: .4rem .8rem;
+    font-size: .82rem; font-weight: 700; text-align: center; color: #fff;
+    margin-top: auto;
+  }
+
+  .delta-formula {
+    background: rgba(249,168,37,.15); border-radius: 8px;
+    margin: 0 1.8rem .8rem; padding: .55rem 1.2rem;
+    font-size: .95rem; color: var(--text); flex-shrink: 0;
+    text-align: center;
+  }
+  .delta-formula strong { color: var(--red); font-size: 1.1rem; }
+
+  /* ════════════════════════
+     SLIDE 6 — STEPS 2-4
+  ════════════════════════ */
+  #s6 { background: var(--white); }
+
+  .steps-stack {
+    flex: 1; display: flex; flex-direction: column;
+    gap: .55rem; padding: .9rem 1.8rem;
+  }
+  .hstep {
+    background: var(--light); border-radius: 10px;
+    display: grid; grid-template-columns: 2.6rem 1fr 1fr;
+    gap: 0; align-items: stretch; overflow: hidden; flex: 1;
+  }
+  .hstep-num {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: 800; color: #fff;
+    border-radius: 10px 0 0 10px;
+  }
+  .hstep-main {
+    padding: .6rem .85rem; border-right: 1px solid rgba(0,0,0,.08);
+  }
+  .hstep-main h4 { font-size: .9rem; font-weight: 700; margin-bottom: .3rem; }
+  .hstep-main p  { font-size: .83rem; line-height: 1.55; color: var(--text); }
+  .hstep-main .ex {
+    display: inline-block; margin-top: .35rem;
+    font-size: .8rem; font-style: italic; color: var(--muted);
+    background: rgba(0,0,0,.05); border-radius: 5px; padding: .2rem .5rem;
+  }
+  .hstep-hint {
+    padding: .6rem .85rem;
+    font-size: .82rem; line-height: 1.5; color: var(--text);
+    font-style: italic; display: flex; align-items: center;
+  }
+
+  /* ════════════════════════
+     SLIDE 7 — COMPARISON TABLE
+  ════════════════════════ */
+  #s7 { background: var(--white); }
+
+  .summary-cards {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1rem; margin: .9rem 1.8rem 0; flex-shrink: 0;
+  }
+  .sum-card {
+    border-radius: 10px; padding: .65rem 1rem; text-align: center; color: #fff;
+  }
+  .sum-card .sum-label { font-size: .78rem; font-weight: 600; opacity: .9; }
+  .sum-card .sum-val   { font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  .sum-card .sum-sub   { font-size: .78rem; opacity: .8; }
+
+  .cmp-table {
+    flex: 1; margin: .7rem 1.8rem .8rem;
+    border-collapse: collapse; width: calc(100% - 3.6rem);
+    font-size: .88rem;
+  }
+  .cmp-table th {
+    background: var(--navy); color: #fff;
+    padding: .5rem .8rem; text-align: left; font-size: .82rem;
+  }
+  .cmp-table td { padding: .48rem .8rem; border-bottom: 1px solid var(--gray); }
+  .cmp-table tr.strip-row td { background: #FFF8E1; }
+  .cmp-table tr.total-row td { background: #E8F5E9; font-weight: 700; }
+  .cmp-table .red   { color: var(--red);   font-weight: 700; }
+  .cmp-table .green { color: var(--green); font-weight: 700; }
+
+  /* ════════════════════════
+     SLIDE 8 — QUESTIONS
+  ════════════════════════ */
+  #s8 { background: var(--white); }
+
+  .q-grid {
+    flex: 1; display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: .9rem; padding: .9rem 1.8rem 1rem;
+  }
+  .q-card {
+    background: var(--light); border-radius: 11px;
+    padding: .85rem 1rem; display: flex; flex-direction: column; gap: .5rem;
+  }
+  .q-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2rem; height: 1.4rem; border-radius: 5px;
+    font-size: .75rem; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .q-card p  { font-size: .9rem; line-height: 1.55; flex: 1; }
+  .q-hint {
+    font-size: .8rem; font-style: italic; border-radius: 6px;
+    padding: .35rem .7rem; color: var(--text);
+  }
+
+  /* ════════════════════════
+     SLIDE 9 — AI PROMPT
+  ════════════════════════ */
+  #s9 { background: var(--navy); justify-content: center; align-items: center; }
+
+  .s9-inner { width: min(700px, 88%); display: flex; flex-direction: column; gap: 1.3rem; }
+  .s9-title { font-size: 1.6rem; font-weight: 800; color: var(--accent); text-align: center; }
+
+  .prompt-box {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(46,196,182,.3);
+    border-radius: 12px; padding: 1.2rem 1.4rem;
+  }
+  .prompt-box .prompt-label {
+    font-size: .75rem; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--accent); font-weight: 700; margin-bottom: .6rem;
+  }
+  .prompt-box p { color: #fff; font-size: .95rem; line-height: 1.7; font-style: italic; }
+
+  .takeaways {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: .9rem;
+  }
+  .tk {
+    background: rgba(255,255,255,.07); border-radius: 10px;
+    padding: .9rem 1rem; text-align: center;
+  }
+  .tk-icon {
+    width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    margin: 0 auto .55rem; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .tk strong { display: block; font-size: .88rem; color: #fff; margin-bottom: .3rem; }
+  .tk p { font-size: .8rem; color: rgba(255,255,255,.65); line-height: 1.45; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="slide-counter"></div>
+
+<div id="deck">
+
+<!-- ══ SLIDE 1 ══ -->
+<div class="slide active" id="s1">
+  <div class="s1-eyebrow">กิจกรรมที่ 7</div>
+  <div class="s1-title">Closest Pair</div>
+  <div class="s1-sub">หาเพื่อนที่อยู่ใกล้กันที่สุด</div>
+  <div class="s1-pills">
+    <div class="pill"><strong>Divide</strong><span>แบ่งปัญหา</span></div>
+    <div class="pill"><strong>Conquer</strong><span>แก้แต่ละส่วน</span></div>
+    <div class="pill"><strong>Combine</strong><span>รวมอย่างระวัง</span></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 2 ══ -->
+<div class="slide" id="s2">
+  <div class="slide-header">ภาพรวมกิจกรรมและเป้าหมายการเรียนรู้</div>
+  <div class="s2-body">
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        </div>
+        <div>
+          <h4>แนวคิดหลัก</h4>
+          <p>Divide and Conquer · Geometry · Careful Combine</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+        </div>
+        <div>
+          <h4>เวลาที่แนะนำ</h4>
+          <p>40 – 55 นาที</p>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon" style="background:var(--teal)">
+          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+        </div>
+        <div>
+          <h4>กลุ่มเป้าหมาย</h4>
+          <p>ครูสายคอมพิวเตอร์ / คณิตศาสตร์ที่ต้องการความท้าทาย</p>
+        </div>
+      </div>
+    </div>
+    <div class="goal-card">
+      <h3>เป้าหมายการเรียนรู้</h3>
+      <p>ผู้เรียนเห็นว่า Divide and Conquer <strong style="color:var(--accent)">ไม่ใช่แค่แบ่งปัญหา</strong> แต่ต้องรวมคำตอบย่อยอย่างระมัดระวัง</p>
+      <p>โดยเฉพาะกรณีที่คำตอบที่ถูกต้องอาจอยู่ <em>ข้ามเส้นแบ่ง</em></p>
+      <div style="margin-top:.5rem; padding:.7rem; background:rgba(255,255,255,.08); border-radius:8px; font-size:.88rem; color:rgba(255,255,255,.8); line-height:1.6">
+        <strong style="color:var(--accent)">หลักคิด:</strong> "คิดด้วยตนเองก่อน ใช้ AI เป็นคู่คิดภายหลัง"
+      </div>
+    </div>
+  </div>
+  <div class="equip-bar">อุปกรณ์: กระดาษ A3 หรือกระดาน &nbsp;·&nbsp; สติกเกอร์จุด 10–16 จุด &nbsp;·&nbsp; ไม้บรรทัด &nbsp;·&nbsp; ปากกาเมจิก</div>
+</div>
+
+<!-- ══ SLIDE 3 ══ -->
+<div class="slide" id="s3">
+  <div class="slide-header">ขั้นตอนการทำกิจกรรม</div>
+  <div class="steps-grid">
+    <div class="step-card" style="position:relative">
+      <div class="step-num" style="background:var(--teal)">1</div>
+      <h3 style="color:var(--teal)">เตรียมพื้นที่</h3>
+      <ul>
+        <li>ติดสติกเกอร์จุด 10–16 จุดบนกระดาษ A3</li>
+        <li>วางจุดแบบสุ่ม ไม่ต้องเป็นระเบียบ</li>
+        <li>กำหนดจุดเริ่มต้นร่วมกันก่อนเริ่ม</li>
+      </ul>
+      <span class="step-arrow">&#8594;</span>
+    </div>
+    <div class="step-card" style="position:relative">
+      <div class="step-num" style="background:var(--red)">2</div>
+      <h3 style="color:var(--red)">รอบ Brute Force</h3>
+      <ul>
+        <li>วัดระยะทางทุกคู่จุดด้วยไม้บรรทัด</li>
+        <li>บันทึกจำนวนครั้งที่วัดทั้งหมด</li>
+        <li>จด "คู่ที่ใกล้ที่สุด" พร้อมระยะทาง</li>
+      </ul>
+      <span class="step-arrow">&#8594;</span>
+    </div>
+    <div class="step-card">
+      <div class="step-num" style="background:var(--accent)">3</div>
+      <h3 style="color:var(--teal)">รอบ Divide &amp; Conquer</h3>
+      <ul>
+        <li>ลากเส้นแบ่งพื้นที่เป็นซ้าย/ขวา</li>
+        <li>หาคู่ใกล้สุดในแต่ละฝั่ง</li>
+        <li>ตรวจบริเวณใกล้เส้นแบ่ง <em>(รายละเอียดในสไลด์ถัดไป)</em></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 4 ══ -->
+<div class="slide" id="s4">
+  <div class="slide-header" style="background:var(--teal)">ทำไมต้องตรวจบริเวณใกล้เส้นแบ่ง?</div>
+  <div class="s4-body">
+    <div class="diagram-panel">
+      <svg width="100%" height="100%" viewBox="0 0 420 340" preserveAspectRatio="xMidYMid meet">
+        <!-- left half -->
+        <rect x="10" y="10" width="190" height="320" rx="8" fill="#D4EEFF"/>
+        <!-- right half -->
+        <rect x="220" y="10" width="190" height="320" rx="8" fill="#D4FFE1"/>
+        <!-- strip zone -->
+        <rect x="167" y="10" width="86" height="320" fill="#FFD6D6" opacity=".55" rx="4"/>
+        <!-- dividing line -->
+        <line x1="210" y1="10" x2="210" y2="330" stroke="#E84855" stroke-width="2" stroke-dasharray="6,4"/>
+        <!-- delta arrows -->
+        <line x1="167" y1="38" x2="210" y2="38" stroke="#F9A825" stroke-width="1.5"/>
+        <line x1="210" y1="38" x2="253" y2="38" stroke="#F9A825" stroke-width="1.5"/>
+        <text x="185" y="30" font-size="13" fill="#F9A825" font-style="italic" font-weight="700" text-anchor="middle">&#948;</text>
+        <text x="232" y="30" font-size="13" fill="#F9A825" font-style="italic" font-weight="700" text-anchor="middle">&#948;</text>
+        <!-- left points -->
+        <circle cx="55"  cy="110" r="7" fill="#2255AA"/>
+        <text x="65" y="107" font-size="12" fill="#2255AA" font-weight="700">A</text>
+        <circle cx="100" cy="200" r="7" fill="#2255AA"/>
+        <text x="110" y="197" font-size="12" fill="#2255AA" font-weight="700">B</text>
+        <circle cx="145" cy="85"  r="7" fill="#2255AA"/>
+        <text x="155" y="82" font-size="12" fill="#2255AA" font-weight="700">C</text>
+        <circle cx="80"  cy="265" r="7" fill="#2255AA"/>
+        <text x="90" y="262" font-size="12" fill="#2255AA" font-weight="700">D</text>
+        <!-- right points -->
+        <circle cx="280" cy="135" r="7" fill="#115522"/>
+        <text x="290" y="132" font-size="12" fill="#115522" font-weight="700">G</text>
+        <circle cx="350" cy="185" r="7" fill="#115522"/>
+        <text x="360" y="182" font-size="12" fill="#115522" font-weight="700">H</text>
+        <circle cx="390" cy="90"  r="7" fill="#115522"/>
+        <text x="395" y="87" font-size="12" fill="#115522" font-weight="700">I</text>
+        <!-- cross-strip points E, F -->
+        <circle cx="188" cy="175" r="8" fill="#E84855"/>
+        <text x="173" y="170" font-size="12" fill="#E84855" font-weight="700">E</text>
+        <circle cx="228" cy="205" r="8" fill="#E84855"/>
+        <text x="238" y="202" font-size="12" fill="#E84855" font-weight="700">F</text>
+        <!-- E-F connecting line -->
+        <line x1="188" y1="175" x2="228" y2="205" stroke="#2D9B43" stroke-width="2.5"/>
+        <!-- labels -->
+        <text x="100" y="335" font-size="11" fill="#2255AA" text-anchor="middle">ฝั่งซ้าย</text>
+        <text x="305" y="335" font-size="11" fill="#115522" text-anchor="middle">ฝั่งขวา</text>
+        <text x="210" y="335" font-size="10" fill="#E84855" text-anchor="middle">แถบตรวจ</text>
+      </svg>
+    </div>
+    <div class="explain-cards">
+      <div class="explain-card">
+        <div class="explain-dot" style="background:var(--red)">!</div>
+        <div>
+          <h4 style="color:var(--red)">ปัญหาของการแบ่งแค่ซ้าย/ขวา</h4>
+          <p>คู่จุด E–F อยู่คนละฝั่งของเส้นแบ่ง ไม่ถูกนับในขั้นตอน Conquer ของแต่ละฝั่ง จึงอาจถูกมองข้ามได้!</p>
+        </div>
+      </div>
+      <div class="explain-card">
+        <div class="explain-dot" style="background:var(--teal)">?</div>
+        <div>
+          <h4 style="color:var(--teal)">วิธีแก้: ตรวจแถบรอบเส้นแบ่ง (Strip)</h4>
+          <p>กำหนดแถบกว้าง 2&#948; รอบเส้นแบ่ง (&#948; = ระยะที่ใกล้สุดจากทั้งสองฝั่ง) ตรวจเฉพาะจุดที่อยู่ในแถบนี้เท่านั้น</p>
+        </div>
+      </div>
+      <div class="explain-card">
+        <div class="explain-dot" style="background:var(--green)">✓</div>
+        <div>
+          <h4 style="color:var(--green)">ผลลัพธ์</h4>
+          <p>พบว่า E–F ใกล้กันกว่าคู่ที่ดีที่สุดในแต่ละฝั่ง จึงเป็นคำตอบสุดท้าย</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 5 ══ -->
+<div class="slide" id="s5">
+  <div class="slide-header" style="background:var(--navy)">ขั้นที่ 1: &#948; (delta) คืออะไร และหาได้อย่างไร?</div>
+  <div class="def-banner">
+    <strong>&#948; (delta) = ระยะทางระหว่างคู่จุด 2 จุด ที่อยู่ใกล้กันที่สุดในฝั่งนั้น</strong>
+    &nbsp;&nbsp;<em>(ไม่ใช่ระยะจากจุดไปยังเส้นแบ่ง)</em>
+  </div>
+  <div class="delta-grid">
+    <div class="delta-panel left">
+      <h3 style="color:#2255AA">ฝั่งซ้าย</h3>
+      <svg width="100%" viewBox="0 0 280 195" style="flex:1">
+        <!-- faint lines between all pairs -->
+        <line x1="50"  y1="60"  x2="130" y2="120" stroke="#AACCEE" stroke-width="1"/>
+        <line x1="50"  y1="60"  x2="90"  y2="160" stroke="#AACCEE" stroke-width="1"/>
+        <line x1="50"  y1="60"  x2="200" y2="45"  stroke="#AACCEE" stroke-width="1"/>
+        <line x1="90"  y1="160" x2="200" y2="45"  stroke="#AACCEE" stroke-width="1"/>
+        <line x1="90"  y1="160" x2="130" y2="120" stroke="#AACCEE" stroke-width="1"/>
+        <line x1="200" y1="45"  x2="130" y2="120" stroke="#AACCEE" stroke-width="1"/>
+        <!-- highlighted closest pair B–C -->
+        <line x1="130" y1="120" x2="90" y2="160" stroke="#126872" stroke-width="2.5"/>
+        <!-- delta label -->
+        <rect x="88" y="120" width="72" height="20" rx="5" fill="#126872"/>
+        <text x="124" y="133" font-size="11" fill="white" font-weight="700" text-anchor="middle">&#948;_left = 1.8</text>
+        <!-- points -->
+        <circle cx="50"  cy="60"  r="6" fill="#2255AA"/>
+        <text x="58" y="57" font-size="11" fill="#2255AA" font-weight="700">A</text>
+        <circle cx="130" cy="120" r="6" fill="#2255AA"/>
+        <text x="138" y="117" font-size="11" fill="#2255AA" font-weight="700">B</text>
+        <circle cx="90"  cy="160" r="6" fill="#2255AA"/>
+        <text x="98" y="157" font-size="11" fill="#2255AA" font-weight="700">C</text>
+        <circle cx="200" cy="45"  r="6" fill="#2255AA"/>
+        <text x="208" y="42" font-size="11" fill="#2255AA" font-weight="700">D</text>
+      </svg>
+      <div class="result-badge" style="background:#2255AA">คู่ใกล้สุดในฝั่งซ้าย: B–C &nbsp;&#8594;&nbsp; &#948;_left = 1.8</div>
+    </div>
+    <div class="delta-panel right">
+      <h3 style="color:#115522">ฝั่งขวา</h3>
+      <svg width="100%" viewBox="0 0 280 195" style="flex:1">
+        <line x1="60"  y1="80"  x2="155" y2="55"  stroke="#AADDBB" stroke-width="1"/>
+        <line x1="60"  y1="80"  x2="90"  y2="155" stroke="#AADDBB" stroke-width="1"/>
+        <line x1="60"  y1="80"  x2="220" y2="110" stroke="#AADDBB" stroke-width="1"/>
+        <line x1="90"  y1="155" x2="155" y2="55"  stroke="#AADDBB" stroke-width="1"/>
+        <line x1="90"  y1="155" x2="220" y2="110" stroke="#AADDBB" stroke-width="1"/>
+        <line x1="155" y1="55"  x2="220" y2="110" stroke="#AADDBB" stroke-width="1"/>
+        <!-- highlighted E–F -->
+        <line x1="60" y1="80" x2="155" y2="55" stroke="#117733" stroke-width="2.5"/>
+        <rect x="76" y="48" width="72" height="20" rx="5" fill="#117733"/>
+        <text x="112" y="61" font-size="11" fill="white" font-weight="700" text-anchor="middle">&#948;_right = 1.5</text>
+        <!-- points -->
+        <circle cx="60"  cy="80"  r="6" fill="#115522"/>
+        <text x="38" y="77" font-size="11" fill="#115522" font-weight="700">E</text>
+        <circle cx="155" cy="55"  r="6" fill="#115522"/>
+        <text x="163" y="52" font-size="11" fill="#115522" font-weight="700">F</text>
+        <circle cx="90"  cy="155" r="6" fill="#115522"/>
+        <text x="98" y="152" font-size="11" fill="#115522" font-weight="700">G</text>
+        <circle cx="220" cy="110" r="6" fill="#115522"/>
+        <text x="228" y="107" font-size="11" fill="#115522" font-weight="700">H</text>
+      </svg>
+      <div class="result-badge" style="background:#117733">คู่ใกล้สุดในฝั่งขวา: E–F &nbsp;&#8594;&nbsp; &#948;_right = 1.5</div>
+    </div>
+  </div>
+  <div class="delta-formula">
+    ดังนั้น &nbsp; &#948; = min(&#948;_left, &#948;_right) = min(1.8, 1.5) = <strong>1.5</strong>
+    &nbsp;&nbsp; &#8592; ใช้ค่านี้กำหนดความกว้างของแถบ Strip
+  </div>
+</div>
+
+<!-- ══ SLIDE 6 ══ -->
+<div class="slide" id="s6">
+  <div class="slide-header">ขั้นที่ 2–4: สร้างแถบ &#8594; เรียงจุด &#8594; ตรวจคู่ข้ามฝั่ง</div>
+  <div class="steps-stack">
+    <div class="hstep">
+      <div class="hstep-num" style="background:var(--accent)">2</div>
+      <div class="hstep-main">
+        <h4 style="color:var(--teal)">สร้างแถบ Strip</h4>
+        <p>ลากเส้นขนานกับเส้นแบ่ง ทั้งซ้ายและขวา ห่างออกมาข้างละ &#948; = 1.5 ซม.<br>เก็บเฉพาะจุดที่อยู่ในแถบกว้าง 2&#948; นี้เข้าไว้</p>
+        <span class="ex">&gt;&gt; แถบกว้าง 2&#948; = 3.0 ซม. รอบเส้นแบ่ง</span>
+      </div>
+      <div class="hstep-hint" style="color:var(--muted)">จุดที่อยู่นอกแถบไม่มีทางใกล้กันน้อยกว่า &#948; ได้ จึงข้ามได้ทันที</div>
+    </div>
+    <div class="hstep">
+      <div class="hstep-num" style="background:var(--red)">3</div>
+      <div class="hstep-main">
+        <h4 style="color:var(--red)">เรียงจุดในแถบจากบนลงล่าง</h4>
+        <p>นำจุดในแถบมาเรียงตามตำแหน่งแนวตั้ง (จากบนลงล่าง)<br>เพื่อตรวจเฉพาะจุดที่อยู่ใกล้กันในแนวตั้งด้วย</p>
+        <span class="ex">&gt;&gt; เช่น จุดที่อยู่ในแถบ: [P(y=1.2), Q(y=1.8), R(y=3.5)]</span>
+      </div>
+      <div class="hstep-hint" style="color:var(--muted)">P–Q ห่างกันในแนวตั้งแค่ 0.6<br>P–R ห่างกัน 2.3 &gt; &#948; ไม่ต้องตรวจ</div>
+    </div>
+    <div class="hstep">
+      <div class="hstep-num" style="background:var(--gold)">4</div>
+      <div class="hstep-main">
+        <h4 style="color:#B8860B">ตรวจแต่ละคู่ในแถบ</h4>
+        <p>ตรวจแต่ละจุดในแถบกับจุดถัดไปไม่เกิน 7 จุด<br>ถ้าพบคู่ที่ใกล้กว่า &#948; ให้อัปเดต &#948; ใหม่ทันที</p>
+        <span class="ex">&gt;&gt; วัด P–Q ได้ 1.2 &lt; &#948;=1.5 &rarr; อัปเดต &#948;=1.2</span>
+      </div>
+      <div class="hstep-hint" style="color:var(--muted)">คู่นี้คือ "คู่ข้ามฝั่ง" ที่ D&amp;C ปกติจะมองข้ามไป</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 7 ══ -->
+<div class="slide" id="s7">
+  <div class="slide-header" style="background:var(--teal)">ตัวอย่างการทำงานจริง — ผลลัพธ์แต่ละวิธี</div>
+  <div class="summary-cards">
+    <div class="sum-card" style="background:var(--red)">
+      <div class="sum-label">Brute Force</div>
+      <div class="sum-val">66</div>
+      <div class="sum-sub">ครั้ง — วัดทุกคู่จาก 12 จุด</div>
+    </div>
+    <div class="sum-card" style="background:var(--accent)">
+      <div class="sum-label">D&amp;C (ซ้าย+ขวา ยังขาด strip)</div>
+      <div class="sum-val">20</div>
+      <div class="sum-sub">ครั้ง — แต่คำตอบอาจผิด</div>
+    </div>
+    <div class="sum-card" style="background:var(--green)">
+      <div class="sum-label">D&amp;C + Strip Check</div>
+      <div class="sum-val">26</div>
+      <div class="sum-sub">ครั้ง — ครบถ้วนและถูกต้อง</div>
+    </div>
+  </div>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th>วิธี</th><th>คู่ที่ใกล้สุด</th><th>ระยะทาง</th><th>ครั้งที่วัด</th><th>ข้อสังเกต</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Brute Force</td><td>C – G</td><td>1.2 หน่วย</td>
+        <td class="red">66 ครั้ง</td><td>ถูกต้อง แต่ช้ามาก</td>
+      </tr>
+      <tr>
+        <td>D&amp;C ฝั่งซ้าย</td><td>A – D</td><td>1.8 หน่วย</td>
+        <td>10 ครั้ง</td><td>คำตอบในฝั่งซ้ายเท่านั้น</td>
+      </tr>
+      <tr>
+        <td>D&amp;C ฝั่งขวา</td><td>H – K</td><td>1.5 หน่วย</td>
+        <td>10 ครั้ง</td><td>คำตอบในฝั่งขวาเท่านั้น</td>
+      </tr>
+      <tr class="strip-row">
+        <td>Strip Check</td><td class="green">C – G ✓</td><td>1.2 หน่วย</td>
+        <td>6 ครั้ง</td><td class="red">พบคู่ข้ามฝั่ง!</td>
+      </tr>
+      <tr class="total-row">
+        <td>D&amp;C รวม</td><td class="green">C – G ✓</td><td>1.2 หน่วย</td>
+        <td class="green">26 ครั้ง</td><td class="green">น้อยกว่า Brute Force และถูกต้อง</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ SLIDE 8 ══ -->
+<div class="slide" id="s8">
+  <div class="slide-header">คำถามถอดบทเรียน</div>
+  <div class="q-grid">
+    <div class="q-card">
+      <span class="q-badge" style="background:var(--red)">Q1</span>
+      <p>ถ้าแบ่งซ้าย/ขวาแล้วหาคู่ใกล้สุดในแต่ละฝั่งพอหรือไม่?</p>
+      <div class="q-hint" style="background:rgba(232,72,85,.1)">ลองนึกถึงคู่จุด E–F ในตัวอย่าง</div>
+    </div>
+    <div class="q-card">
+      <span class="q-badge" style="background:var(--teal)">Q2</span>
+      <p>ทำไมต้องตรวจเฉพาะจุดในแถบ 2&#948;?</p>
+      <div class="q-hint" style="background:rgba(18,104,114,.1)">คู่ที่อยู่นอกแถบ สามารถมีระยะน้อยกว่า &#948; ได้ไหม?</div>
+    </div>
+    <div class="q-card">
+      <span class="q-badge" style="background:var(--accent)">Q3</span>
+      <p>ขั้นตอน Combine มีความเสี่ยงอะไรถ้าออกแบบไม่ดี?</p>
+      <div class="q-hint" style="background:rgba(46,196,182,.1)">นึกถึงกรณีที่ลืมตรวจ strip</div>
+    </div>
+    <div class="q-card">
+      <span class="q-badge" style="background:var(--gold)">Q4</span>
+      <p>กิจกรรมนี้เหมาะกับนักเรียนระดับใด และควรลดความซับซ้อนอย่างไร?</p>
+      <div class="q-hint" style="background:rgba(249,168,37,.15)">ขั้นตอนใดที่ยากเกินไปสำหรับนักเรียนชั้นต้น?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 9 ══ -->
+<div class="slide" id="s9">
+  <div class="s9-inner">
+    <div class="s9-title">จุดเชื่อมกับ AI / Gemini</div>
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt แนะนำสำหรับกิจกรรมนี้</div>
+      <p>"ฉันกำลังออกแบบกิจกรรม Closest Pair แบบ unplugged ช่วยตั้งคำถามนำให้ผู้เรียนเห็นว่าการแบ่งซ้าย/ขวาอย่างเดียวอาจไม่พอ เพราะคำตอบอาจเป็นคู่ข้ามเส้นแบ่ง โดยยังไม่เฉลยทันที"</p>
+    </div>
+    <div class="takeaways">
+      <div class="tk">
+        <div class="tk-icon" style="background:var(--teal)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+        </div>
+        <strong>แบ่งได้ แต่ต้องรวมให้ถูก</strong>
+        <p>D&amp;C ไม่สมบูรณ์หากขั้นตอน Combine ไม่ครอบคลุมทุกกรณี</p>
+      </div>
+      <div class="tk">
+        <div class="tk-icon" style="background:var(--red)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        </div>
+        <strong>อย่าลืมจุดข้ามฝั่ง</strong>
+        <p>คู่ที่ใกล้สุดอาจอยู่คนละฝั่ง ต้องตรวจ strip ทุกครั้ง</p>
+      </div>
+      <div class="tk">
+        <div class="tk-icon" style="background:var(--gold)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2a7 7 0 0 0-7 7c0 2.6 1.4 4.8 3.5 6.1V17a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-1.9C17.6 13.8 19 11.6 19 9a7 7 0 0 0-7-7zm2 15h-4v-1h4v1zm0-2h-4v-1h4v1z"/></svg>
+        </div>
+        <strong>AI ช่วยถาม ไม่ใช่เฉลย</strong>
+        <p>ให้ AI ตั้งคำถามนำ เพื่อให้ผู้เรียนค้นพบข้อบกพร่องเอง</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<div id="nav">
+  <button id="btn-prev" title="ย้อนกลับ">&#8592;</button>
+  <button id="btn-next" title="ถัดไป">&#8594;</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total  = slides.length;
+  let cur = 0;
+
+  const progress = document.getElementById('progress');
+  const counter  = document.getElementById('slide-counter');
+
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    cur = (n + total) % total;
+    slides[cur].classList.add('active');
+    progress.style.width = ((cur + 1) / total * 100) + '%';
+    counter.textContent  = (cur + 1) + ' / ' + total;
+  }
+
+  document.getElementById('btn-next').addEventListener('click', () => goTo(cur + 1));
+  document.getElementById('btn-prev').addEventListener('click', () => goTo(cur - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); goTo(cur - 1); }
+  });
+
+  // touch swipe
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) goTo(cur + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  goTo(0);
+</script>
+</body>
+</html>
