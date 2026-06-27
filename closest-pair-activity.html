@@ -1,0 +1,1705 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Closest Pair — Algorithmic Thinking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#181c27;--bg3:#1e2333;--card:#232840;
+  --border:#2e3450;--border2:#3d4468;
+  --text:#eef0f8;--text2:#9ba3c4;--text3:#5c6490;
+  --teal:#2dd4bf;--teal-dim:#1a7a72;--teal-bg:#0d3632;
+  --amber:#fbbf24;--amber-dim:#92690e;--amber-bg:#2d1f06;
+  --green:#4ade80;--green-dim:#1a6b3a;--green-bg:#0a2318;
+  --red:#f87171;--red-dim:#7a2e2e;--red-bg:#2a0f0f;
+  --purple:#a78bfa;--purple-dim:#4c3a8a;--purple-bg:#1a1230;
+  --blue:#60a5fa;--blue-dim:#1e3a6e;--blue-bg:#0a1628;
+  --r:10px;--rl:16px;
+  --font:'Sarabun',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html.light{
+  --bg:#f5f6fa;--bg2:#ffffff;--bg3:#eef0f6;--card:#ffffff;
+  --border:#dde0ef;--border2:#c5cade;
+  --text:#1a1d2e;--text2:#4a5075;--text3:#8b92b8;
+  --teal:#0d9488;--teal-dim:#99d6d1;--teal-bg:#e6f7f6;
+  --amber:#d97706;--amber-dim:#fcd97d;--amber-bg:#fef9ec;
+  --green:#16a34a;--green-dim:#86efac;--green-bg:#f0fdf4;
+  --red:#dc2626;--red-dim:#fca5a5;--red-bg:#fef2f2;
+  --purple:#7c3aed;--purple-dim:#c4b5fd;--purple-bg:#f5f3ff;
+  --blue:#2563eb;--blue-dim:#93c5fd;--blue-bg:#eff6ff;
+}
+#theme-toggle{position:fixed;top:14px;right:14px;z-index:999;width:40px;height:40px;border-radius:50%;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+#theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none;transition:all .15s}
+button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.screen{display:none;flex-direction:column;align-items:center;padding:1.5rem 1rem 3rem;min-height:100vh}
+.screen.active{display:flex}
+.tag{display:inline-block;border-radius:6px;padding:3px 12px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.75rem}
+.card-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;width:100%;max-width:640px;margin-bottom:1rem}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;width:100%;max-width:640px;margin-bottom:1rem}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1rem}
+.btn-primary{background:var(--teal);color:#0a1f1e;border:none;border-radius:10px;padding:.9rem 2rem;font-size:16px;font-weight:700}
+.btn-primary:hover:not(:disabled){transform:scale(1.03)}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:10px;padding:.85rem 1.5rem;font-size:15px}
+.btn-secondary:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.hint-box{background:var(--purple-bg);border:1px solid var(--purple-dim);border-radius:var(--r);padding:.9rem 1.25rem;max-width:640px;width:100%;margin-bottom:.75rem}
+/* phase tabs */
+.phase-tabs{display:flex;gap:0;width:100%;max-width:640px;margin-bottom:1rem;background:var(--bg3);border-radius:10px;padding:4px}
+.phase-tab{flex:1;padding:.6rem .5rem;border-radius:7px;font-size:14px;font-weight:600;background:transparent;border:none;color:var(--text3);cursor:pointer;transition:all .2s}
+.phase-tab.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+/* game canvas */
+#game-canvas{width:100%;max-width:640px;border:1px solid var(--border);border-radius:var(--rl);background:var(--bg2);cursor:crosshair;display:block;touch-action:none}
+/* DC step card */
+.dc-step{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem;width:100%;max-width:640px;margin-bottom:.75rem}
+.dc-step-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:13px;font-weight:700;margin-right:.5rem;flex-shrink:0}
+/* pair log */
+.pair-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem .75rem;border-radius:6px;margin-bottom:4px;font-size:13px;font-family:var(--mono);background:var(--bg3);border:1px solid var(--border)}
+.pair-row.best-pair{background:var(--teal-bg);border-color:var(--teal-dim);color:var(--teal)}
+/* code */
+.code-line{white-space:pre;font-size:13px;line-height:1.9;padding-left:6px;margin-left:-6px;border-left:3px solid transparent;color:var(--text3);font-family:var(--mono)}
+.code-line.active{background:rgba(45,212,191,.1);border-left-color:var(--teal);color:var(--text)}
+/* quiz */
+.quiz-choice{text-align:left;padding:.75rem 1rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:14px;line-height:1.5;width:100%;margin-bottom:.5rem;cursor:pointer;transition:all .15s}
+.quiz-choice:hover:not(.locked){border-color:var(--teal)}
+.quiz-choice.correct{background:var(--green-bg);border-color:var(--green-dim);color:var(--green)}
+.quiz-choice.wrong{background:var(--red-bg);border-color:var(--red-dim);color:var(--red)}
+.quiz-choice.faded{opacity:.4}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem}
+.match-btn{text-align:left;padding:.6rem .75rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text2);cursor:pointer;line-height:1.4;width:100%;transition:all .15s}
+.match-btn.msel{background:var(--purple-bg);border-color:var(--purple);color:var(--purple)}
+.match-btn.mmatched{background:var(--teal-bg);border-color:var(--teal-dim);color:var(--teal)}
+.match-btn.mok{background:var(--green-bg);border-color:var(--green-dim);color:var(--green)}
+.match-btn.merr{background:var(--red-bg);border-color:var(--red-dim);color:var(--red)}
+.match-btn.mused{opacity:.38;pointer-events:none}
+/* dc clickable point */
+.dc-pt-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:2px solid var(--border2);background:var(--bg3);font-size:12px;font-weight:700;font-family:var(--mono);cursor:pointer;transition:all .15s;color:var(--text2)}
+.dc-pt-btn:hover{border-color:var(--teal);color:var(--teal)}
+.dc-pt-btn.dc-sel{border-color:var(--teal);background:var(--teal-bg);color:var(--teal)}
+.dc-pt-btn.dc-done{border-color:var(--green-dim);background:var(--green-bg);color:var(--green);cursor:default}
+.dc-pt-btn.dc-strip{border-color:var(--purple-dim);background:var(--purple-bg);color:var(--purple)}
+</style>
+</head>
+<body>
+<button id="theme-toggle" onclick="toggleTheme()" aria-label="สลับธีม" title="สลับ Dark / Light">&#9790;</button>
+
+<!-- ══ INTRO ══ -->
+<div id="screen-intro" class="screen active">
+  <div style="max-width:560px;width:100%;text-align:center;margin-bottom:2rem">
+    <div class="tag" style="background:var(--blue-bg);border:1px solid var(--blue-dim);color:var(--blue)">กิจกรรมที่ 7 — Divide and Conquer</div>
+    <h1 style="font-size:clamp(1.8rem,5vw,2.6rem);font-weight:700;line-height:1.2;margin-bottom:.75rem">หาเพื่อนที่อยู่ใกล้กันที่สุด</h1>
+    <p style="color:var(--text2);font-size:16px;line-height:1.7">ทดลองแบบ Brute Force แล้วค้นพบว่า Divide &amp; Conquer ทำได้ดีกว่าอย่างไร</p>
+  </div>
+
+  <div class="card-box">
+    <div style="font-size:14px;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:1rem">สองส่วนของกิจกรรม</div>
+    <div style="display:flex;flex-direction:column;gap:.85rem">
+      <div style="display:flex;gap:.85rem;align-items:flex-start">
+        <div style="min-width:32px;height:32px;border-radius:8px;background:var(--amber-bg);border:1px solid var(--amber-dim);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--amber);flex-shrink:0">1</div>
+        <div>
+          <div style="font-weight:600;font-size:15px;margin-bottom:2px">Brute Force — ลองด้วยตัวเอง</div>
+          <div style="font-size:14px;color:var(--text2)">คลิกเลือกคู่จุดอิสระ ระบบวัดระยะให้ทันที ยืนยันคำตอบที่ดีที่สุดที่หาได้</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.85rem;align-items:flex-start">
+        <div style="min-width:32px;height:32px;border-radius:8px;background:var(--teal-bg);border:1px solid var(--teal-dim);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--teal);flex-shrink:0">2</div>
+        <div>
+          <div style="font-weight:600;font-size:15px;margin-bottom:2px">Divide &amp; Conquer — ทำทีละขั้น</div>
+          <div style="font-size:14px;color:var(--text2)">ไกด์ผ่าน 5 ขั้นตอน: แบ่งจุด &#8594; Conquer ซ้าย &#8594; Conquer ขวา &#8594; คำนวณ &#948; &#8594; Strip Check</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-box">
+    <div style="font-size:14px;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:.9rem">กฎทั่วไป</div>
+    <div style="display:flex;flex-direction:column;gap:.4rem">
+      <div style="display:flex;gap:.75rem"><span>&#128205;</span><span style="color:var(--text);font-size:15px">คลิกจุด 2 จุด — ระบบวัดระยะ Euclidean ให้อัตโนมัติ</span></div>
+      <div style="display:flex;gap:.75rem"><span>&#127919;</span><span style="color:var(--text);font-size:15px">เป้าหมาย: ระบุคู่จุดที่ <strong>ใกล้กันที่สุด</strong></span></div>
+      <div style="display:flex;gap:.75rem"><span>&#128200;</span><span style="color:var(--text);font-size:15px">สังเกตว่า BF กับ D&amp;C ใช้จำนวนการวัดต่างกันแค่ไหน</span></div>
+    </div>
+  </div>
+
+  <div class="card-box">
+    <div style="font-size:14px;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:.9rem">เลือกจำนวนจุด</div>
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.75rem">
+      <button onclick="adjustN(-1)" id="btn-minus" style="width:40px;height:40px;border-radius:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:20px;flex-shrink:0">&#8722;</button>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:40px;font-weight:700;font-family:var(--mono);color:var(--teal);line-height:1" id="n-display">8</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">จุด</div>
+      </div>
+      <button onclick="adjustN(1)" id="btn-plus" style="width:40px;height:40px;border-radius:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:20px;flex-shrink:0">+</button>
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:.6rem 1rem;display:flex;justify-content:space-between">
+      <span style="font-size:13px;color:var(--text3)">BF worst case</span>
+      <span style="font-size:13px;font-family:var(--mono);color:var(--amber)" id="bf-count">28 คู่</span>
+    </div>
+    <div style="margin-top:.5rem;font-size:12px;color:var(--text3);text-align:center" id="n-label">แนะนำ — สมดุลดี</div>
+  </div>
+
+  <button class="btn-primary" onclick="startGame()">เริ่มเล่น &#8594;</button>
+</div>
+
+<!-- ══ GAME ══ -->
+<div id="screen-game" class="screen">
+
+  <!-- phase tabs -->
+  <div class="phase-tabs">
+    <button class="phase-tab active" id="tab-bf" onclick="switchPhase('bf')">
+      &#x2460; Brute Force
+    </button>
+    <button class="phase-tab" id="tab-dc" onclick="switchPhase('dc')" id="tab-dc">
+      &#x2461; Divide &amp; Conquer
+    </button>
+  </div>
+
+  <!-- header row -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;max-width:640px;margin-bottom:.6rem">
+    <div>
+      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em" id="g-phase-label">Brute Force</div>
+      <div style="font-size:18px;font-weight:700" id="g-title">วัดคู่จุดที่ต้องการ</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;color:var(--text3)" id="g-ops-label">คู่ที่วัด</div>
+      <div style="font-size:32px;font-weight:700;font-family:var(--mono);color:var(--teal)" id="g-ops">0</div>
+    </div>
+  </div>
+
+  <!-- canvas -->
+  <canvas id="game-canvas" height="380"></canvas>
+
+  <!-- instruction bar -->
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:.7rem 1.1rem;max-width:640px;width:100%;margin:.6rem 0;min-height:46px;display:flex;align-items:center;font-size:14px;line-height:1.5;gap:.5rem" id="g-instr"></div>
+
+  <!-- BF section -->
+  <div id="bf-section" style="width:100%;max-width:640px">
+
+    <!-- concept box -->
+    <div style="background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.75rem">
+      <div style="font-size:12px;font-weight:600;color:var(--amber);letter-spacing:.05em;margin-bottom:.35rem">&#128218; แนวคิด Brute Force</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.65">วัดระยะ<strong>ทุกคู่</strong>จุดที่เป็นไปได้ แล้วจำคู่ที่ระยะสั้นที่สุด — ง่าย แต่ถ้าจุดมาก จำนวนคู่เพิ่มเร็วมาก เพราะมีทั้งหมด n(n&#8722;1)/2 คู่ และต้องแน่ใจว่าไม่ข้ามคู่ใดไป</div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+      <span style="font-size:13px;color:var(--text3)">ระยะสั้นสุดที่พบ</span>
+      <div id="bf-best" style="font-family:var(--mono);font-size:13px;color:var(--teal)">&#8212;</div>
+    </div>
+    <div id="bf-log" style="margin-bottom:.75rem"></div>
+    <div class="hint-box" id="bf-hint" style="display:none">
+      <div style="font-size:12px;color:var(--purple);font-weight:600;margin-bottom:4px" id="bf-hint-label">&#128161; คำใบ้</div>
+      <div style="color:var(--text2);font-size:14px" id="bf-hint-text"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
+      <button onclick="bfSubmit()" id="btn-bf-submit" style="flex:1;min-width:150px;padding:.8rem 1.2rem;background:var(--teal-bg);border:1.5px solid var(--teal);color:var(--teal);border-radius:10px;font-size:15px;font-weight:600" disabled>&#10003; ยืนยันคำตอบ BF</button>
+      <button onclick="bfHint()" id="btn-bf-hint" style="padding:.8rem 1rem;background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:10px;font-size:14px">&#128161; คำใบ้</button>
+      <button onclick="skipToDC()" style="padding:.8rem 1rem;background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:10px;font-size:14px">ข้าม &#8594; D&amp;C</button>
+    </div>
+
+    <!-- post-submit reflection (hidden until bfSubmit) -->
+    <div id="bf-reflect" style="display:none;margin-top:.85rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1rem">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:.5rem">&#129300; ตอบก่อนไปขั้นถัดไป</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:.75rem">จากที่ลองทำ Brute Force แล้ว — ถ้าต้องการ<strong>มั่นใจ 100%</strong> ว่าตรวจ<em>ทุกคู่</em>แล้ว ต้องวัดกี่ครั้ง? (สำหรับ <span id="bf-reflect-n" style="font-family:var(--mono);color:var(--amber)">n</span> จุดชุดนี้)</div>
+      <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.6rem">
+        <input type="number" id="bf-reflect-input" min="1" max="999" placeholder="กรอกตัวเลข" style="flex:1;padding:.6rem .8rem;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;font-size:15px;font-family:var(--mono);color:var(--text);outline:none">
+        <button onclick="bfReflectSubmit()" style="padding:.6rem 1.1rem;background:var(--amber-bg);border:1.5px solid var(--amber-dim);color:var(--amber);border-radius:8px;font-size:14px;font-weight:600">ยืนยัน</button>
+      </div>
+      <div id="bf-reflect-result" style="display:none;padding:.65rem .85rem;border-radius:8px;font-size:13px;line-height:1.6"></div>
+    </div>
+
+    <!-- DC button row (shown after reflection) -->
+    <div id="bf-dc-btn-row" style="display:none;margin-top:.75rem"></div>
+  </div>
+
+  <!-- DC section (hidden until phase 2) -->
+  <div id="dc-section" style="display:none;width:100%;max-width:640px">
+
+    <!-- concept box -->
+    <div style="background:var(--teal-bg);border:1px solid var(--teal-dim);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.75rem">
+      <div style="font-size:12px;font-weight:600;color:var(--teal);letter-spacing:.05em;margin-bottom:.35rem">&#128218; แนวคิด Divide and Conquer</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.65">แบ่งปัญหาใหญ่เป็นสองส่วน แก้แต่ละส่วน แล้วรวมคำตอบ — แต่ต้องตรวจ "แถบ Strip" รอบเส้นแบ่งด้วย เพราะคู่ที่ใกล้สุดอาจอยู่คนละฝั่ง ทำให้ประหยัดการวัดได้มากเมื่อ n ใหญ่ขึ้น</div>
+    </div>
+
+    <div id="dc-steps-container"></div>
+
+    <!-- DC reflection (shown at last step) -->
+    <div id="dc-reflect" style="display:none;margin-bottom:.75rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1rem">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:.5rem">&#129300; ตอบก่อนดูสรุป</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:.75rem">จากที่ทำ D&amp;C ทีละขั้นแล้ว — คุณคิดว่า D&amp;C ต้องวัดทั้งหมดกี่ครั้ง? (รวมทุกขั้น: Conquer ซ้าย + ขวา + Strip Check)</div>
+      <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.6rem">
+        <input type="number" id="dc-reflect-input" min="1" max="999" placeholder="กรอกตัวเลข" style="flex:1;padding:.6rem .8rem;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;font-size:15px;font-family:var(--mono);color:var(--text);outline:none">
+        <button onclick="dcReflectSubmit()" style="padding:.6rem 1.1rem;background:var(--teal-bg);border:1.5px solid var(--teal-dim);color:var(--teal);border-radius:8px;font-size:14px;font-weight:600">ยืนยัน</button>
+      </div>
+      <div id="dc-reflect-result" style="display:none;padding:.65rem .85rem;border-radius:8px;font-size:13px;line-height:1.6"></div>
+    </div>
+
+    <div style="display:flex;gap:.6rem;margin-top:.25rem">
+      <button onclick="dcPrev()" id="btn-dc-prev" style="padding:.8rem 1.1rem;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:10px;font-size:14px" disabled>&#8592; ย้อน</button>
+      <button onclick="dcNext()" id="btn-dc-next" style="flex:1;padding:.8rem 1.1rem;background:var(--amber-bg);border:1.5px solid var(--amber);color:var(--amber);border-radius:10px;font-size:15px;font-weight:600">ขั้นถัดไป &#8594;</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ SUMMARY ══ -->
+<div id="screen-summary" class="screen">
+  <div style="max-width:640px;width:100%">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:52px;margin-bottom:.5rem" id="sum-emoji">&#127942;</div>
+      <h1 style="font-size:24px;font-weight:700;margin-bottom:.25rem">สรุปผลการเล่น</h1>
+      <div style="font-size:15px;color:var(--text2)" id="sum-sub">รอบที่ 1</div>
+    </div>
+
+    <!-- comparison stat -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem">
+      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:1rem">เปรียบเทียบ BF vs D&amp;C</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div style="text-align:center;padding:1rem;background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:10px">
+          <div style="font-size:11px;color:var(--amber);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Brute Force</div>
+          <div style="font-size:36px;font-weight:700;font-family:var(--mono);color:var(--amber)" id="sum-bf-ops">—</div>
+          <div style="font-size:12px;color:var(--text3)">คู่ที่คุณวัด</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">(worst case: <span id="sum-wc">—</span>)</div>
+        </div>
+        <div style="text-align:center;padding:1rem;background:var(--teal-bg);border:1px solid var(--teal-dim);border-radius:10px">
+          <div style="font-size:11px;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.06em">D&amp;C</div>
+          <div style="font-size:36px;font-weight:700;font-family:var(--mono);color:var(--teal)" id="sum-dc-ops">—</div>
+          <div style="font-size:12px;color:var(--text3)">การวัดใน D&amp;C</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">O(n log n)</div>
+        </div>
+      </div>
+      <!-- reflect answers vs actual -->
+      <div style="margin-top:.85rem">
+        <div style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.05em;margin-bottom:.5rem">คำตอบของคุณ vs ที่ทำจริง</div>
+        <div id="sum-reflect-block"></div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:3px">คำตอบของคุณ (BF)</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--mono)" id="sum-ans-you">—</div>
+        <div style="font-size:11px;color:var(--text3)" id="sum-ans-you-d">—</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:3px">คำตอบที่ถูกต้อง</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--mono);color:var(--green)" id="sum-ans-true">—</div>
+        <div style="font-size:11px;color:var(--text3)" id="sum-ans-true-d">—</div>
+      </div>
+    </div>
+
+    <!-- BF history -->
+    <div class="card-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+        <div style="font-size:14px;font-weight:600;color:var(--text2)">บันทึกการวัด (Brute Force)</div>
+        <div style="font-size:12px;color:var(--text3)" id="sum-hist-label"></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;font-family:var(--mono)">
+          <thead><tr style="color:var(--text3);border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">#</th>
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">คู่</th>
+            <th style="text-align:right;padding:4px 8px 8px;font-weight:500">ระยะ</th>
+            <th style="text-align:left;padding:4px 8px 8px;font-weight:500">หมายเหตุ</th>
+          </tr></thead>
+          <tbody id="sum-hist-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- pseudocode -->
+    <div class="card-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem">
+        <div style="font-size:14px;font-weight:600;color:var(--text2)">&#128203; Pseudocode</div>
+        <div style="display:flex;gap:4px;background:var(--bg3);border-radius:8px;padding:3px">
+          <button onclick="switchPcode('bf')" id="pcode-tab-bf" style="padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:var(--amber-bg);border:1px solid var(--amber-dim);color:var(--amber);cursor:pointer">Brute Force</button>
+          <button onclick="switchPcode('dc')" id="pcode-tab-dc" style="padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;border:1px solid transparent;color:var(--text3);cursor:pointer">Divide &amp; Conquer</button>
+        </div>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:1rem;border:1px solid var(--border);overflow-x:auto" id="pcode-block"></div>
+      <div style="margin-top:.75rem;font-size:13px;color:var(--text3);line-height:1.6" id="pcode-note"></div>
+    </div>
+
+    <!-- python sim -->
+    <div class="card-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem">
+        <div style="font-size:14px;font-weight:600;color:var(--text2)">&#128013; Python — ดูโค้ดทำงานทีละขั้น</div>
+        <div style="display:flex;gap:4px;background:var(--bg3);border-radius:8px;padding:3px">
+          <button onclick="switchPy('bf')" id="py-tab-bf" style="padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:var(--amber-bg);border:1px solid var(--amber-dim);color:var(--amber);cursor:pointer">Brute Force</button>
+          <button onclick="switchPy('dc')" id="py-tab-dc" style="padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;border:1px solid transparent;color:var(--text3);cursor:pointer">Divide &amp; Conquer</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+        <button onclick="pyReset()" style="padding:4px 12px;background:var(--bg3);border:1px solid var(--border2);color:var(--text3);border-radius:6px;font-size:12px">รีเซต</button>
+        <button onclick="pyRun()" id="py-btn" style="padding:4px 14px;background:var(--teal-bg);border:1px solid var(--teal);color:var(--teal);border-radius:6px;font-size:12px;font-weight:600">&#9654; Run</button>
+      </div>
+      <div style="font-family:var(--mono);font-size:13px;background:var(--bg3);border-radius:8px;padding:.75rem;border:1px solid var(--border);margin-bottom:.75rem;overflow-x:auto" id="py-code"></div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.75rem;margin-bottom:.75rem">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:.4rem">จุด (x, y) ชุดปัจจุบัน</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="py-pts-vis"></div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);min-height:20px" id="py-status"></div>
+    </div>
+
+    <!-- big-o chart -->
+    <div class="card-box">
+      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:.25rem">&#128200; Big O — เปรียบเทียบ complexity</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:1rem">Linear scale, n = 2–100 — ลาก slider เปรียบเทียบ BF O(n&#178;) กับ D&amp;C O(n log n)</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.75rem">
+        <span style="font-size:13px;color:var(--text3);white-space:nowrap">n =</span>
+        <input type="range" min="2" max="100" value="8" step="1" id="chart-slider" oninput="updateChart(this.value)" style="flex:1">
+        <span style="font-family:var(--mono);font-size:15px;color:var(--teal);min-width:32px;text-align:right" id="chart-n">8</span>
+      </div>
+      <div style="position:relative;height:260px;margin-bottom:.75rem">
+        <canvas id="bigo-canvas" style="width:100%;height:100%"></canvas>
+      </div>
+      <div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:12px;color:var(--text3);margin-bottom:.75rem">
+        <span><span style="color:var(--teal)">&#8212;</span> O(n&#178;) Brute Force</span>
+        <span><span style="color:#6366f1">&#8212;&#8212;</span> O(n log n) D&amp;C</span>
+        <span><span style="color:#64748b">&#8212;&#8212;</span> O(n)</span>
+        <span id="chart-you-label" style="display:none"><span style="color:var(--amber)">&#9679;</span> วัดของคุณ (BF)</span>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:.6rem 1rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+        <span style="font-size:13px;color:var(--text3)">n = <span id="chart-nv" style="color:var(--text);font-family:var(--mono)">8</span></span>
+        <span style="font-size:13px;color:var(--text3)">O(n&#178;) = <span id="chart-wc" style="color:var(--teal);font-family:var(--mono)">28</span> คู่</span>
+        <span style="font-size:13px;color:var(--text3)">O(n log n) &#8776; <span id="chart-dc" style="color:#6366f1;font-family:var(--mono)">24</span></span>
+      </div>
+    </div>
+
+    <!-- reflection -->
+    <div style="background:var(--purple-bg);border:1px solid var(--purple-dim);border-radius:var(--r);padding:1.25rem;margin-bottom:1.5rem">
+      <div style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:.75rem">&#129300; คำถามชวนคิดต่อ</div>
+      <div id="reflection" style="display:flex;flex-direction:column;gap:.5rem"></div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2rem">
+      <button class="btn-primary" onclick="startQuiz()" style="flex:1;min-width:160px">&#128221; ทำแบบทดสอบ</button>
+      <button class="btn-secondary" onclick="playAgain()">&#8635; เล่นอีกรอบ</button>
+      <button class="btn-secondary" onclick="goIntro()">&#8592; หน้าแรก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="screen-quiz" class="screen">
+  <div style="max-width:600px;width:100%">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+      <div>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">แบบทดสอบ — Closest Pair</div>
+        <div style="font-size:20px;font-weight:700" id="q-title">ข้อที่ 1 จาก 5</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:var(--text3)">คะแนน</div>
+        <div style="font-size:28px;font-weight:700;font-family:var(--mono);color:var(--teal)" id="q-score">0</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:1.5rem" id="q-dots"></div>
+    <div class="card-box" id="q-box" style="min-height:200px"></div>
+    <div id="q-feedback" style="display:none;margin-bottom:1rem;padding:.9rem 1.25rem;border-radius:var(--r);font-size:14px;line-height:1.6"></div>
+    <button onclick="qNext()" id="q-next" style="display:none;width:100%;padding:.9rem;background:var(--teal);color:#0a1f1e;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">ข้อถัดไป &#8594;</button>
+  </div>
+</div>
+
+<!-- ══ QUIZ RESULT ══ -->
+<div id="screen-quiz-result" class="screen">
+  <div style="max-width:600px;width:100%;text-align:center">
+    <div style="font-size:56px;margin-bottom:.75rem" id="qr-emoji">&#127881;</div>
+    <h1 style="font-size:26px;font-weight:700;margin-bottom:.5rem" id="qr-title">ผลการทดสอบ</h1>
+    <div style="font-size:52px;font-weight:700;font-family:var(--mono);margin:.75rem 0" id="qr-score">—</div>
+    <div style="font-size:15px;color:var(--text2);margin-bottom:2rem" id="qr-sub">—</div>
+    <div class="card-box" style="text-align:left;margin-bottom:1.5rem">
+      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:1rem">ทบทวนคำตอบ</div>
+      <div id="qr-review"></div>
+    </div>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center">
+      <button class="btn-primary" onclick="startQuiz()">&#8635; ทำใหม่ (สุ่มข้อใหม่)</button>
+      <button class="btn-secondary" onclick="showScreen('summary')">&#8592; กลับสรุป</button>
+      <button class="btn-secondary" onclick="goIntro()">&#8592; หน้าแรก</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// THEME
+// ══════════════════════════════════
+function toggleTheme(){
+  const l=document.documentElement.classList.toggle('light');
+  document.getElementById('theme-toggle').textContent=l?'\u2600':'\u263a';
+  localStorage.setItem('theme',l?'light':'dark');
+  if(G.pts.length){redrawCanvas();}
+  const n=parseInt(document.getElementById('chart-slider')?.value||8);
+  drawBigO(n);
+}
+(function(){
+  const s=localStorage.getItem('theme');
+  const pl=s?s==='light':window.matchMedia('(prefers-color-scheme:light)').matches;
+  if(pl){document.documentElement.classList.add('light');document.getElementById('theme-toggle').textContent='\u2600';}
+})();
+
+// ══════════════════════════════════
+// UTILS
+// ══════════════════════════════════
+function dist(a,b){return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);}
+function fmt(d){return d.toFixed(2);}
+function bfPairs(n){return n*(n-1)/2;}
+function lab(i){return String.fromCharCode(65+i);}
+function cssVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+function setInstr(html,col){
+  const el=document.getElementById('g-instr');
+  el.innerHTML=html;
+  el.style.color=col||'var(--text2)';
+}
+
+function genPts(n,W,H,margin,minD){
+  const pts=[];let tries=0;
+  while(pts.length<n&&tries<3000){
+    tries++;
+    const p={x:margin+Math.random()*(W-2*margin),y:margin+Math.random()*(H-2*margin)};
+    if(pts.every(q=>dist(p,q)>=minD))pts.push(p);
+  }
+  return pts;
+}
+function bfClosest(arr){
+  let best=Infinity,pi=0,pj=1;
+  for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){
+    const d=dist(arr[i],arr[j]);if(d<best){best=d;pi=i;pj=j;}
+  }
+  return{d:best,i:pi,j:pj};
+}
+
+// ══════════════════════════════════
+// INTRO
+// ══════════════════════════════════
+let selectedN=8;
+function adjustN(d){
+  selectedN=Math.min(12,Math.max(4,selectedN+d));
+  document.getElementById('n-display').textContent=selectedN;
+  document.getElementById('bf-count').textContent=bfPairs(selectedN)+' คู่';
+  document.getElementById('btn-minus').disabled=selectedN<=4;
+  document.getElementById('btn-plus').disabled=selectedN>=12;
+  const lbl={4:'ง่าย',5:'ง่าย-ปานกลาง',6:'ปานกลาง',8:'แนะนำ — สมดุลดี',10:'ท้าทาย',12:'ยากมาก'};
+  document.getElementById('n-label').textContent=lbl[selectedN]||'';
+}
+
+// ══════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════
+const G={
+  pts:[],n:8,round:1,
+  // BF state
+  bfSel:null,bfMeasured:[],bfBestI:-1,bfBestJ:-1,bfBestD:Infinity,
+  bfHintLevel:-1,bfDone:false,bfGuessI:-1,bfGuessJ:-1,
+  bfReflectAns:null,
+  // DC state
+  dcPhase:0,  // 0..5
+  dcData:{},  // computed at each step
+  dcMeasures:0,
+  dcReflectAns:null,
+  // shared
+  trueAns:null,
+  currentMode:'bf'  // 'bf' | 'dc'
+};
+
+function startGame(){
+  G.n=selectedN;
+  G.bfSel=null;G.bfMeasured=[];G.bfBestI=-1;G.bfBestJ=-1;G.bfBestD=Infinity;
+  G.bfHintLevel=-1;G.bfDone=false;G.bfGuessI=-1;G.bfGuessJ=-1;G.bfReflectAns=null;
+  G.dcPhase=0;G.dcData={};G.dcMeasures=0;G.dcReflectAns=null;
+  G.currentMode='bf';
+
+  const canvas=document.getElementById('game-canvas');
+  const W=Math.min(640,window.innerWidth-32);
+  canvas.width=W;canvas.height=380;
+  G.pts=genPts(G.n,W,380,36,28);
+  G.trueAns=bfClosest(G.pts);
+
+  // precompute DC data for all phases
+  computeDCData();
+
+  switchPhase('bf');
+  showScreen('game');
+}
+
+// ══════════════════════════════════
+// CANVAS
+// ══════════════════════════════════
+function redrawCanvas(){
+  const canvas=document.getElementById('game-canvas');
+  if(!canvas||!G.pts.length)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=cssVar('--bg2');ctx.fillRect(0,0,W,H);
+
+  if(G.currentMode==='bf') drawBFCanvas(ctx,W,H);
+  else drawDCCanvas(ctx,W,H);
+}
+
+function drawBFCanvas(ctx,W,H){
+  // faint measured lines
+  G.bfMeasured.forEach(m=>{
+    const a=G.pts[m.i],b=G.pts[m.j];
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle='rgba(92,100,144,.3)';ctx.lineWidth=1;
+    ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+  });
+  // best measured line
+  if(G.bfBestI>=0){
+    const a=G.pts[G.bfBestI],b=G.pts[G.bfBestJ];
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle=cssVar('--teal');ctx.lineWidth=2;ctx.stroke();
+    const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+    ctx.fillStyle=cssVar('--teal-bg');
+    rrect(ctx,mx-28,my-11,56,20,5);ctx.fill();
+    ctx.fillStyle=cssVar('--teal');ctx.font='11px IBM Plex Mono,monospace';
+    ctx.textAlign='center';ctx.fillText(fmt(G.bfBestD),mx,my+4);
+  }
+  // selected highlight ring
+  if(G.bfSel!==null){
+    const p=G.pts[G.bfSel];
+    ctx.beginPath();ctx.arc(p.x,p.y,14,0,Math.PI*2);
+    ctx.strokeStyle=cssVar('--teal');ctx.lineWidth=2;ctx.stroke();
+  }
+  // points
+  G.pts.forEach((p,i)=>{
+    const isSel=i===G.bfSel;
+    const isBest=(i===G.bfBestI||i===G.bfBestJ)&&G.bfBestI>=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);
+    ctx.fillStyle=isSel?cssVar('--teal'):isBest?cssVar('--teal-dim'):cssVar('--blue');
+    ctx.fill();
+    ctx.strokeStyle=isSel?cssVar('--teal'):cssVar('--border2');ctx.lineWidth=isSel?2:1;ctx.stroke();
+    ctx.fillStyle=cssVar('--text');ctx.font='bold 11px Sarabun,sans-serif';
+    ctx.textAlign='center';ctx.fillText(lab(i),p.x,p.y-13);
+  });
+}
+
+function drawDCCanvas(ctx,W,H){
+  const d=G.dcData;
+  const phase=G.dcPhase;
+
+  // sorted x order label at top when phase>=1
+  if(phase>=1&&d.sortedIdx){
+    const xSorted=[...d.sortedIdx].sort((a,b)=>G.pts[a].x-G.pts[b].x);
+    // show rank numbers above points
+  }
+
+  // divide line
+  if(phase>=2&&d.midX!==undefined){
+    ctx.beginPath();ctx.moveTo(d.midX,0);ctx.lineTo(d.midX,H);
+    ctx.strokeStyle=cssVar('--border2');ctx.lineWidth=1.5;
+    ctx.setLineDash([8,5]);ctx.stroke();ctx.setLineDash([]);
+  }
+
+  // strip zone
+  if(phase>=5&&d.delta!==undefined){
+    ctx.fillStyle='rgba(167,139,250,0.09)';
+    ctx.fillRect(d.midX-d.delta,0,2*d.delta,H);
+    ctx.strokeStyle=cssVar('--purple-dim');ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(d.midX-d.delta,0);ctx.lineTo(d.midX-d.delta,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(d.midX+d.delta,0);ctx.lineTo(d.midX+d.delta,H);ctx.stroke();
+    // delta label
+    ctx.fillStyle=cssVar('--purple');ctx.font='11px IBM Plex Mono,monospace';ctx.textAlign='center';
+    ctx.fillText('\u03b4='+fmt(d.delta),d.midX,18);
+  }
+
+  // left/right best line
+  if(phase===3&&d.leftBest){
+    drawPairLine(ctx,d.leftBest.i,d.leftBest.j,cssVar('--teal'));
+  }
+  if(phase===4&&d.rightBest){
+    drawPairLine(ctx,d.rightBest.i,d.rightBest.j,cssVar('--amber'));
+    if(d.leftBest) drawPairLine(ctx,d.leftBest.i,d.leftBest.j,cssVar('--teal'));
+  }
+
+  // strip check best
+  if(phase>=5&&d.stripBest){
+    drawPairLine(ctx,d.stripBest.i,d.stripBest.j,cssVar('--purple'));
+  }
+  if(phase>=6&&d.trueAns){
+    drawPairLine(ctx,d.trueAns.i,d.trueAns.j,cssVar('--green'));
+  }
+
+  // points
+  G.pts.forEach((p,i)=>{
+    let color=cssVar('--blue');
+    if(phase>=2&&d.midX!==undefined){
+      color=G.pts[i].x<d.midX?cssVar('--teal-dim'):cssVar('--amber-dim');
+    }
+    if(phase>=5&&d.stripIds&&d.stripIds.includes(i)) color=cssVar('--purple');
+    if(phase>=6&&d.trueAns&&(i===d.trueAns.i||i===d.trueAns.j)) color=cssVar('--green');
+    ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);
+    ctx.fillStyle=color;ctx.fill();
+    ctx.strokeStyle=cssVar('--border2');ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle=cssVar('--text');ctx.font='bold 11px Sarabun,sans-serif';
+    ctx.textAlign='center';ctx.fillText(lab(i),p.x,p.y-13);
+  });
+}
+
+function drawPairLine(ctx,i,j,color){
+  const a=G.pts[i],b=G.pts[j];
+  ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+  ctx.strokeStyle=color;ctx.lineWidth=2;ctx.stroke();
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+  ctx.fillStyle=color;ctx.font='11px IBM Plex Mono,monospace';
+  ctx.textAlign='center';ctx.fillText(fmt(dist(a,b)),mx,my-6);
+}
+
+function rrect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
+}
+
+function ptNear(x,y){
+  let best=null,bestD=20;
+  G.pts.forEach((p,i)=>{
+    const d=Math.sqrt((p.x-x)**2+(p.y-y)**2);
+    if(d<bestD){bestD=d;best=i;}
+  });
+  return best;
+}
+
+// ══════════════════════════════════
+// BF PHASE
+// ══════════════════════════════════
+document.getElementById('game-canvas').addEventListener('click',function(e){
+  if(G.currentMode!=='bf'||G.bfDone)return;
+  const rect=this.getBoundingClientRect();
+  const sx=this.width/rect.width,sy=this.height/rect.height;
+  const x=(e.clientX-rect.left)*sx,y=(e.clientY-rect.top)*sy;
+  const hit=ptNear(x,y);
+  if(hit===null)return;
+
+  if(G.bfSel===null){
+    G.bfSel=hit;
+    setInstr('<strong>'+lab(hit)+'</strong> ถูกเลือก — คลิกจุดที่สองเพื่อวัดระยะ (คลิก '+lab(hit)+' อีกครั้งเพื่อยกเลิก)','');
+  } else {
+    if(hit===G.bfSel){
+      G.bfSel=null;setInstr('&#128073; คลิกจุดแรกที่ต้องการวัด','');redrawCanvas();return;
+    }
+    const i=Math.min(G.bfSel,hit),j=Math.max(G.bfSel,hit);
+    const d=dist(G.pts[i],G.pts[j]);
+    if(!G.bfMeasured.find(m=>m.i===i&&m.j===j)){
+      G.bfMeasured.push({i,j,d});
+      document.getElementById('g-ops').textContent=G.bfMeasured.length;
+      addBFRow(i,j,d);
+    }
+    if(d<G.bfBestD){G.bfBestD=d;G.bfBestI=i;G.bfBestJ=j;updateBFBest();}
+    G.bfSel=null;
+    G.bfHintLevel=-1;document.getElementById('bf-hint').style.display='none';
+    document.getElementById('btn-bf-submit').disabled=false;
+    setInstr('&#10003; ' +lab(i)+'&#8211;'+lab(j)+' = '+fmt(d)+'  &nbsp; คลิกต่อหรือกด "ยืนยันคำตอบ BF"','var(--text2)');
+  }
+  redrawCanvas();
+});
+
+function addBFRow(i,j,d){
+  const log=document.getElementById('bf-log');
+  log.querySelectorAll('.best-pair').forEach(r=>r.classList.remove('best-pair'));
+  const div=document.createElement('div');
+  div.className='pair-row';div.id='bfr-'+i+'-'+j;
+  div.innerHTML='<span>'+lab(i)+'&#8211;'+lab(j)+'</span><span>'+fmt(d)+'</span>';
+  log.appendChild(div);
+  log.scrollTop=log.scrollHeight;
+  updateBFBest();
+}
+function updateBFBest(){
+  if(G.bfBestI<0)return;
+  document.getElementById('bf-best').innerHTML=
+    '<strong>'+lab(G.bfBestI)+'&#8211;'+lab(G.bfBestJ)+'</strong>&nbsp; d = '+fmt(G.bfBestD);
+  document.querySelectorAll('.pair-row').forEach(r=>r.classList.remove('best-pair'));
+  const r=document.getElementById('bfr-'+G.bfBestI+'-'+G.bfBestJ);
+  if(r)r.classList.add('best-pair');
+}
+
+function bfHint(){
+  G.bfHintLevel=Math.min(G.bfHintLevel+1,2);
+  const truePair=lab(G.trueAns.i)+'&#8211;'+lab(G.trueAns.j);
+  const hints=[
+    'ลองวัดจุดที่ดูใกล้กันในพื้นที่เดียวกันก่อน',
+    'แบ่งพื้นที่เป็นโซนเล็กๆ แล้ววัดคู่ที่อยู่ในโซนเดียวกัน',
+    'คู่ที่ใกล้สุดคือ <strong style="color:var(--teal)">'+truePair+'</strong> ลองวัดคู่นั้นแล้วยืนยัน'
+  ];
+  const box=document.getElementById('bf-hint');
+  box.style.display='block';
+  document.getElementById('bf-hint-label').innerHTML='&#128161; คำใบ้ระดับ '+(G.bfHintLevel+1)+'/3';
+  document.getElementById('bf-hint-text').innerHTML=hints[G.bfHintLevel];
+}
+
+function bfSubmit(){
+  if(G.bfBestI<0)return;
+  G.bfGuessI=G.bfBestI;G.bfGuessJ=G.bfBestJ;G.bfDone=true;
+  const correct=G.bfGuessI===G.trueAns.i&&G.bfGuessJ===G.trueAns.j;
+  const msg=correct
+    ?'\u2713 ถูกต้อง! คู่ที่ใกล้สุดคือ '+lab(G.trueAns.i)+'\u2013'+lab(G.trueAns.j)
+    :'คำตอบที่ถูกคือ '+lab(G.trueAns.i)+'\u2013'+lab(G.trueAns.j)+' = '+fmt(G.trueAns.d);
+  setInstr(msg,correct?'var(--green)':'var(--amber)');
+  document.getElementById('btn-bf-submit').disabled=true;
+  document.getElementById('btn-bf-hint').disabled=true;
+  // show reflection box
+  document.getElementById('bf-reflect-n').textContent=G.n;
+  document.getElementById('bf-reflect').style.display='block';
+}
+
+function bfReflectSubmit(){
+  const inp=document.getElementById('bf-reflect-input');
+  const val=parseInt(inp.value);
+  if(!val||val<1){inp.style.borderColor='var(--red)';return;}
+  inp.disabled=true;
+  document.querySelector('#bf-reflect button').disabled=true;
+  const correct=bfPairs(G.n);
+  const isRight=val===correct;
+  const res=document.getElementById('bf-reflect-result');
+  res.style.display='block';
+  res.style.background=isRight?'var(--green-bg)':'var(--red-bg)';
+  res.style.border='1px solid '+(isRight?'var(--green-dim)':'var(--red-dim)');
+  res.style.color='var(--text2)';
+  G.bfReflectAns=val;
+  const formula='n(n\u22121)/2 = '+G.n+'\u00d7'+(G.n-1)+'/2 = '+correct;
+  if(isRight){
+    res.innerHTML='<strong style="color:var(--green)">\u2713 ถูกต้อง!</strong>'
+      +' BF ต้องวัด <strong style="color:var(--green)">'+correct+'</strong> คู่'
+      +'<div style="margin-top:.4rem;font-size:12px;color:var(--text3)">'+formula+' — ครบทุกคู่จึงจะมั่นใจ 100% ได้</div>';
+  } else {
+    res.innerHTML='<strong style="color:var(--red)">\u2717 ยังไม่ถูก</strong>'
+      +' คุณตอบ <strong>'+val+'</strong> ครั้ง'
+      +'<div style="margin-top:.5rem;background:var(--bg3);border-radius:7px;padding:.5rem .75rem;font-size:13px">'
+      +'เฉลย: BF ต้องวัด <strong style="color:var(--red)">'+correct+'</strong> คู่<br>'
+      +'<span style="color:var(--text3)">'+formula+' — ต้องครบทุกคู่จึงจะมั่นใจได้</span>'
+      +'</div>';
+  }
+  // show DC button
+  const row=document.getElementById('bf-dc-btn-row');
+  row.style.display='block';
+  row.innerHTML='<button onclick="switchPhase(\'dc\')" style="width:100%;padding:.85rem;background:var(--teal);border:none;color:#0a1f1e;border-radius:10px;font-size:15px;font-weight:700">ทดลอง D&amp;C \u2192</button>';
+}
+
+function skipToDC(){switchPhase('dc');}
+
+// ══════════════════════════════════
+// DC PHASE — precompute
+// ══════════════════════════════════
+function computeDCData(){
+  const pts=G.pts;
+  const d=G.dcData;
+  // sorted by x
+  d.sortedIdx=[...pts.map((_,i)=>i)].sort((a,b)=>pts[a].x-pts[b].x);
+  // divide
+  const mid=Math.floor(d.sortedIdx.length/2);
+  d.midX=pts[d.sortedIdx[mid]].x;
+  d.leftIds=d.sortedIdx.slice(0,mid);
+  d.rightIds=d.sortedIdx.slice(mid);
+  // conquer
+  const Larr=d.leftIds.map(i=>pts[i]);
+  const Lans=bfClosest(Larr);
+  d.leftBest={i:d.leftIds[Lans.i],j:d.leftIds[Lans.j],d:Lans.d};
+  const Rarr=d.rightIds.map(i=>pts[i]);
+  const Rans=bfClosest(Rarr);
+  d.rightBest={i:d.rightIds[Rans.i],j:d.rightIds[Rans.j],d:Rans.d};
+  // delta
+  d.delta=Math.min(d.leftBest.d,d.rightBest.d);
+  d.bestBeforeStrip=d.leftBest.d<=d.rightBest.d?d.leftBest:d.rightBest;
+  // strip
+  d.stripIds=d.sortedIdx.filter(id=>Math.abs(pts[id].x-d.midX)<d.delta);
+  const stripSort=[...d.stripIds].sort((a,b)=>pts[a].y-pts[b].y);
+  let sb=null;
+  for(let a=0;a<stripSort.length;a++){
+    for(let b=a+1;b<stripSort.length&&(pts[stripSort[b]].y-pts[stripSort[a]].y)<d.delta;b++){
+      const dd=dist(pts[stripSort[a]],pts[stripSort[b]]);
+      if(!sb||dd<sb.d)sb={i:stripSort[a],j:stripSort[b],d:dd};
+    }
+  }
+  d.stripBest=sb&&sb.d<d.delta?sb:null;
+  d.crossFound=!!d.stripBest;
+  d.trueAns=bfClosest(pts);
+  // count measures
+  // Exact count: pairs in each side (brute-force per half) + actual strip pair checks
+  d.dcLeftPairs  = d.leftIds.length*(d.leftIds.length-1)/2;
+  d.dcRightPairs = d.rightIds.length*(d.rightIds.length-1)/2;
+  // count actual strip comparisons (same loop the algorithm runs)
+  const ss=[...d.stripIds].sort((a,b)=>pts[a].y-pts[b].y);
+  let stripComps=0;
+  for(let a=0;a<ss.length;a++){
+    for(let b=a+1;b<ss.length&&(pts[ss[b]].y-pts[ss[a]].y)<d.delta;b++) stripComps++;
+  }
+  d.dcStripComps = stripComps;
+  d.dcExact      = d.dcLeftPairs + d.dcRightPairs + d.dcStripComps;
+  d.dcMeasures   = d.dcExact; // keep for compatibility
+}
+
+// DC step definitions
+function getDCSteps(){
+  const d=G.dcData,pts=G.pts;
+  return [
+    // phase 0: intro
+    {
+      title:'เริ่มต้น — เรียงจุดตามแกน x',
+      instr:'D&C ต้องรู้ตำแหน่งจุดก่อน: <strong>เรียงจุดทั้งหมดจากซ้ายไปขวา</strong> ตามค่า x',
+      body: ()=>{
+        const order=d.sortedIdx.map(i=>'<span style="font-family:var(--mono);color:var(--teal)">'+lab(i)+'</span>').join(' &#8594; ');
+        return '<div style="font-size:14px;color:var(--text2);margin-bottom:.5rem">ลำดับตาม x:</div><div style="font-size:15px;line-height:2">'+order+'</div>';
+      },
+      interactive:false
+    },
+    // phase 1: divide
+    {
+      title:'Divide — แบ่งจุดออกสองฝั่ง',
+      instr:'ลากเส้นแบ่งที่จุดกลาง: ฝั่ง <strong style="color:var(--teal)">ซ้าย</strong> = '+d.leftIds.map(i=>'<span style="color:var(--teal)">'+lab(i)+'</span>').join(' ')+' &nbsp;|&nbsp; ฝั่ง <strong style="color:var(--amber)">ขวา</strong> = '+d.rightIds.map(i=>'<span style="color:var(--amber)">'+lab(i)+'</span>').join(' '),
+      body: ()=>{
+        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">'
+          +'<div style="padding:.75rem;background:var(--teal-bg);border:1px solid var(--teal-dim);border-radius:8px"><div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:.4rem">ฝั่งซ้าย</div><div style="font-family:var(--mono);font-size:15px;color:var(--teal)">'+d.leftIds.map(i=>lab(i)).join(', ')+'</div></div>'
+          +'<div style="padding:.75rem;background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:8px"><div style="font-size:12px;color:var(--amber);font-weight:600;margin-bottom:.4rem">ฝั่งขวา</div><div style="font-family:var(--mono);font-size:15px;color:var(--amber)">'+d.rightIds.map(i=>lab(i)).join(', ')+'</div></div>'
+          +'</div>';
+      },
+      interactive:false
+    },
+    // phase 2: conquer left — interactive!
+    {
+      title:'Conquer (ซ้าย) — หาคู่ใกล้สุดในฝั่งซ้าย',
+      instr:'<strong style="color:var(--teal)">คลิกวัดคู่จุดในฝั่งซ้าย</strong> เพื่อหาคู่ที่ใกล้สุด จุดที่ใช้ได้: '+d.leftIds.map(i=>'<strong>'+lab(i)+'</strong>').join(', '),
+      body: ()=>buildConquerUI('left'),
+      interactive:true,
+      side:'left'
+    },
+    // phase 3: conquer right — interactive!
+    {
+      title:'Conquer (ขวา) — หาคู่ใกล้สุดในฝั่งขวา',
+      instr:'<strong style="color:var(--amber)">คลิกวัดคู่จุดในฝั่งขวา</strong> เพื่อหาคู่ที่ใกล้สุด จุดที่ใช้ได้: '+d.rightIds.map(i=>'<strong>'+lab(i)+'</strong>').join(', '),
+      body: ()=>buildConquerUI('right'),
+      interactive:true,
+      side:'right'
+    },
+    // phase 4: delta
+    {
+      title:'คำนวณ \u03b4 (delta)',
+      instr:'&#948; = ระยะสั้นสุดจากทั้งสองฝั่ง = min('+fmt(d.leftBest.d)+', '+fmt(d.rightBest.d)+') = <strong style="color:var(--amber)">'+fmt(d.delta)+'</strong>',
+      body: ()=>{
+        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">'
+          +'<div style="padding:.75rem;background:var(--teal-bg);border:1px solid var(--teal-dim);border-radius:8px"><div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:.3rem">&#948;_left</div><div style="font-family:var(--mono);color:var(--teal);font-size:16px">'+fmt(d.leftBest.d)+'</div><div style="font-size:12px;color:var(--text3)">คู่ '+lab(d.leftBest.i)+'&#8211;'+lab(d.leftBest.j)+'</div></div>'
+          +'<div style="padding:.75rem;background:var(--amber-bg);border:1px solid var(--amber-dim);border-radius:8px"><div style="font-size:12px;color:var(--amber);font-weight:600;margin-bottom:.3rem">&#948;_right</div><div style="font-family:var(--mono);color:var(--amber);font-size:16px">'+fmt(d.rightBest.d)+'</div><div style="font-size:12px;color:var(--text3)">คู่ '+lab(d.rightBest.i)+'&#8211;'+lab(d.rightBest.j)+'</div></div>'
+          +'</div>'
+          +'<div style="margin-top:.75rem;padding:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text2)">'
+          +'&#948; = min('+fmt(d.leftBest.d)+', '+fmt(d.rightBest.d)+') = <strong style="color:var(--amber)">'+fmt(d.delta)+'</strong>'
+          +'<br><span style="font-size:13px;color:var(--text3)">ใช้ค่านี้กำหนดความกว้างของแถบ Strip = 2&#948; = '+fmt(2*d.delta)+'</span></div>';
+      },
+      interactive:false
+    },
+    // phase 5: strip check — interactive!
+    {
+      title:'Strip Check — หาคู่ข้ามเส้นแบ่ง',
+      instr:'<strong style="color:var(--purple)">แถบ Strip</strong> กว้าง 2&#948; รอบเส้นแบ่ง &#8212; จุดในแถบ: '+d.stripIds.map(i=>'<strong>'+lab(i)+'</strong>').join(', ')+(d.stripIds.length===0?' (ไม่มีจุดในแถบ)':''),
+      body: ()=>buildStripUI(),
+      interactive:true,
+      side:'strip'
+    },
+    // phase 6: result
+    {
+      title:'ผลลัพธ์ — คำตอบสุดท้าย',
+      instr:'<strong style="color:var(--green)">คู่ที่ใกล้กันที่สุดคือ '+lab(d.trueAns.i)+'&#8211;'+lab(d.trueAns.j)+' = '+fmt(d.trueAns.d)+'</strong>',
+      body: ()=>{
+        const cross=d.crossFound;
+        return '<div style="padding:.85rem;background:var(--green-bg);border:1px solid var(--green-dim);border-radius:10px;margin-bottom:.75rem">'
+          +'<div style="font-size:13px;color:var(--green);font-weight:600;margin-bottom:.3rem">&#10003; คำตอบสุดท้าย</div>'
+          +'<div style="font-family:var(--mono);font-size:18px;color:var(--green)">'+lab(d.trueAns.i)+'&#8211;'+lab(d.trueAns.j)+'</div>'
+          +'<div style="font-size:13px;color:var(--text3)">d = '+fmt(d.trueAns.d)+'</div></div>'
+          +(cross
+            ?'<div style="padding:.75rem;background:var(--purple-bg);border:1px solid var(--purple-dim);border-radius:8px;font-size:14px;color:var(--text2)">&#10004; Strip Check พบคู่ข้ามเส้นแบ่ง! ถ้าข้ามขั้นนี้ไปจะได้คำตอบ <span style="color:var(--red)">ผิด</span></div>'
+            :'<div style="padding:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text2)">Strip Check ยืนยัน: ไม่มีคู่ข้ามเส้นใกล้กว่า &#948; คำตอบมาจากฝั่ง'+(d.leftBest.d<=d.rightBest.d?'ซ้าย':'ขวา')+'</div>');
+      },
+      interactive:false
+    }
+  ];
+}
+
+// Interactive conquer UI
+let dcConquerState={side:'',sel:null,measured:[],bestI:-1,bestJ:-1,bestD:Infinity,done:false};
+
+function buildConquerUI(side){
+  const ids=side==='left'?G.dcData.leftIds:G.dcData.rightIds;
+  const ans=side==='left'?G.dcData.leftBest:G.dcData.rightBest;
+  dcConquerState={side,sel:null,measured:[],bestI:-1,bestJ:-1,bestD:Infinity,done:false};
+
+  let html='<div style="font-size:13px;color:var(--text3);margin-bottom:.6rem">คลิกวัดคู่จุดในฝั่ง'+(side==='left'?'ซ้าย':'ขวา')+':</div>';
+  html+='<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem" id="dc-pt-btns">';
+  ids.forEach(i=>{
+    html+='<button class="dc-pt-btn" id="dcb-'+i+'" onclick="dcConquerClick('+i+')" title="'+lab(i)+'">'+lab(i)+'</button>';
+  });
+  html+='</div>';
+  html+='<div id="dc-conquer-log" style="margin-bottom:.5rem"></div>';
+  html+='<div id="dc-conquer-best" style="font-size:13px;color:var(--text3)">ยังไม่ได้วัด</div>';
+  html+='<button onclick="dcConquerSubmit(\'' +side+'\')" id="dc-conquer-btn" style="margin-top:.6rem;padding:.65rem 1.25rem;background:var(--teal-bg);border:1.5px solid var(--teal);color:var(--teal);border-radius:8px;font-size:14px;font-weight:600" disabled>ยืนยันคำตอบฝั่ง'+(side==='left'?'ซ้าย':'ขวา')+'</button>';
+  return html;
+}
+
+function dcConquerClick(hit){
+  if(dcConquerState.done)return;
+  const ids=dcConquerState.side==='left'?G.dcData.leftIds:G.dcData.rightIds;
+  if(!ids.includes(hit))return;
+
+  if(dcConquerState.sel===null){
+    dcConquerState.sel=hit;
+    document.querySelectorAll('.dc-pt-btn').forEach(b=>b.classList.remove('dc-sel'));
+    document.getElementById('dcb-'+hit)?.classList.add('dc-sel');
+  } else {
+    if(hit===dcConquerState.sel){dcConquerState.sel=null;document.querySelectorAll('.dc-pt-btn').forEach(b=>b.classList.remove('dc-sel'));return;}
+    const i=Math.min(dcConquerState.sel,hit),j=Math.max(dcConquerState.sel,hit);
+    const d=dist(G.pts[i],G.pts[j]);
+    if(!dcConquerState.measured.find(m=>m.i===i&&m.j===j)){
+      dcConquerState.measured.push({i,j,d});
+      const log=document.getElementById('dc-conquer-log');
+      if(log){const div=document.createElement('div');div.className='pair-row';div.innerHTML='<span>'+lab(i)+'&#8211;'+lab(j)+'</span><span>'+fmt(d)+'</span>';log.appendChild(div);}
+    }
+    if(d<dcConquerState.bestD){dcConquerState.bestD=d;dcConquerState.bestI=i;dcConquerState.bestJ=j;}
+    const bd=document.getElementById('dc-conquer-best');
+    if(bd)bd.innerHTML='ดีสุด: <strong>'+lab(dcConquerState.bestI)+'&#8211;'+lab(dcConquerState.bestJ)+'</strong> = '+fmt(dcConquerState.bestD);
+    dcConquerState.sel=null;
+    document.querySelectorAll('.dc-pt-btn').forEach(b=>b.classList.remove('dc-sel'));
+    const btn=document.getElementById('dc-conquer-btn');
+    if(btn)btn.disabled=false;
+    G.dcMeasures+=1;
+    document.getElementById('g-ops').textContent=G.dcMeasures;
+  }
+}
+
+function dcConquerSubmit(side){
+  const ans=side==='left'?G.dcData.leftBest:G.dcData.rightBest;
+  const correct=dcConquerState.bestI===ans.i&&dcConquerState.bestJ===ans.j;
+  dcConquerState.done=true;
+  const btn=document.getElementById('dc-conquer-btn');
+  if(btn){btn.disabled=true;}
+  document.querySelectorAll('.dc-pt-btn').forEach(b=>{b.disabled=true;b.classList.remove('dc-sel');if(b.id==='dcb-'+ans.i||b.id==='dcb-'+ans.j)b.classList.add('dc-done');});
+  // show answer
+  const bd=document.getElementById('dc-conquer-best');
+  if(bd){
+    if(correct)bd.innerHTML='<span style="color:var(--green)">&#10003; ถูกต้อง! คู่ใกล้สุด: '+lab(ans.i)+'&#8211;'+lab(ans.j)+' = '+fmt(ans.d)+'</span>';
+    else bd.innerHTML='<span style="color:var(--amber)">คำตอบที่ถูกคือ '+lab(ans.i)+'&#8211;'+lab(ans.j)+' = '+fmt(ans.d)+'</span>';
+  }
+  // enable next
+  document.getElementById('btn-dc-next').disabled=false;
+}
+
+// Strip UI
+let dcStripState={sel:null,measured:[],bestI:-1,bestJ:-1,bestD:Infinity,done:false};
+
+function buildStripUI(){
+  const ids=G.dcData.stripIds;
+  dcStripState={sel:null,measured:[],bestI:-1,bestJ:-1,bestD:Infinity,done:false};
+
+  if(ids.length<2){
+    return '<div style="padding:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text2)">ไม่มีจุดในแถบมากพอที่จะตรวจข้ามฝั่ง &#8212; ข้ามขั้นนี้ได้</div>';
+  }
+
+  let html='<div style="font-size:13px;color:var(--text3);margin-bottom:.6rem">คลิกวัดคู่จุดในแถบ (จุดสีม่วง):</div>';
+  html+='<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem" id="dc-strip-btns">';
+  ids.forEach(i=>{
+    html+='<button class="dc-pt-btn dc-strip" id="dcs-'+i+'" onclick="dcStripClick('+i+')" title="'+lab(i)+'">'+lab(i)+'</button>';
+  });
+  html+='</div>';
+  html+='<div id="dc-strip-log" style="margin-bottom:.5rem"></div>';
+  html+='<div id="dc-strip-best" style="font-size:13px;color:var(--text3);margin-bottom:.5rem">ยังไม่ได้วัด</div>';
+  html+='<button onclick="dcStripSubmit()" id="dc-strip-btn" style="padding:.65rem 1.25rem;background:var(--purple-bg);border:1.5px solid var(--purple-dim);color:var(--purple);border-radius:8px;font-size:14px;font-weight:600" disabled>ยืนยัน Strip Check</button>';
+  return html;
+}
+
+function dcStripClick(hit){
+  if(dcStripState.done)return;
+  if(!G.dcData.stripIds.includes(hit))return;
+  if(dcStripState.sel===null){
+    dcStripState.sel=hit;
+    document.querySelectorAll('#dc-strip-btns .dc-pt-btn').forEach(b=>b.classList.remove('dc-sel'));
+    document.getElementById('dcs-'+hit)?.classList.add('dc-sel');
+  } else {
+    if(hit===dcStripState.sel){dcStripState.sel=null;document.querySelectorAll('#dc-strip-btns .dc-pt-btn').forEach(b=>b.classList.remove('dc-sel'));return;}
+    const i=Math.min(dcStripState.sel,hit),j=Math.max(dcStripState.sel,hit);
+    const d=dist(G.pts[i],G.pts[j]);
+    if(!dcStripState.measured.find(m=>m.i===i&&m.j===j)){
+      dcStripState.measured.push({i,j,d});
+      const log=document.getElementById('dc-strip-log');
+      if(log){const div=document.createElement('div');div.className='pair-row';div.innerHTML='<span>'+lab(i)+'&#8211;'+lab(j)+'</span><span>'+fmt(d)+'</span>';log.appendChild(div);}
+    }
+    if(d<dcStripState.bestD){dcStripState.bestD=d;dcStripState.bestI=i;dcStripState.bestJ=j;}
+    const bd=document.getElementById('dc-strip-best');
+    if(bd)bd.innerHTML='ดีสุดในแถบ: <strong>'+lab(dcStripState.bestI)+'&#8211;'+lab(dcStripState.bestJ)+'</strong> = '+fmt(dcStripState.bestD);
+    dcStripState.sel=null;
+    document.querySelectorAll('#dc-strip-btns .dc-pt-btn').forEach(b=>b.classList.remove('dc-sel'));
+    const btn=document.getElementById('dc-strip-btn');if(btn)btn.disabled=false;
+    G.dcMeasures+=1;
+    document.getElementById('g-ops').textContent=G.dcMeasures;
+  }
+}
+
+function dcStripSubmit(){
+  const ans=G.dcData.stripBest;
+  dcStripState.done=true;
+  const btn=document.getElementById('dc-strip-btn');if(btn)btn.disabled=true;
+  document.querySelectorAll('#dc-strip-btns .dc-pt-btn').forEach(b=>{b.disabled=true;});
+  const bd=document.getElementById('dc-strip-best');
+  if(bd){
+    if(ans&&dcStripState.bestI===ans.i&&dcStripState.bestJ===ans.j)
+      bd.innerHTML='<span style="color:var(--green)">&#10003; พบคู่ข้ามฝั่ง! '+lab(ans.i)+'&#8211;'+lab(ans.j)+' = '+fmt(ans.d)+'</span>';
+    else if(ans)
+      bd.innerHTML='<span style="color:var(--amber)">คู่ข้ามฝั่งที่ดีสุดคือ '+lab(ans.i)+'&#8211;'+lab(ans.j)+' = '+fmt(ans.d)+'</span>';
+    else
+      bd.innerHTML='<span style="color:var(--teal)">&#10003; ไม่มีคู่ใกล้กว่า &#948; ในแถบ</span>';
+  }
+  document.getElementById('btn-dc-next').disabled=false;
+}
+
+// ══════════════════════════════════
+// DC NAVIGATION
+// ══════════════════════════════════
+let dcStepsDef=[];
+
+function switchPhase(mode){
+  G.currentMode=mode;
+  document.getElementById('tab-bf').classList.toggle('active',mode==='bf');
+  document.getElementById('tab-dc').classList.toggle('active',mode==='dc');
+  document.getElementById('bf-section').style.display=mode==='bf'?'block':'none';
+  document.getElementById('dc-section').style.display=mode==='dc'?'block':'none';
+
+  if(mode==='bf'){
+    document.getElementById('g-phase-label').textContent='Brute Force';
+    document.getElementById('g-title').textContent='วัดคู่จุดที่ต้องการ';
+    document.getElementById('g-ops-label').textContent='คู่ที่วัด';
+    document.getElementById('g-ops').textContent=G.bfMeasured.length;
+    setInstr(G.bfDone?'BF เสร็จแล้ว — กด "ทดลอง D&C" เพื่อดำเนินการต่อ':'&#128073; คลิกจุดแรกที่ต้องการวัด','');
+  } else {
+    document.getElementById('g-phase-label').textContent='Divide & Conquer';
+    document.getElementById('g-ops-label').textContent='การวัดใน D&C';
+    G.dcPhase=0;G.dcMeasures=0;G.dcReflectAns=null;
+    // reset DC reflect state
+    const dcRef=document.getElementById('dc-reflect');
+    if(dcRef){dcRef.style.display='none';}
+    const dcRefInp=document.getElementById('dc-reflect-input');
+    if(dcRefInp){dcRefInp.value='';dcRefInp.disabled=false;}
+    const dcRefRes=document.getElementById('dc-reflect-result');
+    if(dcRefRes){dcRefRes.style.display='none';}
+    document.getElementById('g-ops').textContent=0;
+    dcStepsDef=getDCSteps();
+    renderDCStep();
+  }
+  redrawCanvas();
+}
+
+function renderDCStep(){
+  const steps=dcStepsDef;
+  const step=steps[G.dcPhase];
+  if(!step)return;
+
+  document.getElementById('g-title').textContent='D&C ขั้นที่ '+(G.dcPhase+1)+'/'+steps.length;
+  setInstr(step.instr,'');
+
+  const container=document.getElementById('dc-steps-container');
+
+  // progress dots
+  let dots='<div style="display:flex;gap:5px;margin-bottom:.75rem">';
+  steps.forEach((_,i)=>{
+    const active=i===G.dcPhase;
+    const done=i<G.dcPhase;
+    dots+='<div style="width:'+(active?'20px':'8px')+';height:8px;border-radius:99px;background:'+(done?'var(--teal)':active?'var(--amber)':'var(--border2)')+';transition:all .3s"></div>';
+  });
+  dots+='</div>';
+
+  // step card
+  let card='<div class="dc-step">';
+  card+='<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem">';
+  card+='<div class="dc-step-num" style="background:var(--amber-bg);border:1px solid var(--amber-dim);color:var(--amber)">'+(G.dcPhase+1)+'</div>';
+  card+='<div style="font-size:16px;font-weight:700">'+step.title+'</div>';
+  card+='</div>';
+  card+=step.body();
+  card+='</div>';
+
+  container.innerHTML=dots+card;
+
+  // nav buttons
+  document.getElementById('btn-dc-prev').disabled=G.dcPhase===0;
+  const nxt=document.getElementById('btn-dc-next');
+  const isLast=G.dcPhase===steps.length-1;
+  if(isLast){
+    nxt.textContent='ดูสรุปผล \u2192';
+    nxt.style.cssText='flex:1;padding:.8rem 1.1rem;background:var(--teal);border:1.5px solid var(--teal);color:#0a1f1e;border-radius:10px;font-size:15px;font-weight:700';
+  } else {
+    nxt.textContent='ขั้นถัดไป \u2192';
+    nxt.style.cssText='flex:1;padding:.8rem 1.1rem;background:var(--amber-bg);border:1.5px solid var(--amber);color:var(--amber);border-radius:10px;font-size:15px;font-weight:600';
+  }
+  // interactive steps need confirm before advancing
+  if(step.interactive){
+    // Special case: Strip Check with <2 strip points has no submit button
+    // so enable Next immediately rather than leaving user stuck
+    const stripEmpty=step.side==='strip'&&G.dcData.stripIds&&G.dcData.stripIds.length<2;
+    nxt.disabled=!stripEmpty;
+  } else {
+    nxt.disabled=false;
+  }
+
+  redrawCanvas();
+}
+
+function dcNext(){
+  const steps=dcStepsDef;
+  if(G.dcPhase>=steps.length-1){
+    // show DC reflection before summary (if not already shown/answered)
+    const reflect=document.getElementById('dc-reflect');
+    if(reflect&&reflect.style.display==='none'){
+      reflect.style.display='block';
+      document.getElementById('btn-dc-next').disabled=true;
+      return;
+    }
+    showSummary();return;
+  }
+  G.dcPhase++;renderDCStep();
+  document.getElementById('btn-dc-prev').disabled=false;
+}
+
+function dcReflectSubmit(){
+  const inp=document.getElementById('dc-reflect-input');
+  const val=parseInt(inp.value);
+  if(!val||val<1){inp.style.borderColor='var(--red)';return;}
+  inp.disabled=true;
+  document.querySelector('#dc-reflect button').disabled=true;
+  const d=G.dcData;
+  const leftP  = d.dcLeftPairs  || 0;
+  const rightP = d.dcRightPairs || 0;
+  const stripC = d.dcStripComps || 0;
+  const exact  = d.dcExact      || (leftP+rightP+stripC);
+  G.dcReflectAns=val;
+  const isRight=val===exact;
+  const res=document.getElementById('dc-reflect-result');
+  res.style.display='block';
+  res.style.background=isRight?'var(--green-bg)':'var(--red-bg)';
+  res.style.border='1px solid '+(isRight?'var(--green-dim)':'var(--red-dim)');
+  res.style.color='var(--text2)';
+  const lNames=(d.leftIds||[]).map(i=>lab(i)).join('');
+  const rNames=(d.rightIds||[]).map(i=>lab(i)).join('');
+  const sLen=(d.stripIds||[]).length;
+  const sNames=sLen>=2?(d.stripIds||[]).map(i=>lab(i)).join(''):'(ว่าง)';
+  res.innerHTML=(isRight
+    ?'<strong style="color:var(--green)">✓ ถูกต้อง!</strong>'
+    :'<strong style="color:var(--red)">✗ ยังไม่ถูก</strong> &mdash; คุณตอบ <strong>'+val+'</strong> ครั้ง')
+    +'<div style="margin-top:.6rem;background:var(--bg3);border-radius:7px;padding:.6rem .85rem;font-family:var(--mono);font-size:13px;line-height:2.1">'
+    +'<div>Conquer ซ้าย ('+lNames+') &nbsp;= <strong>'+leftP+'</strong> คู่'
+      +' &nbsp;<span style="color:var(--text3);font-size:11px">['+d.leftIds.length+' จุด &rarr; n(n-1)/2]</span></div>'
+    +'<div>Conquer ขวา ('+rNames+') &nbsp;= <strong>'+rightP+'</strong> คู่'
+      +' &nbsp;<span style="color:var(--text3);font-size:11px">['+d.rightIds.length+' จุด &rarr; n(n-1)/2]</span></div>'
+    +'<div>Strip Check ('+sNames+') &nbsp;= <strong>'+stripC+'</strong> คู่</div>'
+    +'<div style="border-top:1px solid var(--border);margin-top:5px;padding-top:5px;font-weight:700;color:var(--teal)">'
+      +leftP+' + '+rightP+' + '+stripC+' = <span style="font-size:15px">'+exact+'</span> ครั้ง</div>'
+    +'</div>';
+  document.getElementById('btn-dc-next').disabled=false;
+  document.getElementById('btn-dc-next').textContent='ดูสรุปผล →';
+  document.getElementById('btn-dc-next').style.cssText='flex:1;padding:.8rem 1.1rem;background:var(--teal);border:1.5px solid var(--teal);color:#0a1f1e;border-radius:10px;font-size:15px;font-weight:700';
+}
+function dcPrev(){
+  if(G.dcPhase<=0)return;
+  G.dcPhase--;renderDCStep();
+}
+
+// ══════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════
+function showSummary(){
+  const n=G.n;
+  const bfOps=G.bfMeasured.length;
+  const dcOps=G.dcData.dcExact||G.dcMeasures||Math.ceil(n*Math.log2(n));
+  const trueA=G.trueAns;
+  const guessCorrect=G.bfGuessI===trueA.i&&G.bfGuessJ===trueA.j;
+
+  document.getElementById('sum-emoji').textContent=guessCorrect?'\u{1F3C6}':'\u{1F4AA}';
+  document.getElementById('sum-sub').textContent='รอบที่ '+G.round+' — '+n+' จุด';
+  document.getElementById('sum-bf-ops').textContent=bfOps||'—';
+  document.getElementById('sum-wc').textContent=bfPairs(n);
+  document.getElementById('sum-dc-ops').textContent=dcOps;
+  // reflect answers
+  const sumReflect=document.getElementById('sum-reflect-block');
+  if(sumReflect){
+    const bfAns=G.bfReflectAns;const dcAns=G.dcReflectAns;
+    const bfTrue=bfPairs(n);const dcTrue=dcOps;
+    let html='';
+    if(bfAns!==null){
+      const bfOk=bfAns===bfTrue;
+      html+='<div style="display:flex;align-items:center;gap:.75rem;padding:.55rem .75rem;background:'+(bfOk?'var(--green-bg)':'var(--amber-bg)')+';border:1px solid '+(bfOk?'var(--green-dim)':'var(--amber-dim)')+';border-radius:8px;margin-bottom:.5rem">'
+        +'<span style="font-size:18px">'+(bfOk?'\u2713':'\u2192')+'</span>'
+        +'<div><div style="font-size:13px;font-weight:600;color:'+(bfOk?'var(--green)':'var(--amber)')+'">Brute Force</div>'
+        +'<div style="font-size:13px;color:var(--text2)">คุณตอบ <strong>'+bfAns+'</strong> ครั้ง &nbsp; | &nbsp; คำตอบที่ถูก <strong style="color:'+(bfOk?'var(--green)':'var(--amber)')+'">'+bfTrue+'</strong> ครั้ง</div></div></div>';
+    }
+    if(dcAns!==null){
+      const dcOk=dcAns===dcTrue;
+      html+='<div style="display:flex;align-items:center;gap:.75rem;padding:.55rem .75rem;background:'+(dcOk?'var(--green-bg)':'var(--teal-bg)')+';border:1px solid '+(dcOk?'var(--green-dim)':'var(--teal-dim)')+';border-radius:8px">'
+        +'<span style="font-size:18px">'+(dcOk?'\u2713':'\u2192')+'</span>'
+        +'<div><div style="font-size:13px;font-weight:600;color:'+(dcOk?'var(--green)':'var(--red)')+'">D&amp;C</div>'
+        +'<div style="font-size:13px;color:var(--text2)">คุณตอบ <strong>'+dcAns+'</strong> ครั้ง &nbsp; | &nbsp; ที่ทำจริง <strong style="color:'+(dcOk?'var(--green)':'var(--red)')+'">'+dcTrue+'</strong> ครั้ง</div></div></div>';
+    }
+    if(bfAns===null&&dcAns===null){
+      html='<div style="font-size:13px;color:var(--text3)">ไม่ได้กรอกในเกม</div>';
+    }
+    sumReflect.innerHTML=html;
+  }
+
+  const youPair=G.bfGuessI>=0?(lab(G.bfGuessI)+'\u2013'+lab(G.bfGuessJ)):'(ไม่ได้ยืนยัน)';
+  document.getElementById('sum-ans-you').textContent=youPair;
+  document.getElementById('sum-ans-you-d').textContent=G.bfGuessI>=0?'d = '+fmt(dist(G.pts[G.bfGuessI],G.pts[G.bfGuessJ])):'';
+  document.getElementById('sum-ans-true').textContent=lab(trueA.i)+'\u2013'+lab(trueA.j);
+  document.getElementById('sum-ans-true-d').textContent='d = '+fmt(trueA.d);
+
+  document.getElementById('sum-hist-label').textContent=bfOps+' คู่';
+  document.getElementById('sum-hist-body').innerHTML=G.bfMeasured.map((m,idx)=>{
+    const isTrue=m.i===trueA.i&&m.j===trueA.j;
+    return '<tr style="border-bottom:1px solid var(--border);color:'+(isTrue?'var(--teal)':'var(--text2)')+'"><td style="padding:6px 8px;color:var(--text3)">'+(idx+1)+'</td><td style="padding:6px 8px">'+lab(m.i)+'\u2013'+lab(m.j)+'</td><td style="padding:6px 8px;text-align:right;font-family:var(--mono)">'+fmt(m.d)+'</td><td style="padding:6px 8px;font-size:12px">'+(isTrue?'<span style="color:var(--green)">\u2713 คู่ที่ใกล้สุด</span>':'')+'</td></tr>';
+  }).join('');
+
+  buildPseudo();
+
+  document.getElementById('reflection').innerHTML=[
+    'ถ้ามีจุด '+(n*2)+' จุด BF ต้องวัด <strong>'+bfPairs(n*2)+'</strong> คู่ ส่วน D&amp;C ใช้เพียง ~'+Math.ceil(n*2*Math.log2(n*2))+' ครั้ง',
+    'Strip Check จำเป็นแค่ไหน? ถ้าข้ามขั้นนี้จะเกิดอะไรขึ้น?',
+    'D&amp;C ดีกว่า BF เสมอไหม? ลองนึกถึงกรณี n = 2 หรือ 3'
+  ].map((q,i)=>'<div style="display:flex;gap:8px;font-size:14px;color:var(--text2)"><span style="color:var(--purple);font-weight:600;flex-shrink:0">Q'+(i+1)+'.</span><span>'+q+'</span></div>').join('');
+
+  showScreen('summary');
+  setTimeout(()=>{pcodeMode='bf';buildPseudo();pyMode='bf';switchPy('bf');updateChart(n);},60);
+}
+
+// ══════════════════════════════════
+// PSEUDOCODE
+// ══════════════════════════════════
+const PLINES_BF=[
+  'procedure brute_force(points):',
+  '    best_dist ← ∞',
+  '    best_pair ← (points[0], points[1])',
+  '    for i from 0 to |points|−1:',
+  '        for j from i+1 to |points|−1:',
+  '            d ← distance(points[i], points[j])',
+  '            if d < best_dist:',
+  '                best_dist ← d',
+  '                best_pair ← (points[i], points[j])',
+  '    return best_pair, best_dist',
+  '',
+  '// complexity: O(n²) — checks every pair',
+];
+
+const PLINES_DC=[
+  'procedure closest_pair(points):',
+  '    sorted ← sort points by x-coordinate',
+  '    return rec(sorted)',
+  '',
+  'procedure rec(pts):',
+  '    if |pts| ≤ 3: return brute_force(pts)  // base case',
+  '    mid ← pts[|pts|/2]',
+  '    δ_L ← rec(pts[left of mid])   // Conquer left',
+  '    δ_R ← rec(pts[right of mid])  // Conquer right',
+  '    δ   ← min(δ_L, δ_R)',
+  '    strip ← pts where |x − mid.x| < δ  // Strip zone',
+  '    sort strip by y-coordinate',
+  '    for each p in strip:',
+  '        check next ≤ 7 points in strip',
+  '        if dist < δ: update δ   // Cross-strip pair!',
+  '    return δ',
+  '',
+  '// complexity: O(n log n)',
+];
+
+let pcodeMode='bf';
+function switchPcode(mode){
+  pcodeMode=mode;
+  const tabBF=document.getElementById('pcode-tab-bf');
+  const tabDC=document.getElementById('pcode-tab-dc');
+  if(mode==='bf'){
+    tabBF.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:var(--amber-bg);border:1px solid var(--amber-dim);color:var(--amber);cursor:pointer';
+    tabDC.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;border:1px solid transparent;color:var(--text3);cursor:pointer';
+  } else {
+    tabDC.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:var(--teal-bg);border:1px solid var(--teal-dim);color:var(--teal);cursor:pointer';
+    tabBF.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;border:1px solid transparent;color:var(--text3);cursor:pointer';
+  }
+  buildPseudo();
+}
+function buildPseudo(){
+  const lines=pcodeMode==='bf'?PLINES_BF:PLINES_DC;
+  const note=pcodeMode==='bf'
+    ?'<span style="color:var(--amber)">O(n²)</span> — ตรวจทุกคู่จุด n(n−1)/2 คู่ ง่ายแต่ช้าเมื่อ n ใหญ่ขึ้น'
+    :'<span style="color:var(--teal)">O(n log n)</span> — แบ่งครึ่ง+รวม ต้องมี Strip Check มิฉะนั้นคำตอบอาจผิด';
+  document.getElementById('pcode-block').innerHTML=lines.map(l=>{
+    let h=(l||' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/(procedure|return|if|for|each|in)/g,'<span style="color:var(--purple)">$1</span>')
+      .replace(/(rec|closest_pair|brute_force)/g,'<span style="color:var(--teal)">$1</span>')
+      .replace(/\/\/.*/g,m=>'<span style="color:var(--text3);font-style:italic">'+m+'</span>');
+    return '<div class="code-line">'+h+'</div>';
+  }).join('');
+  const noteEl=document.getElementById('pcode-note');
+  if(noteEl)noteEl.innerHTML='<span style="color:var(--text3)">Complexity:</span> '+note;
+}
+
+// ══════════════════════════════════
+// PYTHON SIM
+// ══════════════════════════════════
+const PY_LINES_BF=[
+  'import math',
+  '',
+  'def dist(a, b):',
+  '    return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)',
+  '',
+  'def brute_force(points):',
+  '    best_dist = math.inf',
+  '    best_pair = (points[0], points[1])',
+  '    for i in range(len(points)):',
+  '        for j in range(i+1, len(points)):',
+  '            d = dist(points[i], points[j])',
+  '            if d < best_dist:',
+  '                best_dist = d',
+  '                best_pair = (points[i], points[j])',
+  '    return best_pair, best_dist',
+  '',
+  '# O(n²) — checks every pair',
+];
+
+const PY_LINES_DC=[
+  'import math',
+  '',
+  'def dist(a, b):',
+  '    return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)',
+  '',
+  'def strip_check(strip, delta):',
+  '    strip.sort(key=lambda p: p[1])  # sort by y',
+  '    best = delta',
+  '    for i in range(len(strip)):',
+  '        j = i + 1',
+  '        while j < len(strip) and strip[j][1]-strip[i][1] < best:',
+  '            d = dist(strip[i], strip[j])',
+  '            if d < best: best = d',
+  '            j += 1',
+  '    return best',
+  '',
+  'def closest_pair_dc(pts):',
+  '    pts.sort(key=lambda p: p[0])  # sort by x',
+  '    return rec(pts)',
+  '',
+  'def rec(pts):',
+  '    if len(pts) <= 3:',
+  '        return brute_force(pts)[1]  # base case',
+  '    mid = len(pts) // 2',
+  '    mid_x = pts[mid][0]',
+  '    d_L = rec(pts[:mid])            # Conquer left',
+  '    d_R = rec(pts[mid:])            # Conquer right',
+  '    delta = min(d_L, d_R)',
+  '    strip = [p for p in pts if abs(p[0]-mid_x) < delta]',
+  '    return min(delta, strip_check(strip, delta))',
+  '',
+  '# O(n log n)',
+];
+
+let pyMode='bf';
+function switchPy(mode){
+  pyMode=mode;
+  const tabBF=document.getElementById('py-tab-bf');
+  const tabDC=document.getElementById('py-tab-dc');
+  if(mode==='bf'){
+    tabBF.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:var(--amber-bg);border:1px solid var(--amber-dim);color:var(--amber);cursor:pointer';
+    tabDC.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;border:1px solid transparent;color:var(--text3);cursor:pointer';
+  } else {
+    tabDC.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:var(--teal-bg);border:1px solid var(--teal-dim);color:var(--teal);cursor:pointer';
+    tabBF.style.cssText='padding:4px 14px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;border:1px solid transparent;color:var(--text3);cursor:pointer';
+  }
+  pyReset();
+}
+
+let pyState={stepIdx:-1,interval:null};
+function currentPyLines(){return pyMode==='bf'?PY_LINES_BF:PY_LINES_DC;}
+function pyReset(){
+  if(pyState.interval){clearInterval(pyState.interval);pyState.interval=null;}
+  pyState.stepIdx=-1;
+  renderPyCode(-1);renderPyPts();
+  document.getElementById('py-status').textContent='';
+  const btn=document.getElementById('py-btn');
+  btn.innerHTML='&#9654; Run';
+  btn.style.cssText='padding:4px 14px;background:var(--teal-bg);border:1px solid var(--teal);color:var(--teal);border-radius:6px;font-size:12px;font-weight:600';
+}
+function pyRun(){
+  const btn=document.getElementById('py-btn');
+  if(pyState.interval){
+    clearInterval(pyState.interval);pyState.interval=null;
+    btn.innerHTML='&#9654; Run';
+    btn.style.cssText='padding:4px 14px;background:var(--teal-bg);border:1px solid var(--teal);color:var(--teal);border-radius:6px;font-size:12px;font-weight:600';
+    return;
+  }
+  btn.innerHTML='&#9646;&#9646; หยุด';
+  btn.style.cssText='padding:4px 14px;background:var(--amber-bg);border:1px solid var(--amber);color:var(--amber);border-radius:6px;font-size:12px;font-weight:600';
+  pyState.interval=setInterval(()=>{
+    const lines=currentPyLines();
+    pyState.stepIdx=(pyState.stepIdx+1)%lines.length;
+    renderPyCode(pyState.stepIdx);
+    document.getElementById('py-status').textContent=lines[pyState.stepIdx]||'';
+    if(pyState.stepIdx===lines.length-1){
+      clearInterval(pyState.interval);pyState.interval=null;
+      btn.innerHTML='&#10003; เสร็จ — กด รีเซต';
+      btn.style.cssText='padding:4px 14px;background:var(--green-bg);border:1px solid var(--green-dim);color:var(--green);border-radius:6px;font-size:12px;font-weight:600';
+    }
+  },400);
+}
+function renderPyCode(active){
+  const PY_LINES=currentPyLines();
+  document.getElementById('py-code').innerHTML=PY_LINES.map((t,i)=>{
+    const isA=i===active;
+    let h=(t||' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\b(def|import|return|if|for|while|in|and|or|not)\b/g,'<span style="color:var(--purple)">$1</span>')
+      .replace(/\b(True|False|None|math)\b/g,'<span style="color:var(--amber)">$1</span>')
+      .replace(/#.*/g,m=>'<span style="color:var(--text3);font-style:italic">'+m+'</span>')
+      .replace(/\b(dist|brute|strip_check|closest)\b/g,'<span style="color:var(--teal)">$1</span>');
+    return '<div class="code-line'+(isA?' active':'')+'">'+(isA?'<span style="color:var(--teal)">\u2192</span>  ':'   ')+h+'</div>';
+  }).join('');
+}
+function renderPyPts(){
+  document.getElementById('py-pts-vis').innerHTML=(G.pts||[]).slice(0,10).map((p,i)=>
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
+    +'<div style="min-width:52px;padding:2px 6px;background:var(--card);border:1.5px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--text)">'+lab(i)+'</div>'
+    +'<span style="font-size:10px;color:var(--text3);font-family:var(--mono)">('+Math.round(p.x)+','+Math.round(p.y)+')</span></div>'
+  ).join('');
+}
+
+// ══════════════════════════════════
+// BIG-O CHART
+// ══════════════════════════════════
+function updateChart(n){
+  n=Math.max(2,Math.min(100,parseInt(n)));
+  document.getElementById('chart-slider').value=n;
+  document.getElementById('chart-n').textContent=n;
+  document.getElementById('chart-nv').textContent=n;
+  document.getElementById('chart-wc').textContent=bfPairs(n).toLocaleString();
+  document.getElementById('chart-dc').textContent=Math.ceil(n*Math.log2(n)).toLocaleString();
+  drawBigO(n);
+}
+function drawBigO(hl){
+  const canvas=document.getElementById('bigo-canvas');if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const rect=canvas.getBoundingClientRect();
+  const W=rect.width||560,H=rect.height||260;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
+  const cs=getComputedStyle(document.documentElement);
+  const cT=cs.getPropertyValue('--text3').trim();
+  const cTeal=cs.getPropertyValue('--teal').trim();
+  const cA=cs.getPropertyValue('--amber').trim();
+  const isL=document.documentElement.classList.contains('light');
+  const cDC=isL?'#7c3aed':'#6366f1';
+  const cN=isL?'#8b8fa8':'#4a5280';
+  const grid=isL?'rgba(180,186,210,0.5)':'rgba(60,68,104,0.7)';
+  const cBg=cs.getPropertyValue('--bg').trim();
+  const PAD={l:52,r:40,t:16,b:44};
+  const maxN=100,maxY=bfPairs(maxN);
+  const xs=n=>PAD.l+(n-2)/(maxN-2)*(W-PAD.l-PAD.r);
+  const ys=v=>H-PAD.b-Math.min(v,maxY)/maxY*(H-PAD.t-PAD.b);
+  [0,1000,2000,3000,4000,4950].forEach(yv=>{
+    const y=ys(yv);ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(W-PAD.r,y);
+    ctx.strokeStyle=grid;ctx.lineWidth=.5;ctx.stroke();
+    ctx.fillStyle=cT;ctx.font='10px IBM Plex Mono,monospace';ctx.textAlign='right';
+    ctx.fillText(yv>=1000?(yv/1000)+'K':yv,PAD.l-5,y+3);
+  });
+  [2,20,40,60,80,100].forEach(xv=>{
+    const x=xs(xv);ctx.beginPath();ctx.moveTo(x,PAD.t);ctx.lineTo(x,H-PAD.b);
+    ctx.strokeStyle=grid;ctx.lineWidth=.5;ctx.stroke();
+    ctx.fillStyle=cT;ctx.font='10px IBM Plex Mono,monospace';ctx.textAlign='center';
+    ctx.fillText(xv,x,H-PAD.b+13);
+  });
+  ctx.strokeStyle=isL?'#c5cade':'#3d4468';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(PAD.l,PAD.t);ctx.lineTo(PAD.l,H-PAD.b);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(PAD.l,H-PAD.b);ctx.lineTo(W-PAD.r,H-PAD.b);ctx.stroke();
+  ctx.fillStyle=cT;ctx.font='11px Sarabun,sans-serif';ctx.textAlign='center';
+  ctx.fillText('จำนวนจุด (n)',PAD.l+(W-PAD.l-PAD.r)/2,H-2);
+  ctx.save();ctx.translate(11,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('จำนวนการวัด',0,0);ctx.restore();
+  function curve(fn,col,dash,w){
+    ctx.beginPath();ctx.strokeStyle=col;ctx.lineWidth=w||2;ctx.setLineDash(dash||[]);
+    for(let n=2;n<=maxN;n++){const x=xs(n),y=ys(fn(n));n===2?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke();ctx.setLineDash([]);
+  }
+  curve(n=>n,cN,[5,4],1.5);
+  curve(n=>Math.ceil(n*Math.log2(n)),cDC,[5,4],1.5);
+  curve(n=>bfPairs(n),cTeal,[],2.5);
+  ctx.beginPath();
+  for(let n=2;n<=maxN;n++){const x=xs(n),y=ys(bfPairs(n));n===2?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.lineTo(xs(maxN),H-PAD.b);ctx.lineTo(xs(2),H-PAD.b);ctx.closePath();
+  ctx.fillStyle=isL?'rgba(13,148,136,0.08)':'rgba(45,212,191,0.07)';ctx.fill();
+  const lx=xs(maxN)+4;ctx.font='11px IBM Plex Mono,monospace';ctx.textAlign='left';
+  ctx.fillStyle=cTeal;ctx.fillText('n\u00B2',lx,ys(bfPairs(maxN))+4);
+  ctx.fillStyle=cDC;ctx.fillText('n\u00B7log\u2082n',lx,ys(maxN*Math.log2(maxN))+4);
+  ctx.fillStyle=cN;ctx.fillText('n',lx,ys(maxN)-4);
+  if(G.bfMeasured.length>0){
+    const mx=xs(G.n),my=ys(G.bfMeasured.length);
+    ctx.beginPath();ctx.arc(mx,my,6,0,Math.PI*2);
+    ctx.fillStyle=cA;ctx.fill();ctx.strokeStyle=cBg;ctx.lineWidth=2;ctx.stroke();
+    document.getElementById('chart-you-label').style.display='inline';
+    ctx.fillStyle=cA;ctx.font='11px IBM Plex Mono,monospace';ctx.textAlign=mx<W-80?'left':'right';
+    ctx.fillText('BF:'+G.bfMeasured.length,mx<W-80?mx+9:mx-9,my-8);
+  }
+  const hx=xs(hl),hy=ys(bfPairs(hl));
+  ctx.beginPath();ctx.strokeStyle=isL?'rgba(13,148,136,0.3)':'rgba(45,212,191,0.25)';
+  ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.moveTo(hx,H-PAD.b);ctx.lineTo(hx,hy);ctx.moveTo(PAD.l,hy);ctx.lineTo(hx,hy);
+  ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(hx,hy,6,0,Math.PI*2);
+  ctx.fillStyle=cTeal;ctx.fill();ctx.strokeStyle=cBg;ctx.lineWidth=2;ctx.stroke();
+}
+
+// ══════════════════════════════════
+// QUIZ
+// ══════════════════════════════════
+const QBANK=[
+  {id:'mc1',type:'mc',q:'Closest Pair (D&amp;C) มี time complexity เท่าไหร่?',choices:['O(n)','O(n log n)','O(n&sup2;)','O(2&sup2;)'],answer:1,explain:'D&amp;C แบ่งปัญหาเป็น 2 ส่วนในแต่ละระดับ รวม O(log n) ระดับ แต่ละระดับใช้ O(n) ในขั้น Strip Check รวม O(n log n)'},
+  {id:'mc2',type:'mc',q:'ทำไม Strip Check จึงจำเป็นสำหรับ Closest Pair D&amp;C?',choices:['เพื่อเรียงจุดตาม x','เพราะคู่ที่ใกล้สุดอาจอยู่คนละฝั่งเส้นแบ่ง','เพื่อลด memory','เพราะ Brute Force ไม่ทำงาน'],answer:1,explain:'หากข้ามขั้น Strip Check คู่จุดที่ข้ามเส้นแบ่งจะถูกมองข้ามไป ทำให้คำตอบอาจผิด'},
+  {id:'mc3',type:'mc',q:'&delta; (delta) ในขั้น Strip Check หมายถึงอะไร?',choices:['ความกว้างของ canvas','ระยะสั้นสุดที่พบจากทั้งสองฝั่ง','จำนวนจุดทั้งหมด','ระยะจากจุดไปยังเส้นแบ่ง'],answer:1,explain:'&delta; = min(&delta;_left, &delta;_right) คือระยะสั้นสุดที่พบจากการ Conquer ทั้งสองฝั่ง ใช้กำหนดความกว้างของแถบ Strip'},
+  {id:'mc4',type:'mc',q:'Brute Force Closest Pair มี complexity เท่าไหร่?',choices:['O(n)','O(n log n)','O(n&sup2;)','O(log n)'],answer:2,explain:'Brute Force ต้องตรวจทุกคู่ มี n(n-1)/2 คู่ ซึ่งเติบโตแบบ O(n&sup2;)'},
+  {id:'mc5',type:'mc',q:'ใน Strip Check ทำไมต้องเรียงจุดในแถบตาม y ก่อน?',choices:['เพื่อหาเส้นแบ่งตรงกลาง','เพื่อตรวจเฉพาะจุดที่อยู่ใกล้กันในแนวตั้ง','เพื่อความสวยงาม','เพื่อลดจำนวนจุด'],answer:1,explain:'การเรียงตาม y ทำให้หยุดตรวจได้ทันทีเมื่อระยะในแนวตั้งเกิน &delta; ลดจำนวนการตรวจเหลือไม่เกิน 7 จุดต่อจุด'},
+  {id:'mc6',type:'mc',q:'ถ้า n = 16 จุด Brute Force ต้องตรวจกี่คู่?',choices:['16','32','120','256'],answer:2,explain:'Brute Force = n(n-1)/2 = 16&times;15/2 = 120 คู่'},
+  {id:'mc7',type:'mc',q:'D&amp;C แบ่งปัญหา Closest Pair โดยใช้เกณฑ์ใด?',choices:['ค่า x ของจุดกลาง','ค่า y ของจุดกลาง','ระยะจากจุดศูนย์กลาง','ขนาดของจุด'],answer:0,explain:'D&amp;C เรียงจุดตาม x แล้วแบ่งที่จุดกลาง ทำให้ฝั่งซ้ายและขวามีจุดเท่ากันโดยประมาณ'},
+  {id:'mc8',type:'mc',q:'ทฤษฎีพิสูจน์ว่าใน Strip ขนาด 2&delta;&times;&delta; มีจุดได้ไม่เกินกี่จุด?',choices:['4','6','8','16'],answer:2,explain:'ในสี่เหลี่ยม 2&delta;&times;&delta; สามารถวางจุดที่ห่างกันอย่างน้อย &delta; ได้ไม่เกิน 8 จุด จึงต้องตรวจไม่เกิน 7 จุดถัดไป'},
+  {id:'m1',type:'match',q:'จับคู่คำศัพท์กับความหมาย',pairs:[{left:'Divide',right:'แบ่งปัญหาออกเป็นส่วนย่อย'},{left:'Conquer',right:'แก้ปัญหาแต่ละส่วนแยกกัน'},{left:'Combine',right:'รวมคำตอบย่อยกลับเป็นคำตอบเดียว'},{left:'Strip Check',right:'ตรวจคู่จุดข้ามเส้นแบ่ง'}],explain:'Divide &amp; Conquer มี 3 ขั้นหลัก บวก Strip Check ซึ่งเป็นขั้น Combine ที่ซับซ้อนของ Closest Pair'},
+  {id:'m2',type:'match',q:'จับคู่ algorithm กับ complexity',pairs:[{left:'Brute Force Closest Pair',right:'O(n\u00B2)'},{left:'D&C Closest Pair',right:'O(n log n)'},{left:'Binary Search',right:'O(log n)'},{left:'Linear Scan',right:'O(n)'}],explain:'แต่ละ algorithm มีรูปแบบการเติบโตต่างกัน D&amp;C ดีกว่า Brute Force อย่างชัดเจน'},
+  {id:'m3',type:'match',q:'จับคู่ขั้นตอนกับสิ่งที่ทำ',pairs:[{left:'เรียงจุดตาม x',right:'ก่อน Divide'},{left:'หา \u03b4_left, \u03b4_right',right:'ขั้น Conquer'},{left:'\u03b4 = min(\u03b4_L, \u03b4_R)',right:'เริ่ม Combine'},{left:'ตรวจจุดในแถบ 2\u03b4',right:'Strip Check'}],explain:'ลำดับขั้นตอนของ D&amp;C Closest Pair: Sort \u2192 Divide \u2192 Conquer \u2192 Combine (Strip Check)'},
+];
+
+let QS={questions:[],cur:0,score:0,answers:[]};
+function shuffleArr(a){return[...a].sort(()=>Math.random()-.5);}
+function startQuiz(){
+  const mcs=shuffleArr(QBANK.filter(q=>q.type==='mc'));
+  const ms=shuffleArr(QBANK.filter(q=>q.type==='match'));
+  QS.questions=shuffleArr([mcs[0],mcs[1],mcs[2],ms[0],ms[1]]);
+  QS.cur=0;QS.score=0;QS.answers=[];
+  showScreen('quiz');renderQ();
+}
+function renderQ(){
+  const q=QS.questions[QS.cur];
+  document.getElementById('q-title').textContent='ข้อที่ '+(QS.cur+1)+' จาก '+QS.questions.length;
+  document.getElementById('q-score').textContent=QS.score;
+  document.getElementById('q-feedback').style.display='none';
+  document.getElementById('q-next').style.display='none';
+  document.getElementById('q-dots').innerHTML=QS.questions.map((_,i)=>{
+    const a=QS.answers[i];const c=a===undefined?'var(--border2)':a.correct?'var(--green)':'var(--red)';
+    const sz=i===QS.cur?'12px':'8px';
+    return '<div style="width:'+sz+';height:'+sz+';border-radius:50%;background:'+c+';transition:all .2s;flex-shrink:0"></div>';
+  }).join('');
+  const box=document.getElementById('q-box');
+  if(q.type==='mc')renderMC(box,q);else renderMatch(box,q);
+}
+function renderMC(box,q){
+  box.innerHTML='<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:1.25rem">'+q.q+'</div>'+
+    q.choices.map((c,i)=>'<button class="quiz-choice" onclick="submitMC('+i+')" data-idx="'+i+'"><span style="color:var(--text3);font-family:var(--mono);margin-right:.5rem">'+String.fromCharCode(65+i)+'.</span>'+c+'</button>').join('');
+}
+function submitMC(chosen){
+  const q=QS.questions[QS.cur];const correct=chosen===q.answer;
+  QS.answers.push({correct});if(correct)QS.score++;
+  document.querySelectorAll('.quiz-choice').forEach((b,i)=>{
+    b.classList.add('locked');b.style.cursor='default';b.style.pointerEvents='none';
+    if(i===q.answer)b.classList.add('correct');
+    else if(i===chosen&&!correct)b.classList.add('wrong');
+    else b.classList.add('faded');
+  });
+  showFb(correct,q.explain);
+}
+let matchState={};
+function renderMatch(box,q){
+  const pairs=shuffleArr(q.pairs);
+  const rights=shuffleArr(pairs.map(p=>p.right));
+  matchState={pairs,rights,sel:null,ans:{},locked:false};
+  box.innerHTML='<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:1rem">'+q.q+'</div>'
+    +'<div style="font-size:13px;color:var(--text3);margin-bottom:.75rem">กดคอลัมน์ซ้ายก่อน แล้วกดคอลัมน์ขวาเพื่อจับคู่</div>'
+    +'<div class="match-grid" id="mg"></div>'
+    +'<button onclick="submitMatch()" style="padding:.65rem 1.5rem;background:var(--teal-bg);border:1.5px solid var(--teal);color:var(--teal);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">ยืนยันคำตอบ</button>';
+  renderMG();
+}
+function renderMG(){
+  const {pairs,rights,sel,ans}=matchState;
+  const grid=document.getElementById('mg');if(!grid)return;
+  const lefts=pairs.map((p,i)=>{
+    const matched=ans[i];const isSel=sel===i;
+    let cls='match-btn'+(matched?' mmatched':isSel?' msel':'');
+    return '<button class="'+cls+'" onclick="matchL('+i+')">'+(matched?'\u2713 ':'')+p.left+(matched?'<div style="font-size:11px;opacity:.7;margin-top:2px">\u2192 '+matched+'</div>':'')+'</button>';
+  });
+  const rightBtns=rights.map(r=>{
+    const used=Object.values(ans).includes(r);
+    return '<button class="match-btn'+(used?' mused':'')+'" onclick="matchR(\''+r.replace(/'/g,"\\'")+'\')" >'+r+'</button>';
+  });
+  let html='';
+  pairs.forEach((_,i)=>{html+=lefts[i]+(rightBtns[i]||'');});
+  grid.innerHTML=html;
+}
+function matchL(i){if(matchState.locked)return;matchState.sel=i;renderMG();}
+function matchR(v){
+  if(matchState.locked||matchState.sel===null)return;
+  if(Object.values(matchState.ans).includes(v))return;
+  matchState.ans[matchState.sel]=v;matchState.sel=null;renderMG();
+}
+function submitMatch(){
+  if(matchState.locked)return;matchState.locked=true;
+  const q=QS.questions[QS.cur];const pairs=matchState.pairs;
+  let ok=0;pairs.forEach((p,i)=>{if(matchState.ans[i]===p.right)ok++;});
+  const correct=ok===pairs.length;
+  QS.answers.push({correct,ok,total:pairs.length});if(correct)QS.score++;
+  const grid=document.getElementById('mg');
+  if(grid){
+    let html='';
+    pairs.forEach((p,i)=>{
+      const given=matchState.ans[i];const isOk=given===p.right;
+      html+='<div class="match-btn '+(isOk?'mok':'merr')+'">'+(isOk?'\u2713':'\u2717')+' '+p.left+'</div>';
+      html+='<div class="match-btn '+(isOk?'mok':'merr')+'">'+p.right+(!isOk&&given?'<div style="font-size:11px;opacity:.7">คุณตอบ: '+given+'</div>':'')+'</div>';
+    });
+    grid.innerHTML=html;
+  }
+  showFb(correct,q.explain+(!correct?'<br><small>ถูก '+ok+'/'+pairs.length+' คู่</small>':''));
+}
+function showFb(correct,explain){
+  const fb=document.getElementById('q-feedback');
+  fb.style.display='block';
+  fb.style.background=correct?'var(--green-bg)':'var(--red-bg)';
+  fb.style.border='1px solid '+(correct?'var(--green-dim)':'var(--red-dim)');
+  fb.style.color='var(--text2)';
+  fb.innerHTML='<div style="font-weight:700;color:'+(correct?'var(--green)':'var(--red)')+';margin-bottom:.4rem">'+(correct?'\u2713 ถูกต้อง!':'\u2717 ไม่ถูกต้อง')+'</div>'+explain;
+  const nxt=document.getElementById('q-next');
+  const isLast=QS.cur===QS.questions.length-1;
+  nxt.style.display='block';
+  nxt.textContent=isLast?'ดูผลคะแนน \u2192':'ข้อถัดไป \u2192';
+  document.getElementById('q-dots').innerHTML=QS.questions.map((_,i)=>{
+    const a=QS.answers[i];const c=a===undefined?'var(--border2)':a.correct?'var(--green)':'var(--red)';
+    const sz=i===QS.cur?'12px':'8px';
+    return '<div style="width:'+sz+';height:'+sz+';border-radius:50%;background:'+c+';transition:all .2s;flex-shrink:0"></div>';
+  }).join('');
+}
+function qNext(){if(QS.cur<QS.questions.length-1){QS.cur++;renderQ();}else showQResult();}
+function showQResult(){
+  const total=QS.questions.length,score=QS.score,pct=Math.round(score/total*100);
+  const emoji=pct===100?'\u{1F3C6}':pct>=80?'\u2B50':pct>=60?'\uD83D\uDC4D':'\uD83D\uDCAA';
+  const msg=pct===100?'สมบูรณ์แบบ!':pct>=80?'ทำได้ดีมาก':pct>=60?'ผ่านเกณฑ์':'ลองทบทวนอีกครั้ง';
+  const color=pct>=80?'var(--green)':pct>=60?'var(--teal)':'var(--amber)';
+  document.getElementById('qr-emoji').textContent=emoji;
+  document.getElementById('qr-title').textContent=msg;
+  const sb=document.getElementById('qr-score');sb.textContent=score+'/'+total;sb.style.color=color;
+  document.getElementById('qr-sub').textContent=pct+'% — '+score+' ข้อถูกจาก '+total+' ข้อ';
+  document.getElementById('qr-review').innerHTML=QS.questions.map((q,i)=>{
+    const a=QS.answers[i];const ok=a?.correct;
+    return '<div style="display:flex;gap:.75rem;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--border)"><span style="flex-shrink:0;font-size:16px">'+(ok?'\u2705':'\u274C')+'</span><div><div style="font-size:13px;color:var(--text);line-height:1.5">'+q.q+'</div>'+(!ok?'<div style="font-size:12px;color:var(--text3);margin-top:3px">'+q.explain+'</div>':'')+'</div></div>';
+  }).join('');
+  showScreen('quiz-result');
+}
+
+// ══════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════
+function playAgain(){
+  G.round++;startGame();
+}
+function goIntro(){G.round=1;showScreen('intro');}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+adjustN(0);
+</script>
+</body>
+</html>
