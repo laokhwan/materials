@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สรุปหลักสูตรออนไลน์ฟรี TDGA — บุคลากร MWIT</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-dark: #1F5C99;
+    --blue-mid:  #2E75B6;
+    --blue-light:#EBF3FB;
+    --green-dark:#1D9E75;
+    --green-light:#EAF5EE;
+    --amber-dark:#854F0B;
+    --amber-light:#FEF9ED;
+    --purple-dark:#3C3489;
+    --purple-light:#F3F0FD;
+    --red-dark:  #A32D2D;
+    --red-light: #FEF4F4;
+    --teal-dark: #0F6E56;
+    --teal-light:#EBF5F0;
+    --pink-dark: #993556;
+    --pink-light:#FDF0F5;
+    --text:      #1a1a1a;
+    --text-mid:  #444;
+    --text-muted:#777;
+    --border:    #dde3ec;
+    --bg:        #f5f7fa;
+    --card:      #ffffff;
+    --radius:    10px;
+    --shadow:    0 1px 4px rgba(0,0,0,0.07);
+  }
+
+  body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  /* HEADER */
+  .site-header { background: linear-gradient(135deg, #1a3f6e 0%, #2E75B6 100%); color: #fff; padding: 36px 40px 28px; }
+  .site-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.3px; }
+  .site-header p  { font-size: 14px; opacity: 0.78; }
+  .stat-row { display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
+  .stat-chip { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 10px 18px; text-align: center; min-width: 100px; }
+  .stat-chip .n { font-size: 26px; font-weight: 700; line-height: 1; }
+  .stat-chip .l { font-size: 11px; opacity: 0.75; margin-top: 3px; }
+
+  /* TABS */
+  .tabs-wrap { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+  .tabs { display: flex; gap: 0; }
+  .tab-btn { font-family: 'Sarabun', sans-serif; font-size: 14px; padding: 14px 20px; background: none; border: none; cursor: pointer; color: var(--text-muted); border-bottom: 3px solid transparent; margin-bottom: -1px; transition: all 0.15s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--blue-mid); }
+  .tab-btn.active { color: var(--blue-dark); border-bottom-color: var(--blue-dark); font-weight: 600; }
+
+  /* CONTENT */
+  .content { max-width: 960px; margin: 0 auto; padding: 28px 24px 60px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION TITLE */
+  .sec-title { font-size: 17px; font-weight: 700; color: var(--blue-dark); margin: 0 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--blue-light); }
+  .sec-note { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+
+  /* CATEGORY CARDS */
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .cat-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 16px; box-shadow: var(--shadow); }
+  .cat-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .cat-name { font-size: 13px; font-weight: 700; }
+  .cat-meta { display: flex; gap: 8px; align-items: center; }
+  .pill { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 12px; }
+  .bar-wrap { background: #eef2f8; border-radius: 4px; height: 6px; margin-bottom: 6px; overflow: hidden; }
+  .bar-fill { height: 6px; border-radius: 4px; }
+  .cat-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x: auto; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: var(--blue-dark); color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; white-space: nowrap; }
+  tbody tr:nth-child(even) { background: #f8fafd; }
+  tbody tr:hover { background: var(--blue-light); }
+  tbody td { padding: 9px 12px; border-bottom: 1px solid #edf0f5; vertical-align: top; }
+  .td-name { font-weight: 600; color: var(--blue-dark); }
+  .td-dur { text-align: center; white-space: nowrap; font-weight: 600; }
+  .td-lv { text-align: center; }
+
+  /* LEVEL BADGE */
+  .lv-basic { background: #EAF3DE; color: #3B6D11; }
+  .lv-inter { background: #EBF3FB; color: #185FA5; }
+  .lv-both  { background: #FAEEDA; color: #854F0B; }
+  .lv-none  { background: #f0f0f0; color: #777; }
+
+  /* GROUP CARDS */
+  .group-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .group-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 16px; box-shadow: var(--shadow); }
+  .group-title { font-size: 14px; font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; }
+  .group-hours { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .chip { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 10px; background: var(--blue-light); color: var(--blue-dark); margin: 2px; border: 1px solid #c5d9ef; line-height: 1.5; }
+
+  /* ROADMAP */
+  .phase { border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px; border-left: 5px solid; }
+  .phase-1 { background: var(--green-light); border-color: var(--green-dark); }
+  .phase-2 { background: var(--blue-light);  border-color: var(--blue-mid); }
+  .phase-3 { background: var(--purple-light); border-color: var(--purple-dark); }
+  .phase-title { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .phase-1 .phase-title { color: var(--green-dark); }
+  .phase-2 .phase-title { color: var(--blue-dark); }
+  .phase-3 .phase-title { color: var(--purple-dark); }
+  .phase-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .phase-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .phase-tag { font-size: 11px; padding: 3px 10px; border-radius: 10px; background: rgba(255,255,255,0.75); border: 1px solid rgba(0,0,0,0.1); color: var(--text); }
+  .tip-box { background: #EAF5EE; border: 1px solid #9FE1CB; border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: #0F6E56; margin-top: 6px; }
+
+  /* INSIGHTS */
+  .insight-list { display: grid; gap: 12px; }
+  .insight { background: var(--card); border-radius: var(--radius); padding: 14px 16px; border-left: 4px solid; box-shadow: var(--shadow); }
+  .insight-1,.insight-5 { border-color: var(--blue-mid); }
+  .insight-2,.insight-6 { border-color: var(--green-dark); }
+  .insight-3,.insight-7 { border-color: var(--amber-dark); }
+  .insight-4 { border-color: var(--purple-dark); }
+  .insight-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .insight-1 .insight-title,.insight-5 .insight-title { color: var(--blue-dark); }
+  .insight-2 .insight-title,.insight-6 .insight-title { color: var(--green-dark); }
+  .insight-3 .insight-title,.insight-7 .insight-title { color: var(--amber-dark); }
+  .insight-4 .insight-title { color: var(--purple-dark); }
+  .insight-body { font-size: 13px; color: var(--text-mid); line-height: 1.65; }
+
+  /* STARTER PACK */
+  .starter-list { display: grid; gap: 8px; margin-bottom: 20px; }
+  .starter-item { background: var(--card); border-radius: var(--radius); padding: 12px 16px; border: 1px solid var(--border); display: flex; align-items: flex-start; gap: 14px; box-shadow: var(--shadow); }
+  .starter-num { background: var(--blue-dark); color: #fff; font-size: 13px; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .starter-name { font-size: 14px; font-weight: 700; color: var(--blue-dark); margin-bottom: 2px; }
+  .starter-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .starter-dur { font-size: 12px; background: var(--blue-light); color: var(--blue-dark); padding: 1px 8px; border-radius: 8px; font-weight: 600; }
+  .starter-why { font-size: 12px; color: var(--text-muted); }
+  .summary-box { background: linear-gradient(135deg, #EBF5F0, #EBF3FB); border-radius: var(--radius); padding: 16px 20px; border: 1px solid #9FE1CB; }
+  .summary-box p { font-size: 14px; color: #0F4060; line-height: 1.7; }
+
+  /* FOOTER */
+  .site-footer { text-align: center; padding: 20px; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); background: #fff; }
+
+  @media print {
+    .tabs-wrap { position: relative; }
+    .tab-panel { display: block !important; page-break-before: always; }
+    .tab-panel:first-of-type { page-break-before: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>สรุปหลักสูตรออนไลน์ฟรี TDGA</h1>
+  <p>เพื่อพัฒนาทักษะดิจิทัลของบุคลากร MWIT  ·  แหล่งข้อมูล: tdga.dga.or.th/knowledge/e-learning</p>
+  <div class="stat-row">
+    <div class="stat-chip"><div class="n">35</div><div class="l">หลักสูตรทั้งหมด</div></div>
+    <div class="stat-chip"><div class="n">7</div><div class="l">หมวดหมู่</div></div>
+    <div class="stat-chip"><div class="n">53.2</div><div class="l">ชั่วโมงรวม</div></div>
+    <div class="stat-chip"><div class="n">22</div><div class="l">ระดับ Basic</div></div>
+    <div class="stat-chip"><div class="n">91</div><div class="l">นาทีเฉลี่ย/หลักสูตร</div></div>
+  </div>
+</header>
+
+<nav class="tabs-wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="switchTab('overview',this)">ภาพรวมหมวดหมู่</button>
+    <button class="tab-btn" onclick="switchTab('courses',this)">รายชื่อหลักสูตร</button>
+    <button class="tab-btn" onclick="switchTab('groups',this)">กลุ่มเป้าหมาย</button>
+    <button class="tab-btn" onclick="switchTab('roadmap',this)">แผน 3 ระยะ</button>
+    <button class="tab-btn" onclick="switchTab('insights',this)">มุมมองใหม่</button>
+    <button class="tab-btn" onclick="switchTab('starter',this)">Starter Pack</button>
+  </div>
+</nav>
+
+<main class="content">
+
+<!-- TAB: OVERVIEW -->
+<div class="tab-panel active" id="tab-overview">
+  <p class="sec-title">สรุปแต่ละหมวดหมู่</p>
+  <div class="cat-grid">
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <span class="cat-name" style="color:#185FA5">Digital Literacy</span>
+        <span class="pill" style="background:#EBF3FB;color:#185FA5">4 หลักสูตร</span>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:80%;background:#378ADD"></div></div>
+      <div class="cat-meta"><span style="font-size:13px;font-weight:600;color:#185FA5">9 ชม.</span><span style="font-size:12px;color:#777">เฉลี่ย 135 นาที/หลักสูตร (สูงสุด)</span></div>
+      <div class="cat-note">พื้นฐานสำหรับบุคลากรทุกคน เน้นการใช้เทคโนโลยีดิจิทัล เครื่องมือออนไลน์ และการรู้เท่าทันสื่อ</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <span class="cat-name" style="color:#3B6D11">Digital Technology</span>
+        <span class="pill" style="background:#EAF3DE;color:#3B6D11">8 หลักสูตร</span>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:100%;background:#639922"></div></div>
+      <div class="cat-meta"><span style="font-size:13px;font-weight:600;color:#3B6D11">11 ชม. 10 นาที</span><span style="font-size:12px;color:#777">มากที่สุด</span></div>
+      <div class="cat-note">กลุ่มสำคัญที่สุด ครอบคลุม AI, Prompt Engineering, AI Ethics, Chatbot และ Blockchain</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <span class="cat-name" style="color:#A32D2D">Cyber Security</span>
+        <span class="pill" style="background:#FCEBEB;color:#A32D2D">3 หลักสูตร</span>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:40%;background:#E24B4A"></div></div>
+      <div class="cat-meta"><span style="font-size:13px;font-weight:600;color:#A32D2D">4 ชม. 30 นาที</span></div>
+      <div class="cat-note">เหมาะกับบุคลากรทุกคน โดยเฉพาะการสร้างความตระหนักด้านภัยไซเบอร์</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <span class="cat-name" style="color:#3C3489">Digital Leadership</span>
+        <span class="pill" style="background:#EEEDFE;color:#3C3489">4 หลักสูตร</span>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:60%;background:#7F77DD"></div></div>
+      <div class="cat-meta"><span style="font-size:13px;font-weight:600;color:#3C3489">6 ชม. 40 นาที</span></div>
+      <div class="cat-note">เหมาะกับผู้บริหาร หัวหน้างาน และคณะทำงานขับเคลื่อนโครงการดิจิทัล</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <span class="cat-name" style="color:#854F0B">Data Utilization & Sharing</span>
+        <span class="pill" style="background:#FAEEDA;color:#854F0B">8 หลักสูตร</span>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:90%;background:#BA7517"></div></div>
+      <div class="cat-meta"><span style="font-size:13px;font-weight:600;color:#854F0B">10 ชม.</span></div>
+      <div class="cat-note">เหมาะกับงานแผน ประกันคุณภาพ งานข้อมูล IT และผู้บริหาร เน้น Data Governance, Dashboard</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <span class="cat-name" style="color:#0F6E56">Digital Governance</span>
+        <span class="pill" style="background:#E1F5EE;color:#0F6E56">3 หลักสูตร</span>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:34%;background:#1D9E75"></div></div>
+      <div class="cat-meta"><span style="font-size:13px;font-weight:600;color:#0F6E56">3 ชม. 50 นาที</span></div>
+      <div class="cat-note">กฎหมาย/แนวปฏิบัติภาครัฐดิจิทัล PDPA เหมาะงานธุรการ ทะเบียน บุคคล IT</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <span class="cat-name" style="color:#993556">Digital Service</span>
+        <span class="pill" style="background:#FBEAF0;color:#993556">5 หลักสูตร</span>
+      </div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:72%;background:#D4537E"></div></div>
+      <div class="cat-meta"><span style="font-size:13px;font-weight:600;color:#993556">8 ชม.</span></div>
+      <div class="cat-note">ออกแบบบริการดิจิทัล UX/UI Design Thinking นวัตกรรม</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: COURSES -->
+<div class="tab-panel" id="tab-courses">
+  <p class="sec-title">รายชื่อหลักสูตรทั้ง 35 หลักสูตร</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>หมวดหมู่</th><th>ชื่อหลักสูตร</th><th>ระยะเวลา</th><th>ระดับ</th></tr></thead>
+      <tbody id="courseTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB: GROUPS -->
+<div class="tab-panel" id="tab-groups">
+  <p class="sec-title">หลักสูตรแยกตามกลุ่มบุคลากร MWIT</p>
+  <p class="sec-note">บุคลากรแต่ละกลุ่มไม่จำเป็นต้องเรียนทุกหลักสูตร เลือกตามบทบาทและความจำเป็นของงาน</p>
+  <div class="group-grid" id="groupGrid"></div>
+</div>
+
+<!-- TAB: ROADMAP -->
+<div class="tab-panel" id="tab-roadmap">
+  <p class="sec-title">แผนการดำเนินงาน 3 ระยะ</p>
+  <div class="phase phase-1">
+    <div class="phase-title">ระยะที่ 1 — สร้างฐาน (บุคลากรทุกคน)</div>
+    <div class="phase-sub">เป้าหมาย: ทักษะดิจิทัลพื้นฐาน · ความปลอดภัย · ความเข้าใจ AI · กฎหมายข้อมูล &nbsp;|&nbsp; รวม ~11.5 ชั่วโมง (~2 ชม./เดือน หาก กระจาย 6 เดือน)</div>
+    <div class="phase-tags">
+      <span class="phase-tag">Digital Literacy (90 นาที)</span>
+      <span class="phase-tag">Essential Digital Tools (200 นาที)</span>
+      <span class="phase-tag">Cyber Security Awareness (90 นาที)</span>
+      <span class="phase-tag">PDPA (110 นาที)</span>
+      <span class="phase-tag">AI Basics (130 นาที)</span>
+      <span class="phase-tag">AI for Everyone (90 นาที)</span>
+    </div>
+  </div>
+  <div class="phase phase-2">
+    <div class="phase-title">ระยะที่ 2 — พัฒนาตามบทบาทงาน (เฉพาะกลุ่ม)</div>
+    <div class="phase-sub">เป้าหมาย: ทักษะเฉพาะทางตามสายงาน &nbsp;|&nbsp; รวม ~14.5 ชั่วโมง แบ่งตามกลุ่ม</div>
+    <div class="phase-tags">
+      <span class="phase-tag">Prompt Engineering (100 นาที) — ครู+ทั่วไป</span>
+      <span class="phase-tag">Data Literacy for Analytics (100 นาที) — งานข้อมูล</span>
+      <span class="phase-tag">Dashboard Design (90 นาที) — งานแผน/QA</span>
+      <span class="phase-tag">Leadership in Age of AI (110 นาที) — ผู้บริหาร</span>
+      <span class="phase-tag">Digital Leadership (90 นาที) — ผู้บริหาร</span>
+      <span class="phase-tag">VUCA World (120 นาที) — ผู้บริหาร</span>
+      <span class="phase-tag">Cybersecurity Risk Management (90 นาที) — IT</span>
+      <span class="phase-tag">Basic Cybersecurity Series (90 นาที) — IT</span>
+      <span class="phase-tag">Digital Government Act (30 นาที) — ธุรการ</span>
+    </div>
+  </div>
+  <div class="phase phase-3">
+    <div class="phase-title">ระยะที่ 3 — ต่อยอดสู่โครงการจริง</div>
+    <div class="phase-sub">เป้าหมาย: ประยุกต์ใช้ ออกแบบระบบ/บริการ ขับเคลื่อนองค์กรดิจิทัล &nbsp;|&nbsp; รวม ~12 ชั่วโมง</div>
+    <div class="phase-tags">
+      <span class="phase-tag">AI Governance & Ethics (110 นาที)</span>
+      <span class="phase-tag">Agile Project Management (80 นาที)</span>
+      <span class="phase-tag">Design Thinking (90 นาที)</span>
+      <span class="phase-tag">UX/UI Design (120 นาที)</span>
+      <span class="phase-tag">Digital Service Design (110 นาที)</span>
+      <span class="phase-tag">Innovation Mindset (100 นาที)</span>
+      <span class="phase-tag">Data Driven Digital Government (120 นาที)</span>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>ข้อสังเกตด้านภาระเวลา:</strong> ระยะที่ 1 (~11.5 ชั่วโมง) หากกระจายเป็น 6 เดือน = เฉลี่ยเดือนละ <strong>2 ชั่วโมงเท่านั้น</strong> เป็นภาระที่บุคลากรทุกคนรับได้จริง ส่วนระยะที่ 2–3 เป็นการเรียนแบบเลือกตามกลุ่ม จึงไม่กระทบทุกคนพร้อมกัน
+  </div>
+</div>
+
+<!-- TAB: INSIGHTS -->
+<div class="tab-panel" id="tab-insights">
+  <p class="sec-title">มุมมองใหม่ที่น่านำเสนอ (7 Insights)</p>
+  <div class="insight-list">
+    <div class="insight insight-1">
+      <div class="insight-title">Insight 1 — AI เป็นหัวใจ ควรมี AI Literacy Path ข้ามหมวด</div>
+      <div class="insight-body">มีหลักสูตรที่เกี่ยวกับ AI โดยตรงถึง <strong>6 หลักสูตร</strong> กระจายใน 3 หมวดต่างกัน ควรจัดเป็น "AI Literacy Path" แทนการแบ่งตามหมวดเดิม เพราะ AI ไม่ใช่แค่เรื่องของ IT แต่เกี่ยวข้องกับทุกกลุ่มงาน</div>
+    </div>
+    <div class="insight insight-2">
+      <div class="insight-title">Insight 2 — มี Quick Win 8 หลักสูตร เรียนได้ใน 30–60 นาที</div>
+      <div class="insight-body">เหมาะสำหรับนำมาเป็น "ชุดเปิดตัว" โครงการเพื่อสร้าง momentum ก่อนที่บุคลากรจะลงทุนเวลากับหลักสูตรใหญ่ เช่น Data Governance Framework Standard (30 นาที) ให้ภาพรวมกรอบธรรมาภิบาลได้ทันที</div>
+    </div>
+    <div class="insight insight-3">
+      <div class="insight-title">Insight 3 — ภาระเวลาระยะที่ 1 ไม่หนักอย่างที่คิด</div>
+      <div class="insight-body">~11.5 ชั่วโมง กระจาย 6 เดือน = <strong>เดือนละ 2 ชั่วโมงเท่านั้น</strong> ควรสื่อสารตัวเลขนี้ให้ชัดในการนำเสนอ เพื่อลดความกังวลเรื่องภาระงานเพิ่ม</div>
+    </div>
+    <div class="insight insight-4">
+      <div class="insight-title">Insight 4 — Digital Literacy มีน้ำหนักมากกว่าที่ดูเหมือน</div>
+      <div class="insight-body">แค่ 4 หลักสูตร แต่รวม <strong>9 ชั่วโมง เฉลี่ย 135 นาที/หลักสูตร</strong> สูงสุดในทุกหมวด ต้องจัดสรรเวลาให้เพียงพอ ไม่ควรมองว่าเป็น "หมวดเล็ก"</div>
+    </div>
+    <div class="insight insight-5">
+      <div class="insight-title">Insight 5 — เส้นทางครูผู้สอน: เชื่อม AI + Pedagogy</div>
+      <div class="insight-body">กลุ่มครูมีเส้นทางที่น่าสนใจเฉพาะตัว: AI Basics → Prompt Engineering → AI Governance & Ethics → Design Thinking → Innovation Mindset รวม ~530 นาที (~9 ชม.) ครอบคลุมทั้งการใช้ AI ในชั้นเรียน จริยธรรม และนวัตกรรมการสอน</div>
+    </div>
+    <div class="insight insight-6">
+      <div class="insight-title">Insight 6 — Data Governance มีครบ 3 ระดับ พร้อมออกแบบตามตำแหน่ง</div>
+      <div class="insight-body">Framework Standard (30 นาที) สำหรับทั่วไป → Mindset for Executive (50 นาที) สำหรับผู้บริหาร → Roadmap (90 นาที) สำหรับผู้ปฏิบัติ สามารถออกแบบ Learning Path ตามตำแหน่งได้ทันทีโดยไม่ต้องปรับอะไร</div>
+    </div>
+    <div class="insight insight-7">
+      <div class="insight-title">Insight 7 — โอกาสขยายสู่นักเรียน MWIT</div>
+      <div class="insight-body">หลายหลักสูตร เช่น AI for Everyone, Prompt Engineering, Digital Literacy, Cyber Security Awareness, Innovation Mindset เหมาะกับนักเรียน MWIT ด้วย เป็น side value ที่ใช้ทรัพยากรเดียวกับที่วางแผนไว้ให้บุคลากรอยู่แล้ว</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: STARTER -->
+<div class="tab-panel" id="tab-starter">
+  <p class="sec-title">ชุดเริ่มต้นที่แนะนำสำหรับ MWIT (Starter Pack)</p>
+  <p class="sec-note">8 หลักสูตรต่อไปนี้เสนอเป็น "ชุดเริ่มต้น" เพื่อสร้างพื้นฐานดิจิทัลร่วมกันทั้งองค์กร</p>
+  <div class="starter-list">
+    <div class="starter-item">
+      <div class="starter-num">1</div>
+      <div><div class="starter-name">Cyber Security Awareness</div><div class="starter-meta"><span class="starter-dur">90 นาที</span></div><div class="starter-why">ลดความเสี่ยง phishing, malware และการหลอกลวงออนไลน์ เป็นความเสี่ยงพื้นฐานของทุกคน</div></div>
+    </div>
+    <div class="starter-item">
+      <div class="starter-num">2</div>
+      <div><div class="starter-name">PDPA for Government Officer — กฎหมายคุ้มครองข้อมูลส่วนบุคคล</div><div class="starter-meta"><span class="starter-dur">110 นาที</span></div><div class="starter-why">MWIT มีข้อมูลนักเรียน ผู้ปกครอง บุคลากร และกิจกรรมจำนวนมาก ทุกคนควรมีความเข้าใจร่วม</div></div>
+    </div>
+    <div class="starter-item">
+      <div class="starter-num">3</div>
+      <div><div class="starter-name">Digital Literacy: ความฉลาดทางดิจิทัล (Digital Intelligence)</div><div class="starter-meta"><span class="starter-dur">90 นาที</span></div><div class="starter-why">สร้างฐานความเข้าใจพลเมืองดิจิทัล การรู้เท่าทันสื่อ และความปลอดภัยออนไลน์</div></div>
+    </div>
+    <div class="starter-item">
+      <div class="starter-num">4</div>
+      <div><div class="starter-name">การใช้เครื่องมือดิจิทัลเพื่อการทำงานภาครัฐ (Essential Digital Tools)</div><div class="starter-meta"><span class="starter-dur">200 นาที</span></div><div class="starter-why">เพิ่มประสิทธิภาพงานเอกสาร ตาราง การนำเสนอ การประชุมออนไลน์ และการทำงานร่วมกัน</div></div>
+    </div>
+    <div class="starter-item">
+      <div class="starter-num">5</div>
+      <div><div class="starter-name">AI Basics หรือ AI for Everyone</div><div class="starter-meta"><span class="starter-dur">90–130 นาที</span></div><div class="starter-why">สร้างความเข้าใจพื้นฐาน AI ก่อนนำไปใช้จริง บุคลากรทุกคนควรรู้ว่า AI คืออะไรและใช้ทำอะไรได้บ้าง</div></div>
+    </div>
+    <div class="starter-item">
+      <div class="starter-num">6</div>
+      <div><div class="starter-name">เรียนรู้ Prompt Engineering สู่ความเป็นผู้เชี่ยวชาญ AI</div><div class="starter-meta"><span class="starter-dur">100 นาที</span></div><div class="starter-why">ช่วยให้ใช้ AI สำหรับงานเอกสาร การสื่อสาร การสรุปข้อมูล และการวิเคราะห์เบื้องต้นได้ดีขึ้น</div></div>
+    </div>
+    <div class="starter-item">
+      <div class="starter-num">7</div>
+      <div><div class="starter-name">ความรู้และความเข้าใจข้อมูลสำหรับการวิเคราะห์ข้อมูล (Data Literacy)</div><div class="starter-meta"><span class="starter-dur">100 นาที</span></div><div class="starter-why">ยกระดับการใช้ข้อมูลในโรงเรียน โดยเฉพาะงานแผน ประกันคุณภาพ และการตัดสินใจเชิงนโยบาย</div></div>
+    </div>
+    <div class="starter-item">
+      <div class="starter-num">8</div>
+      <div><div class="starter-name">AI Governance & Ethics — จริยธรรมและธรรมาภิบาล AI</div><div class="starter-meta"><span class="starter-dur">110 นาที</span></div><div class="starter-why">สำคัญสำหรับการกำหนดแนวทางการใช้ AI อย่างเหมาะสมและรับผิดชอบในบริบทโรงเรียน</div></div>
+    </div>
+  </div>
+  <div class="summary-box">
+    <p><strong>บทสรุป:</strong> หลักสูตรจาก TDGA สามารถใช้เป็นฐานในการวางแผนพัฒนาทักษะดิจิทัลของบุคลากร MWIT ได้ทั้งในระดับพื้นฐานสำหรับทุกคน และระดับเฉพาะทางตามสายงาน แนะนำให้ดำเนินการในรูปแบบ <strong>"เส้นทางการเรียนรู้ตามบทบาทงาน (Learning Path)"</strong> มากกว่าการกำหนดให้เรียนทุกหลักสูตรเหมือนกันทั้งหมด เพื่อให้เกิดประโยชน์จริงและไม่เป็นภาระแก่บุคลากร</p>
+  </div>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  จัดทำเพื่อประกอบการวางแผนพัฒนาบุคลากร MWIT &nbsp;·&nbsp; แหล่งข้อมูล: TDGA e-Learning (tdga.dga.or.th/knowledge/e-learning)
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+const courses = [
+  {id:1,cat:"Digital Literacy",name:"Digital Literacy: ความฉลาดทางดิจิทัล (Digital Intelligence)",mins:90,level:"Basic"},
+  {id:2,cat:"Digital Literacy",name:"ความเข้าใจและการใช้เทคโนโลยีดิจิทัลอย่างมีประสิทธิภาพ",mins:150,level:"Basic"},
+  {id:3,cat:"Digital Literacy",name:"การใช้เครื่องมือดิจิทัลเพื่อการทำงานภาครัฐ (Essential Digital Tools for Workplace)",mins:200,level:"Basic"},
+  {id:4,cat:"Digital Literacy",name:"ทักษะที่จำเป็นสำหรับการปฏิบัติงานแบบออนไลน์ (Essential Skills for Working Online)",mins:100,level:"Basic"},
+  {id:5,cat:"Digital Technology",name:"AI Governance & Ethics: หลักการจริยธรรม ธรรมาภิบาล และข้อกฎหมายในการประยุกต์ใช้ AI",mins:110,level:"—"},
+  {id:6,cat:"Digital Technology",name:"AI for Everyone: ปัญญาประดิษฐ์เพื่ออนาคตของทุกคน",mins:90,level:"—"},
+  {id:7,cat:"Digital Technology",name:"เรียนรู้ Prompt Engineering สู่ความเป็นผู้เชี่ยวชาญ AI",mins:100,level:"—"},
+  {id:8,cat:"Digital Technology",name:"หลักสูตรทักษะเอไอระดับพื้นฐาน (AI Basics)",mins:130,level:"Basic"},
+  {id:9,cat:"Digital Technology",name:"การประยุกต์ใช้ AI ในการพัฒนา Chatbot เพื่อการบริการภาครัฐ",mins:60,level:"Intermediate"},
+  {id:10,cat:"Digital Technology",name:"ความรู้ความเข้าใจเกี่ยวกับปัญญาประดิษฐ์ (AI) สำหรับบุคลากรภาครัฐทุกระดับ",mins:60,level:"Basic"},
+  {id:11,cat:"Digital Technology",name:"แนวทางในการนำ AI มาใช้สำหรับบริการภาครัฐ (AI for Government Services)",mins:60,level:"Intermediate"},
+  {id:12,cat:"Digital Technology",name:"การใช้เทคโนโลยีบล็อกเชนสำหรับบริการภาครัฐ (Blockchain for Government Services)",mins:60,level:"Intermediate"},
+  {id:13,cat:"Cyber Security",name:"การสร้างความตระหนักรู้ความมั่นคงปลอดภัยไซเบอร์ (Cyber Security Awareness)",mins:90,level:"—"},
+  {id:14,cat:"Cyber Security",name:"ความเข้าใจการบริหารความเสี่ยงและความปลอดภัยไซเบอร์ (Cybersecurity Risk Management)",mins:90,level:"—"},
+  {id:15,cat:"Cyber Security",name:"Basic Cybersecurity Series: หลักสูตรพัฒนาทักษะด้านความมั่นคงปลอดภัยทางไซเบอร์เบื้องต้น",mins:90,level:"—"},
+  {id:16,cat:"Digital Leadership",name:"Leadership in the Age of AI: ผู้นำในยุค AI",mins:110,level:"—"},
+  {id:17,cat:"Digital Leadership",name:"ภาวะผู้นำในยุคดิจิทัล (Digital Leadership)",mins:90,level:"Basic"},
+  {id:18,cat:"Digital Leadership",name:"การบริหารจัดการโครงการด้วยอไจล์ (Agile Project Management)",mins:80,level:"Basic"},
+  {id:19,cat:"Digital Leadership",name:"ความท้าทายของผู้นำภาครัฐในยุค VUCA World",mins:120,level:"Basic"},
+  {id:20,cat:"Data Utilization and Sharing",name:"มาตรฐานกรอบธรรมาภิบาลข้อมูลภาครัฐ (Data Governance Framework Standard)",mins:30,level:"Basic"},
+  {id:21,cat:"Data Utilization and Sharing",name:"ธรรมาภิบาลข้อมูลสำหรับผู้บริหารองค์กรรัฐ (Data Governance Mindset for the Executive)",mins:50,level:"—"},
+  {id:22,cat:"Data Utilization and Sharing",name:"Introduction to Data Governance Framework and Open Data",mins:90,level:"Basic"},
+  {id:23,cat:"Data Utilization and Sharing",name:"แนวทางและแนวปฏิบัติการเปิดเผยข้อมูลภาครัฐ (Open Government Data Guideline)",mins:30,level:"Basic"},
+  {id:24,cat:"Data Utilization and Sharing",name:"หลักการสร้างภาพข้อมูลและการออกแบบแดชบอร์ดอย่างมีประสิทธิภาพ (Data Visualization & Dashboard Design)",mins:90,level:"Basic"},
+  {id:25,cat:"Data Utilization and Sharing",name:"การขับเคลื่อนด้วยข้อมูลสู่การเป็นรัฐบาลดิจิทัล (Data Driven Digital Government Transformation)",mins:120,level:"Basic+Inter"},
+  {id:26,cat:"Data Utilization and Sharing",name:"ความรู้และความเข้าใจข้อมูลสำหรับการวิเคราะห์ข้อมูล (Data Literacy for Data Analytics)",mins:100,level:"Basic"},
+  {id:27,cat:"Data Utilization and Sharing",name:"การจัดทำธรรมาภิบาลข้อมูลภาครัฐ (Data Governance Roadmap)",mins:90,level:"Basic"},
+  {id:28,cat:"Digital Governance",name:"พระราชบัญญัติการบริหารงานและการให้บริการภาครัฐผ่านระบบดิจิทัล (Digital Government Act)",mins:30,level:"Basic"},
+  {id:29,cat:"Digital Governance",name:"กฎหมายคุ้มครองข้อมูลส่วนบุคคลสำหรับผู้ปฏิบัติงานภาครัฐ (PDPA for Government Officer)",mins:110,level:"—"},
+  {id:30,cat:"Digital Governance",name:"แนวปฏิบัติกระบวนการทางดิจิทัลภาครัฐ ตาม พ.ร.บ. การปฏิบัติราชการทางอิเล็กทรอนิกส์ พ.ศ. 2565",mins:90,level:"Basic"},
+  {id:31,cat:"Digital Service",name:"การเปลี่ยนผ่านสู่องค์กรดิจิทัล",mins:60,level:"Basic"},
+  {id:32,cat:"Digital Service",name:"การออกแบบบริการดิจิทัลภาครัฐ (Government Digital Service Design)",mins:110,level:"Basic"},
+  {id:33,cat:"Digital Service",name:"การเปลี่ยนผ่านองค์กรสู่ดิจิทัลด้วยกระบวนการคิดเชิงออกแบบ (Digital Transformation by Design Thinking)",mins:90,level:"Basic"},
+  {id:34,cat:"Digital Service",name:"การออกแบบ UX/UI เพื่อดึงดูดความสนใจของผู้ใช้ (Awesome UX/UI Design)",mins:120,level:"Basic"},
+  {id:35,cat:"Digital Service",name:"จุดประกายความคิดเพื่อสร้างนวัตกรรม (Building an Innovation Mindset)",mins:100,level:"Basic"},
+];
+
+const catColors = {
+  "Digital Literacy":"#185FA5","Digital Technology":"#3B6D11","Cyber Security":"#A32D2D",
+  "Digital Leadership":"#3C3489","Data Utilization and Sharing":"#854F0B",
+  "Digital Governance":"#0F6E56","Digital Service":"#993556"
+};
+const catBg = {
+  "Digital Literacy":"#EBF3FB","Digital Technology":"#EAF3DE","Cyber Security":"#FCEBEB",
+  "Digital Leadership":"#EEEDFE","Data Utilization and Sharing":"#FAEEDA",
+  "Digital Governance":"#E1F5EE","Digital Service":"#FBEAF0"
+};
+const lvClass = {"Basic":"lv-basic","Intermediate":"lv-inter","Basic+Inter":"lv-both","—":"lv-none"};
+
+const tb = document.getElementById('courseTable');
+courses.forEach(c => {
+  const shortCat = c.cat.replace('Data Utilization and Sharing','Data & Sharing');
+  tb.innerHTML += `<tr>
+    <td>${c.id}</td>
+    <td><span class="pill" style="background:${catBg[c.cat]};color:${catColors[c.cat]}">${shortCat}</span></td>
+    <td class="td-name">${c.name}</td>
+    <td class="td-dur">${c.mins} นาที</td>
+    <td class="td-lv"><span class="pill ${lvClass[c.level]||'lv-none'}">${c.level}</span></td>
+  </tr>`;
+});
+
+const groups = [
+  {emoji:"👤",title:"บุคลากรทุกคน",items:["Digital Literacy (90น.)","Essential Digital Tools (200น.)","Cyber Security Awareness (90น.)","PDPA (110น.)","AI Basics (130น.)","AI for Everyone (90น.)"],total:710},
+  {emoji:"🧑‍🏫",title:"ครูผู้สอน",items:["Prompt Engineering (100น.)","AI Governance & Ethics (110น.)","Data Literacy for Analytics (100น.)","Design Thinking (90น.)","Innovation Mindset (100น.)"],total:500},
+  {emoji:"👔",title:"ผู้บริหาร/หัวหน้างาน",items:["Leadership in Age of AI (110น.)","Digital Leadership (90น.)","VUCA World (120น.)","Data Governance Mindset (50น.)","Data Driven Transformation (120น.)"],total:490},
+  {emoji:"💻",title:"งาน IT/ระบบสารสนเทศ",items:["Basic Cybersecurity Series (90น.)","Cybersecurity Risk Management (90น.)","AI for Government Services (60น.)","Chatbot Development (60น.)","Data Governance Roadmap (90น.)"],total:390},
+  {emoji:"📊",title:"งานแผน/ประกัน/ข้อมูล",items:["Data Literacy for Analytics (100น.)","Dashboard Design (90น.)","Data Governance Framework (30น.)","Open Government Data (30น.)","Introduction to Data Governance (90น.)"],total:340},
+  {emoji:"📝",title:"งานธุรการ/สารบรรณ/ทะเบียน",items:["Essential Digital Tools (200น.)","PDPA (110น.)","Digital Government Act (30น.)","พ.ร.บ. การปฏิบัติราชการอิเล็กทรอนิกส์ (90น.)"],total:430},
+  {emoji:"🎨",title:"ผู้พัฒนาระบบ/บริการ",items:["Design Thinking (90น.)","Government Digital Service Design (110น.)","UX/UI Design (120น.)","Innovation Mindset (100น.)","Agile Project Management (80น.)"],total:500},
+];
+
+const gg = document.getElementById('groupGrid');
+groups.forEach(g => {
+  gg.innerHTML += `<div class="group-card">
+    <div class="group-title">${g.emoji} ${g.title}</div>
+    <div class="group-hours">รวม ${(g.total/60).toFixed(1)} ชั่วโมง · ${g.items.length} หลักสูตร</div>
+    <div>${g.items.map(i=>`<span class="chip">${i}</span>`).join('')}</div>
+  </div>`;
+});
+</script>
+</body>
+</html>
