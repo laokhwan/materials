@@ -1,139 +1,586 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MWIT Interactive Web Programming Lab</title>
   <style>
-    :root{
-      --bg:#f5f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#d8dee9;
-      --blue:#2563eb; --blue2:#1d4ed8; --soft:#eff6ff; --green:#059669; --amber:#b45309;
-      --red:#dc2626; --code:#111827;
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8dee9;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --soft: #eff6ff;
+      --success: #047857;
+      --success-soft: #ecfdf5;
+      --warning: #92400e;
+      --warning-soft: #fffbeb;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --code-bg: #111827;
+      --console-bg: #020617;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun","Noto Sans Thai","Segoe UI",sans-serif;font-size:17px;line-height:1.65}
-    header{background:linear-gradient(135deg,#0f172a,#1d4ed8,#7c3aed);color:#fff;padding:34px 20px}
-    .wrap{max-width:1200px;margin:auto}
-    h1{font-size:clamp(30px,5vw,52px);line-height:1.15;margin:0 0 10px}
-    h2{font-size:30px;margin:0 0 12px}
-    h3{font-size:22px;margin:22px 0 10px}
-    header p{font-size:20px;max-width:900px;margin:0;opacity:.95}
-    nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
-    nav .wrap{display:flex;gap:8px;overflow-x:auto;padding:10px 20px}
-    nav a{text-decoration:none;color:var(--ink);font-weight:700;white-space:nowrap;padding:8px 12px;border-radius:999px}
-    nav a:hover{background:var(--soft);color:var(--blue)}
-    main{max-width:1200px;margin:24px auto 80px;padding:0 20px}
-    section{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;margin:22px 0;box-shadow:0 10px 28px rgba(15,23,42,.05)}
-    .box{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff}
-    .mission{border-left:6px solid var(--blue);background:var(--soft)}
-    .tip{border-left:6px solid var(--green);background:#ecfdf5}
-    .warn{border-left:6px solid var(--amber);background:#fffbeb}
-    .danger{border-left:6px solid var(--red);background:#fef2f2}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    .three{grid-template-columns:repeat(3,minmax(0,1fr))}
-    @media(max-width:900px){.grid,.three{grid-template-columns:1fr}section{padding:18px}}
-    code{background:#eef2ff;color:#1e3a8a;padding:2px 6px;border-radius:6px;font-family:Consolas,monospace}
-    pre{background:#0f172a;color:#e5e7eb;padding:14px;border-radius:14px;overflow:auto;font-family:Consolas,monospace;font-size:15px}
-    .lab{border:1px solid #bfdbfe;border-radius:22px;overflow:hidden;margin:22px 0;background:#fff}
-    .lab-head{padding:18px 20px;background:linear-gradient(180deg,#fff,#f8fbff);border-bottom:1px solid var(--line)}
-    .lab-head p{margin:6px 0 0;color:var(--muted)}
-    .lab-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:18px}
-    @media(max-width:1000px){.lab-body{grid-template-columns:1fr}}
-    label{display:block;font-weight:800;margin:10px 0 6px}
-    textarea.editor{width:100%;min-height:190px;background:var(--code);color:#e5e7eb;border:1px solid #334155;border-radius:14px;padding:12px;font-family:Consolas,Menlo,monospace;font-size:15px;line-height:1.5;resize:vertical;direction:ltr;text-align:left;tab-size:2}
-    textarea.editor.html{min-height:260px}
-    textarea.editor.css{min-height:220px}
-    textarea.editor.js{min-height:220px}
-    button{border:0;border-radius:12px;background:var(--blue);color:#fff;padding:10px 14px;font:inherit;font-weight:800;cursor:pointer;margin:8px 6px 8px 0}
-    button:hover{background:var(--blue2)}
-    button.secondary{background:#475569}
-    button.secondary:hover{background:#334155}
-    button.ghost{background:#fff;color:var(--blue);border:1px solid #bfdbfe}
-    button.ghost:hover{background:#eff6ff}
-    .preview{width:100%;height:420px;border:1px solid #cbd5e1;border-radius:14px;background:#fff}
-    .copy-row{display:flex;gap:8px;flex-wrap:wrap}
-    .file-note{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:10px;color:#334155;font-size:15px;margin:10px 0}
-    .predict,.challenge{border-radius:14px;padding:12px;margin:10px 0}
-    .predict{border:1px solid #bbf7d0;background:#ecfdf5;border-left:6px solid var(--green)}
-    .challenge{border:1px solid #fde68a;background:#fffbeb;border-left:6px solid var(--amber)}
-    table{width:100%;border-collapse:collapse;margin:12px 0}
-    th,td{border:1px solid var(--line);padding:10px;vertical-align:top}
-    th{background:#f1f5f9;text-align:left}
-    footer{text-align:center;color:var(--muted);padding:36px}
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Sarabun", "Noto Sans Thai", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 55%, #7c3aed);
+      color: white;
+      padding: 34px 20px;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4.5vw, 50px);
+      line-height: 1.15;
+    }
+
+    header p {
+      max-width: 900px;
+      margin: 0;
+      font-size: 20px;
+      opacity: 0.95;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+
+    nav .wrap {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      overflow-x: auto;
+      padding: 10px 20px;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    nav a:hover {
+      background: var(--soft);
+      color: var(--primary);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 24px auto 80px;
+      padding: 0 20px;
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 26px;
+      margin: 22px 0;
+      box-shadow: 0 10px 28px rgba(15,23,42,0.06);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 31px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 23px;
+    }
+
+    .lead {
+      font-size: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 920px) {
+      .grid, .three {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 20px;
+      }
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .mission {
+      border-left: 6px solid var(--primary);
+      background: var(--soft);
+    }
+
+    .tip {
+      border-left: 6px solid var(--success);
+      background: var(--success-soft);
+    }
+
+    .warn {
+      border-left: 6px solid var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .danger {
+      border-left: 6px solid var(--danger);
+      background: var(--danger-soft);
+    }
+
+    code {
+      font-family: Consolas, Menlo, Monaco, monospace;
+      background: #eef2ff;
+      color: #1e3a8a;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.92em;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: #e5e7eb;
+      padding: 16px;
+      border-radius: 14px;
+      overflow: auto;
+      line-height: 1.55;
+      font-family: Consolas, Menlo, Monaco, monospace;
+      font-size: 15px;
+    }
+
+    .lab {
+      border: 1px solid #bfdbfe;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 24px 0;
+      background: white;
+      box-shadow: 0 12px 26px rgba(37,99,235,0.08);
+    }
+
+    .lab-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f8fbff);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .lab-title {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .lab-title small {
+      display: block;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 400;
+      margin-top: 4px;
+    }
+
+    .lab-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .lab-body {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 1050px) {
+      .lab-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tabs {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      border: 1px solid #bfdbfe;
+      background: white;
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 7px 12px;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: none;
+    }
+
+    .tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin: 10px 0 5px;
+    }
+
+    textarea.editor {
+      width: 100%;
+      min-height: 300px;
+      resize: vertical;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      background: var(--code-bg);
+      color: #e5e7eb;
+      padding: 14px;
+      font-family: Consolas, Menlo, Monaco, monospace;
+      font-size: 15px;
+      line-height: 1.55;
+      direction: ltr;
+      text-align: left;
+      tab-size: 2;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 15px;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      margin: 8px 6px 0 0;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    button.secondary {
+      background: #475569;
+    }
+
+    button.secondary:hover {
+      background: #334155;
+    }
+
+    button.ghost {
+      background: white;
+      color: var(--primary);
+      border: 1px solid #bfdbfe;
+    }
+
+    button.ghost:hover {
+      background: var(--soft);
+    }
+
+    button.danger-btn {
+      background: #dc2626;
+    }
+
+    button.danger-btn:hover {
+      background: #b91c1c;
+    }
+
+    .file-note {
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: #334155;
+      font-size: 15px;
+    }
+
+    iframe.preview {
+      width: 100%;
+      min-height: 360px;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      background: white;
+    }
+
+    .console {
+      margin-top: 12px;
+      min-height: 70px;
+      background: var(--console-bg);
+      color: #d1fae5;
+      border-radius: 14px;
+      padding: 12px;
+      font-family: Consolas, Menlo, Monaco, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .predict, .modify, .explain {
+      border-radius: 14px;
+      padding: 14px;
+      margin: 0 0 14px;
+    }
+
+    .predict {
+      background: var(--success-soft);
+      border: 1px solid #bbf7d0;
+      border-left: 6px solid var(--success);
+    }
+
+    .modify {
+      background: var(--warning-soft);
+      border: 1px solid #fde68a;
+      border-left: 6px solid var(--warning);
+    }
+
+    .explain {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .copy-status {
+      margin-top: 8px;
+      color: var(--success);
+      font-weight: 800;
+      min-height: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f1f5f9;
+      text-align: left;
+    }
+
+    .task-list li {
+      margin: 6px 0;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+    }
   </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <h1>MWIT Interactive Web Programming Lab</h1>
-    <p>บทเรียนแบบทดลองจริง: นักเรียนแก้ HTML, CSS และ JavaScript ได้ กด Run เพื่อดูผลทันที และ Copy โค้ดไปใช้ใน VS Code แบบแยกไฟล์ได้จริง</p>
-  </div>
-</header>
-
-<nav>
-  <div class="wrap">
-    <a href="#intro">เริ่มต้น</a>
-    <a href="#lab1">Lab 1 Input</a>
-    <a href="#lab2">Lab 2 CSS</a>
-    <a href="#lab3">Lab 3 Calculate</a>
-    <a href="#lab4">Lab 4 if/else</a>
-    <a href="#lab5">Lab 5 Local Storage</a>
-    <a href="#project">Mini Project</a>
-  </div>
-</nav>
-
-<main>
-<section id="intro">
-  <h2>เริ่มต้น: 3 ไฟล์หลักของเว็บแอป</h2>
-  <div class="grid three">
-    <div class="box"><h3>index.html</h3><p>สร้างโครงสร้าง เช่น ช่องรับข้อมูล ปุ่ม และพื้นที่แสดงผล</p></div>
-    <div class="box"><h3>style.css</h3><p>กำหนดหน้าตา เช่น สี ขนาด ระยะห่าง เส้นขอบ และปุ่ม</p></div>
-    <div class="box"><h3>script.js</h3><p>ทำให้เว็บโต้ตอบได้ เช่น อ่านค่า input คำนวณ แสดงผล และบันทึกข้อมูล</p></div>
-  </div>
-  <div class="box warn">
-    <strong>วิธีใช้:</strong> ในแต่ละ Lab ให้แก้โค้ดในกล่อง HTML / CSS / JavaScript แล้วกด <strong>Run</strong> ถ้าต้องการนำไปทำต่อใน VS Code ให้กด Copy แต่ละไฟล์ แล้ววางในไฟล์ชื่อ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ในโฟลเดอร์เดียวกัน
-  </div>
-</section>
-
-<div id="labs"></div>
-
-<section id="project">
-  <h2>Mini Project: Personal Study Planner</h2>
-  <div class="box mission">
-    <p><strong>ภารกิจ:</strong> ให้นักเรียนสร้างเว็บแอปที่รับข้อมูลแผนการอ่านหนังสือ คำนวณเวลาเฉลี่ยต่อบท แสดงคำแนะนำ และบันทึกข้อมูลล่าสุดด้วย Local Storage</p>
-  </div>
-  <div class="grid">
-    <div class="box">
-      <h3>HTML ควรมี</h3>
-      <ul>
-        <li>input สำหรับชื่อ วิชา จำนวนบท จำนวนชั่วโมง</li>
-        <li>select สำหรับระดับความยาก</li>
-        <li>button สำหรับ Calculate / Save / Load / Clear</li>
-        <li>div สำหรับแสดงผลลัพธ์</li>
-      </ul>
+  <header>
+    <div class="wrap">
+      <div class="badge">MWIT Interactive Web Programming Lab · Chapter 1</div>
+      <h1>HTML + CSS + JavaScript: สร้างเว็บแอปที่รับข้อมูล คำนวณ แสดงผล และบันทึกแบบ Local</h1>
+      <p>นักเรียนสามารถทดลองแก้โค้ด กด Run ดูผลทันที และคัดลอกโค้ดไปแยกไฟล์ใน VS Code เป็น index.html, style.css และ script.js ได้จริง</p>
     </div>
-    <div class="box">
-      <h3>CSS ควรมี</h3>
-      <ul>
-        <li>ตกแต่งพื้นหลังและกล่องฟอร์ม</li>
-        <li>ตกแต่ง input, select, button</li>
-        <li>ทำกล่องแสดงผลให้อ่านง่าย</li>
-      </ul>
+  </header>
+
+  <nav>
+    <div class="wrap">
+      <a href="#intro">ภาพรวม</a>
+      <a href="#lab1">Lab 1 Input</a>
+      <a href="#lab2">Lab 2 CSS</a>
+      <a href="#lab3">Lab 3 Number()</a>
+      <a href="#lab4">Lab 4 if/else</a>
+      <a href="#lab5">Lab 5 Local Storage</a>
+      <a href="#project">Mini Project</a>
+      <a href="#reflection">Reflection</a>
     </div>
-  </div>
-</section>
-</main>
+  </nav>
 
-<footer>MWIT Interactive Web Programming Lab</footer>
+  <main>
+    <section id="intro">
+      <h2>ภาพรวม: เว็บแอปหนึ่งหน้าประกอบด้วยอะไรบ้าง?</h2>
 
-<script>
-const labs = [
-  {
-    id:"lab1", title:"Lab 1: สร้างช่องรับชื่อและอ่านค่าด้วย JavaScript",
-    desc:"เรียนรู้ว่า HTML สร้าง input, CSS ตกแต่ง input และ JavaScript อ่านค่าด้วย .value",
-    predict:"ถ้าพิมพ์ชื่อ Somchai แล้วกดปุ่ม ผลลัพธ์ควรเป็นอะไร?",
-    challenge:"เปลี่ยน placeholder ใน HTML, เปลี่ยนสีปุ่มใน CSS, และเปลี่ยนข้อความ Hello ใน JavaScript เป็น สวัสดี",
-    html:`<!DOCTYPE html>
+      <div class="box mission">
+        <p class="lead"><strong>เป้าหมายของบทนี้:</strong> นักเรียนจะเข้าใจว่าเว็บแอปไม่ได้เกิดจาก JavaScript อย่างเดียว แต่เกิดจากการทำงานร่วมกันของ HTML, CSS และ JavaScript</p>
+      </div>
+
+      <div class="grid three">
+        <div class="box">
+          <h3>HTML</h3>
+          <p>สร้างโครงสร้าง เช่น หัวข้อ ช่องรับข้อมูล ปุ่ม และพื้นที่แสดงผล</p>
+          <p><code>&lt;input&gt;</code> <code>&lt;button&gt;</code> <code>&lt;div&gt;</code></p>
+        </div>
+        <div class="box">
+          <h3>CSS</h3>
+          <p>ตกแต่งหน้าตา เช่น สี ขนาด ระยะห่าง เส้นขอบ และรูปแบบปุ่ม</p>
+          <p><code>background</code> <code>border-radius</code> <code>padding</code></p>
+        </div>
+        <div class="box">
+          <h3>JavaScript</h3>
+          <p>ทำให้เว็บโต้ตอบได้ เช่น อ่านค่า คำนวณ แสดงผล และบันทึกข้อมูล</p>
+          <p><code>.value</code> <code>Number()</code> <code>localStorage</code></p>
+        </div>
+      </div>
+
+      <h3>เมื่อนำไปใช้ใน VS Code</h3>
+      <pre><code>my-web-app
+├── index.html   // โครงสร้างหน้าเว็บ
+├── style.css    // การตกแต่ง
+└── script.js    // การทำงานของเว็บ</code></pre>
+
+      <div class="box warn">
+        <strong>วิธีใช้ Workbook:</strong> ในแต่ละ Lab ให้ลองอ่านคำอธิบาย ดูโค้ดทั้ง 3 ไฟล์ กด Run เพื่อดูผล แก้โค้ดบางส่วน แล้วกด Run ใหม่ จากนั้นสามารถกด Copy เพื่อเอาไปวางใน VS Code ได้
+      </div>
+    </section>
+
+    <section id="labsContainer"></section>
+
+    <section id="project">
+      <h2>Mini Project: Personal Study Planner</h2>
+      <div class="box mission">
+        <p class="lead"><strong>ภารกิจ:</strong> สร้างเว็บแอปที่รับข้อมูลแผนการอ่านหนังสือ คำนวณเวลาเฉลี่ยต่อบท แสดงคำแนะนำ และบันทึกข้อมูลล่าสุดด้วย Local Storage</p>
+      </div>
+
+      <div class="grid">
+        <div class="box">
+          <h3>HTML ควรมี</h3>
+          <ul class="task-list">
+            <li><code>input type="text"</code> สำหรับชื่อและวิชา</li>
+            <li><code>input type="number"</code> สำหรับจำนวนบทและจำนวนชั่วโมง</li>
+            <li><code>select</code> สำหรับระดับความยาก</li>
+            <li><code>textarea</code> สำหรับบันทึกเพิ่มเติม</li>
+            <li><code>button</code> สำหรับ Calculate / Save / Load / Clear</li>
+            <li><code>div id="result"</code> สำหรับแสดงผลลัพธ์</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h3>JavaScript ควรทำได้</h3>
+          <ul class="task-list">
+            <li>อ่านค่าจาก input ด้วย <code>.value</code></li>
+            <li>แปลงตัวเลขด้วย <code>Number()</code></li>
+            <li>คำนวณเวลาเฉลี่ยต่อบท</li>
+            <li>ใช้ <code>if/else</code> เพื่อสร้างคำแนะนำ</li>
+            <li>บันทึกและโหลดด้วย <code>localStorage</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="box tip">
+        <strong>Challenge สำหรับผู้เรียนเร็ว:</strong> เพิ่มประวัติการบันทึกหลายรายการ, เพิ่มสีตามความเร่งด่วน, เพิ่มปุ่ม Export ข้อมูลเป็นข้อความ หรือเพิ่มระบบนับจำนวนครั้งที่เปิดเว็บนี้
+      </div>
+    </section>
+
+    <section id="reflection">
+      <h2>Checkoff และ Reflection</h2>
+
+      <h3>Checkoff</h3>
+      <ul class="task-list">
+        <li>อธิบายได้ว่า HTML, CSS และ JavaScript มีหน้าที่ต่างกันอย่างไร</li>
+        <li>สร้าง input อย่างน้อย 3 ชนิดได้</li>
+        <li>ตกแต่ง input และ button ด้วย CSS ได้</li>
+        <li>อ่านค่าจาก input ด้วย JavaScript ได้</li>
+        <li>แปลงข้อมูลเป็นตัวเลขด้วย <code>Number()</code> ได้</li>
+        <li>ใช้ <code>if/else</code> เพื่อสร้างคำแนะนำได้</li>
+        <li>ใช้ <code>localStorage</code> เพื่อ Save / Load / Clear ข้อมูลได้</li>
+      </ul>
+
+      <h3>Reflection</h3>
+      <ol>
+        <li>HTML ส่วนใดในเว็บของคุณเป็น input?</li>
+        <li>CSS ส่วนใดที่ช่วยให้เว็บอ่านง่ายหรือใช้งานง่ายขึ้น?</li>
+        <li>JavaScript อ่านค่าจาก input ใดบ้าง?</li>
+        <li>ข้อมูลใดต้องใช้ <code>Number()</code> ก่อนคำนวณ?</li>
+        <li>Local Storage เหมาะกับข้อมูลประเภทใด และไม่เหมาะกับข้อมูลประเภทใด?</li>
+        <li>ถ้าใช้ AI ช่วยเขียนโค้ด คุณตรวจสอบความถูกต้องอย่างไร?</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    MWIT Interactive Web Programming Lab · Chapter 1
+  </footer>
+
+  <script>
+    const labs = [
+      {
+        id: "lab1",
+        title: "Lab 1: สร้างช่องรับชื่อด้วย HTML และอ่านค่าด้วย JavaScript",
+        subtitle: "รู้จัก input, button, id และ .value",
+        predict: "ถ้ากรอกชื่อ Somchai แล้วกดปุ่ม ผลลัพธ์ควรเป็นอะไร?",
+        modify: "ลองเปลี่ยน placeholder ใน HTML, เปลี่ยนสีปุ่มใน CSS หรือเปลี่ยนข้อความ Hello ใน JavaScript เป็น สวัสดี",
+        explain: "HTML สร้างช่อง input และปุ่ม ส่วน JavaScript ใช้ document.getElementById(...).value เพื่ออ่านค่าจาก input",
+        html: `<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -155,7 +602,7 @@ const labs = [
   <script src="script.js"></script>
 </body>
 </html>`,
-    css:`body {
+        css: `body {
   font-family: sans-serif;
   background: #eff6ff;
   padding: 20px;
@@ -191,19 +638,21 @@ button {
   background: #f8fafc;
   border: 1px dashed #94a3b8;
 }`,
-    js:`function sayHello() {
+        js: `function sayHello() {
   const name = document.getElementById("nameInput").value;
 
   document.getElementById("result").textContent =
     "Hello " + name;
 }`
-  },
-  {
-    id:"lab2", title:"Lab 2: ทบทวน CSS ผ่านการตกแต่ง input และปุ่ม",
-    desc:"ทดลองเปลี่ยนสี กล่อง เส้นขอบ และปุ่ม เพื่อดูว่า CSS ส่งผลต่อหน้าตาเว็บอย่างไร",
-    predict:"ถ้าเปลี่ยน background ของ button เป็น #7c3aed ปุ่มจะเปลี่ยนเป็นสีอะไร?",
-    challenge:"ลองเปลี่ยนสีพื้นหลัง body, เพิ่ม border-radius ของ .card หรือเปลี่ยนสีข้อความ #result",
-    html:`<!DOCTYPE html>
+      },
+      {
+        id: "lab2",
+        title: "Lab 2: ทบทวน CSS ผ่านการตกแต่ง input และ button",
+        subtitle: "ฝึกปรับสี เส้นขอบ ระยะห่าง และ border-radius",
+        predict: "ถ้าเปลี่ยน background ของ button เป็นสีม่วง ปุ่มใน Preview จะเปลี่ยนไหม?",
+        modify: "ลองเปลี่ยน background ของ body, border-radius ของ .card และสีของ button",
+        explain: "CSS ช่วยให้เว็บอ่านง่ายและใช้งานง่ายขึ้น เช่น ปุ่มมีสีชัดเจน ช่อง input มีระยะห่างเหมาะสม",
+        html: `<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -225,7 +674,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css:`body {
+        css: `body {
   font-family: sans-serif;
   background: #f8fafc;
   padding: 20px;
@@ -260,19 +709,21 @@ button {
   color: #1d4ed8;
   font-weight: bold;
 }`,
-    js:`function showFavorite() {
+        js: `function showFavorite() {
   const favorite = document.getElementById("favorite").value;
 
   document.getElementById("result").textContent =
     "คุณชอบ: " + favorite;
 }`
-  },
-  {
-    id:"lab3", title:"Lab 3: รับตัวเลขและคำนวณด้วย Number()",
-    desc:"ค่าจาก input เป็นข้อความ ถ้าต้องนำไปคำนวณควรใช้ Number() เพื่อแปลงเป็นตัวเลข",
-    predict:"ถ้า num1 = 10 และ num2 = 20 ผลบวกควรเป็น 30 หรือ 1020?",
-    challenge:"ลองลบ Number() ออก แล้วสังเกตผลลัพธ์ จากนั้นใส่ Number() กลับคืน",
-    html:`<!DOCTYPE html>
+      },
+      {
+        id: "lab3",
+        title: "Lab 3: รับตัวเลขและคำนวณด้วย Number()",
+        subtitle: "เข้าใจว่าค่าจาก input มักเป็นข้อความ และต้องแปลงก่อนคำนวณ",
+        predict: "ถ้าตัวเลขที่ 1 คือ 10 และตัวเลขที่ 2 คือ 20 ผลบวกควรเป็นอะไร?",
+        modify: "ลองลบ Number(...) ออก แล้วสังเกตว่าผลลัพธ์เปลี่ยนจาก 30 เป็น 1020 หรือไม่",
+        explain: "ค่าที่อ่านจาก input มักเป็น string ถ้านำ string มาบวกกันอาจกลายเป็นการต่อข้อความ จึงควรใช้ Number() ก่อนคำนวณ",
+        html: `<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -297,7 +748,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css:`body {
+        css: `body {
   font-family: sans-serif;
   background: #ecfdf5;
   padding: 20px;
@@ -330,7 +781,7 @@ button {
   background: #f0fdf4;
   border: 1px solid #86efac;
 }`,
-    js:`function calculate() {
+        js: `function calculate() {
   const a = Number(document.getElementById("num1").value);
   const b = Number(document.getElementById("num2").value);
 
@@ -339,13 +790,15 @@ button {
   document.getElementById("result").textContent =
     "ผลบวกคือ " + sum;
 }`
-  },
-  {
-    id:"lab4", title:"Lab 4: ใช้ select และ if/else เพื่อสร้างคำแนะนำ",
-    desc:"ใช้ select ให้ผู้ใช้เลือกข้อมูล และใช้ if/else ให้เว็บแสดงคำแนะนำตามเงื่อนไข",
-    predict:"ถ้าเลือก ยาก เว็บควรแนะนำให้เพิ่มเวลาอ่านหรือไม่?",
-    challenge:"เพิ่ม option ใหม่ เช่น ยากมาก แล้วเพิ่มเงื่อนไขใน JavaScript",
-    html:`<!DOCTYPE html>
+      },
+      {
+        id: "lab4",
+        title: "Lab 4: ใช้ select และ if/else เพื่อสร้างคำแนะนำ",
+        subtitle: "เว็บสามารถตอบสนองต่างกันตามข้อมูลที่ผู้ใช้เลือก",
+        predict: "ถ้าเลือก ยาก ควรได้คำแนะนำแนวไหน?",
+        modify: "ลองเพิ่ม option ใหม่ เช่น very-hard ใน HTML แล้วเพิ่มเงื่อนไขใน JavaScript",
+        explain: "select ใช้รับตัวเลือกจากผู้ใช้ และ if/else ใช้ตัดสินใจว่าควรแสดงคำแนะนำแบบใด",
+        html: `<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -371,7 +824,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css:`body {
+        css: `body {
   font-family: sans-serif;
   background: #fff7ed;
   padding: 20px;
@@ -405,7 +858,7 @@ button {
   padding: 12px;
   background: #fffbeb;
 }`,
-    js:`function showAdvice() {
+        js: `function showAdvice() {
   const difficulty = document.getElementById("difficulty").value;
   let advice = "";
 
@@ -419,13 +872,15 @@ button {
 
   document.getElementById("result").textContent = advice;
 }`
-  },
-  {
-    id:"lab5", title:"Lab 5: บันทึกข้อมูลด้วย Local Storage",
-    desc:"ใช้ localStorage บันทึกข้อมูลไว้ใน Browser เพื่อให้ข้อมูลยังอยู่หลัง Refresh",
-    predict:"ถ้ากด Save แล้ว Refresh หน้าเว็บ จากนั้นกด Load ข้อมูลควรยังอยู่หรือไม่?",
-    challenge:"เปลี่ยน key จาก note เป็น myPlan ทั้งใน saveNote() และ loadNote()",
-    html:`<!DOCTYPE html>
+      },
+      {
+        id: "lab5",
+        title: "Lab 5: บันทึกข้อมูลด้วย Local Storage",
+        subtitle: "Save → Refresh → Load เพื่อให้เห็นว่าเว็บจำข้อมูลได้",
+        predict: "ถ้ากด Save แล้ว Refresh หน้าเว็บ จากนั้นกด Load ข้อมูลควรยังอยู่หรือไม่?",
+        modify: "ลองเปลี่ยน key จาก note เป็น myPlan ทั้งใน saveNote และ loadNote แล้วทดลองอีกครั้ง",
+        explain: "localStorage เก็บข้อมูลไว้ใน Browser ของเครื่องนั้น ๆ เหมาะกับข้อมูลส่วนตัวที่ไม่ต้องแชร์กับคนอื่น",
+        html: `<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -449,7 +904,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css:`body {
+        css: `body {
   font-family: sans-serif;
   background: #f5f3ff;
   padding: 20px;
@@ -484,7 +939,7 @@ button {
   padding: 12px;
   background: #faf5ff;
 }`,
-    js:`function saveNote() {
+        js: `function saveNote() {
   const text = document.getElementById("noteInput").value;
 
   localStorage.setItem("note", text);
@@ -505,103 +960,207 @@ function clearNote() {
   document.getElementById("noteInput").value = "";
   document.getElementById("result").textContent = "ลบข้อมูลแล้ว";
 }`
-  }
-];
+      }
+    ];
 
-function escapeHtml(text){
-  return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
-}
+    function escapeHTML(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
 
-function renderLabs(){
-  const root = document.getElementById("labs");
-  root.innerHTML = labs.map((lab, index)=>`
-    <section id="${lab.id}">
-      <h2>${lab.title}</h2>
-      <p>${lab.desc}</p>
-      <div class="lab">
-        <div class="lab-head">
-          <h3>${lab.title}</h3>
-          <p>แก้โค้ดได้ทั้ง 3 ส่วน แล้วกด Run เพื่อดูผล</p>
-        </div>
-        <div class="lab-body">
-          <div>
-            <div class="file-note">Copy โค้ดไปใช้ใน VS Code ได้โดยสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ในโฟลเดอร์เดียวกัน</div>
+    function buildLabs() {
+      const container = document.getElementById("labsContainer");
+      container.innerHTML = "";
 
-            <label>index.html</label>
-            <textarea id="${lab.id}-html" class="editor html">${escapeHtml(lab.html)}</textarea>
-            <button class="ghost" onclick="copyCode('${lab.id}','html')">Copy index.html</button>
+      labs.forEach((lab) => {
+        const section = document.createElement("section");
+        section.id = lab.id;
+        section.innerHTML = `
+          <div class="lab">
+            <div class="lab-header">
+              <h2 class="lab-title">${lab.title}<small>${lab.subtitle}</small></h2>
+              <div class="lab-actions">
+                <button onclick="runLab('${lab.id}')">▶ Run</button>
+                <button class="secondary" onclick="resetLab('${lab.id}')">Reset</button>
+              </div>
+            </div>
 
-            <label>style.css</label>
-            <textarea id="${lab.id}-css" class="editor css">${escapeHtml(lab.css)}</textarea>
-            <button class="ghost" onclick="copyCode('${lab.id}','css')">Copy style.css</button>
+            <div class="lab-body">
+              <div>
+                <div class="tabs">
+                  <button class="tab active" onclick="showTab('${lab.id}', 'html', this)">index.html</button>
+                  <button class="tab" onclick="showTab('${lab.id}', 'css', this)">style.css</button>
+                  <button class="tab" onclick="showTab('${lab.id}', 'js', this)">script.js</button>
+                </div>
 
-            <label>script.js</label>
-            <textarea id="${lab.id}-js" class="editor js">${escapeHtml(lab.js)}</textarea>
-            <button class="ghost" onclick="copyCode('${lab.id}','js')">Copy script.js</button>
+                <div id="${lab.id}-panel-html" class="panel active">
+                  <label>index.html</label>
+                  <textarea id="${lab.id}-html" class="editor" spellcheck="false"></textarea>
+                  <button class="ghost" onclick="copyCode('${lab.id}', 'html')">Copy index.html</button>
+                </div>
 
-            <div>
-              <button onclick="runLab('${lab.id}')">▶ Run</button>
-              <button class="secondary" onclick="resetLab('${lab.id}')">Reset</button>
+                <div id="${lab.id}-panel-css" class="panel">
+                  <label>style.css</label>
+                  <textarea id="${lab.id}-css" class="editor" spellcheck="false"></textarea>
+                  <button class="ghost" onclick="copyCode('${lab.id}', 'css')">Copy style.css</button>
+                </div>
+
+                <div id="${lab.id}-panel-js" class="panel">
+                  <label>script.js</label>
+                  <textarea id="${lab.id}-js" class="editor" spellcheck="false"></textarea>
+                  <button class="ghost" onclick="copyCode('${lab.id}', 'js')">Copy script.js</button>
+                </div>
+
+                <div id="${lab.id}-copy-status" class="copy-status"></div>
+                <div class="file-note">นำไปใช้ใน VS Code: สร้างโฟลเดอร์ใหม่ แล้วสร้างไฟล์ index.html, style.css, script.js จากนั้นคัดลอกโค้ดแต่ละส่วนไปวางให้ตรงไฟล์</div>
+              </div>
+
+              <div>
+                <div class="predict"><strong>Predict:</strong> ${lab.predict}</div>
+                <h3>Live Preview</h3>
+                <iframe id="${lab.id}-preview" class="preview" title="${lab.id} preview"></iframe>
+                <div id="${lab.id}-console" class="console">Console จะแสดง error ที่นี่ หากมีข้อผิดพลาด</div>
+                <div class="modify"><strong>Modify:</strong> ${lab.modify}</div>
+                <div class="explain"><strong>Explain:</strong> ${lab.explain}</div>
+              </div>
             </div>
           </div>
-          <div>
-            <div class="predict"><strong>Predict:</strong> ${lab.predict}</div>
-            <h3>Live Preview</h3>
-            <iframe id="${lab.id}-frame" class="preview" title="${lab.id} preview"></iframe>
-            <div class="challenge"><strong>Challenge:</strong> ${lab.challenge}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  `).join("");
-}
+        `;
+        container.appendChild(section);
+      });
 
-function runLab(id){
-  const html = document.getElementById(`${id}-html`).value;
-  const css = document.getElementById(`${id}-css`).value;
-  const js = document.getElementById(`${id}-js`).value;
-  const frame = document.getElementById(`${id}-frame`);
+      labs.forEach((lab) => resetLab(lab.id));
+    }
 
-  let doc = html;
+    function getLab(id) {
+      return labs.find((lab) => lab.id === id);
+    }
 
-  // Remove external links/scripts for preview, then inject current CSS/JS.
-  doc = doc.replace(/<link[^>]*href=["']style\.css["'][^>]*>/i, "");
-  doc = doc.replace(/<script[^>]*src=["']script\.js["'][^>]*><\/script>/i, "");
+    function resetLab(id) {
+      const lab = getLab(id);
+      document.getElementById(`${id}-html`).value = lab.html;
+      document.getElementById(`${id}-css`).value = lab.css;
+      document.getElementById(`${id}-js`).value = lab.js;
+      document.getElementById(`${id}-copy-status`).textContent = "";
+      runLab(id);
+    }
 
-  if (doc.includes("</head>")) {
-    doc = doc.replace("</head>", `<style>${css}</style></head>`);
-  } else {
-    doc = `<style>${css}</style>` + doc;
-  }
+    function showTab(id, type, btn) {
+      ["html", "css", "js"].forEach((panelType) => {
+        document.getElementById(`${id}-panel-${panelType}`).classList.toggle("active", panelType === type);
+      });
 
-  if (doc.includes("</body>")) {
-    doc = doc.replace("</body>", `<script>${js}<\/script></body>`);
-  } else {
-    doc += `<script>${js}<\/script>`;
-  }
+      const tabContainer = btn.parentElement;
+      tabContainer.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
+      btn.classList.add("active");
+    }
 
-  frame.srcdoc = doc;
-}
+    function runLab(id) {
+      const html = document.getElementById(`${id}-html`).value;
+      const css = document.getElementById(`${id}-css`).value;
+      const js = document.getElementById(`${id}-js`).value;
+      const frame = document.getElementById(`${id}-preview`);
+      const consoleBox = document.getElementById(`${id}-console`);
 
-function resetLab(id){
-  const lab = labs.find(item => item.id === id);
-  document.getElementById(`${id}-html`).value = lab.html;
-  document.getElementById(`${id}-css`).value = lab.css;
-  document.getElementById(`${id}-js`).value = lab.js;
-  runLab(id);
-}
+      consoleBox.textContent = "Running...";
 
-function copyCode(id,type){
-  const text = document.getElementById(`${id}-${type}`).value;
-  navigator.clipboard.writeText(text).then(()=>{
-    alert("คัดลอกแล้ว");
-  }).catch(()=>{
-    alert("คัดลอกอัตโนมัติไม่สำเร็จ กรุณาเลือกข้อความแล้วกด Ctrl+C");
-  });
-}
+      let doc = html;
 
-renderLabs();
-labs.forEach(lab => runLab(lab.id));
-</script>
+      if (doc.includes('<link rel="stylesheet" href="style.css">')) {
+        doc = doc.replace('<link rel="stylesheet" href="style.css">', `<style>${css}</style>`);
+      } else if (doc.includes("</head>")) {
+        doc = doc.replace("</head>", `<style>${css}</style></head>`);
+      } else {
+        doc = `<style>${css}</style>` + doc;
+      }
+
+      const safeJs = `
+        <script>
+          window.onerror = function(message, source, lineno, colno, error) {
+            parent.postMessage({
+              type: "lab-error",
+              labId: "${id}",
+              message: String(message),
+              line: lineno,
+              column: colno
+            }, "*");
+          };
+        <\/script>
+        <script>
+          try {
+            ${js}
+            parent.postMessage({ type: "lab-ok", labId: "${id}" }, "*");
+          } catch (error) {
+            parent.postMessage({
+              type: "lab-error",
+              labId: "${id}",
+              message: error.message
+            }, "*");
+          }
+        <\/script>
+      `;
+
+      if (doc.includes('<script src="script.js"></script>')) {
+        doc = doc.replace('<script src="script.js"></script>', safeJs);
+      } else if (doc.includes("</body>")) {
+        doc = doc.replace("</body>", `${safeJs}</body>`);
+      } else {
+        doc += safeJs;
+      }
+
+      frame.srcdoc = doc;
+    }
+
+    window.addEventListener("message", (event) => {
+      const data = event.data;
+      if (!data || !data.type || !data.labId) return;
+
+      const consoleBox = document.getElementById(`${data.labId}-console`);
+      if (!consoleBox) return;
+
+      if (data.type === "lab-ok") {
+        consoleBox.textContent = "Run สำเร็จ หากกดปุ่มใน Preview แล้วยังไม่ทำงาน ให้ตรวจสอบชื่อ function และ onclick ใน HTML";
+      }
+
+      if (data.type === "lab-error") {
+        consoleBox.textContent = `Error: ${data.message}${data.line ? "\\nLine: " + data.line : ""}${data.column ? "\\nColumn: " + data.column : ""}`;
+      }
+    });
+
+    function copyCode(id, type) {
+      const value = document.getElementById(`${id}-${type}`).value;
+      const filename = type === "html" ? "index.html" : type === "css" ? "style.css" : "script.js";
+      const status = document.getElementById(`${id}-copy-status`);
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(() => {
+          status.textContent = `คัดลอก ${filename} แล้ว`;
+        }).catch(() => {
+          fallbackCopy(value, status, filename);
+        });
+      } else {
+        fallbackCopy(value, status, filename);
+      }
+    }
+
+    function fallbackCopy(text, status, filename) {
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand("copy");
+        status.textContent = `คัดลอก ${filename} แล้ว`;
+      } catch (error) {
+        status.textContent = `คัดลอกอัตโนมัติไม่สำเร็จ กรุณาเลือกข้อความแล้วกด Ctrl+C`;
+      }
+      document.body.removeChild(temp);
+    }
+
+    document.addEventListener("DOMContentLoaded", buildLabs);
+  </script>
 </body>
 </html>
