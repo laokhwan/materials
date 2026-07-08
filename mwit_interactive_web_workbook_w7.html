@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MWIT Interactive Web Programming Workbook - Chapter 1</title>
+  <style>
+    :root {
+      --bg:#f6f8fc;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --blue:#2563eb;
+      --blue2:#1d4ed8;
+      --purple:#7c3aed;
+      --soft:#eff6ff;
+      --green:#059669;
+      --green-soft:#ecfdf5;
+      --amber:#b45309;
+      --amber-soft:#fffbeb;
+      --red:#dc2626;
+      --red-soft:#fef2f2;
+      --dark:#0f172a;
+      --dark2:#111827;
+      --console:#020617;
+    }
+
+    * { box-sizing:border-box; }
+
+    html { scroll-behavior:smooth; }
+
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:"Sarabun","Noto Sans Thai","Segoe UI",sans-serif;
+      font-size:17px;
+      line-height:1.7;
+    }
+
+    header {
+      background:linear-gradient(135deg,#0f172a,#1d4ed8 55%,#7c3aed);
+      color:#fff;
+      padding:32px 24px;
+      box-shadow:0 10px 30px rgba(15,23,42,.25);
+    }
+
+    .wrap {
+      max-width:1180px;
+      margin:0 auto;
+    }
+
+    .topline {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+
+    .brand {
+      font-weight:800;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .brand-icon {
+      width:36px;height:36px;border-radius:10px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.25);
+    }
+
+    h1 {
+      font-size:clamp(30px,4.6vw,52px);
+      line-height:1.15;
+      margin:0 0 10px;
+    }
+
+    header p {
+      max-width:900px;
+      margin:0;
+      font-size:20px;
+      opacity:.96;
+    }
+
+    .chapter-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.25);
+      padding:6px 12px;
+      border-radius:999px;
+      font-weight:700;
+      margin-bottom:14px;
+    }
+
+    nav {
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.95);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+
+    nav .wrap {
+      padding:10px 20px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      overflow-x:auto;
+    }
+
+    nav a {
+      text-decoration:none;
+      color:var(--ink);
+      padding:8px 12px;
+      border-radius:999px;
+      white-space:nowrap;
+      font-size:15px;
+      font-weight:700;
+    }
+
+    nav a:hover { background:var(--soft); color:var(--blue); }
+
+    .progress-shell {
+      min-width:170px;
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--muted);
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .progress {
+      width:90px;
+      height:8px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-bar {
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--blue),var(--purple));
+      transition:width .25s ease;
+    }
+
+    main {
+      max-width:1180px;
+      margin:24px auto 80px;
+      padding:0 20px;
+    }
+
+    section {
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:28px;
+      margin:22px 0;
+      box-shadow:0 12px 32px rgba(15,23,42,.06);
+    }
+
+    h2 {
+      font-size:32px;
+      line-height:1.25;
+      margin:0 0 14px;
+    }
+
+    h3 {
+      font-size:23px;
+      margin:22px 0 10px;
+    }
+
+    .lead { font-size:20px; }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .three {
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+
+    @media (max-width:900px) {
+      .grid,.three { grid-template-columns:1fr; }
+      section { padding:20px; }
+      .progress-shell { display:none; }
+    }
+
+    .card {
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:#fff;
+    }
+
+    .mission {
+      border-left:6px solid var(--blue);
+      background:var(--soft);
+    }
+
+    .tip {
+      border-left:6px solid var(--green);
+      background:var(--green-soft);
+    }
+
+    .warn {
+      border-left:6px solid var(--amber);
+      background:var(--amber-soft);
+    }
+
+    .danger {
+      border-left:6px solid var(--red);
+      background:var(--red-soft);
+    }
+
+    code {
+      font-family:Consolas,Menlo,Monaco,monospace;
+      background:#eef2ff;
+      color:#1e3a8a;
+      padding:2px 6px;
+      border-radius:6px;
+      font-size:.92em;
+    }
+
+    pre {
+      background:var(--dark);
+      color:#e5e7eb;
+      padding:16px;
+      border-radius:16px;
+      overflow:auto;
+      font-family:Consolas,Menlo,Monaco,monospace;
+      font-size:15px;
+      line-height:1.55;
+      text-align:left;
+      direction:ltr;
+    }
+
+    pre code {
+      background:transparent;
+      color:inherit;
+      padding:0;
+    }
+
+    .lab {
+      border:1px solid #bfdbfe;
+      border-radius:24px;
+      overflow:hidden;
+      background:#fff;
+      margin:22px 0;
+      box-shadow:0 12px 28px rgba(37,99,235,.08);
+    }
+
+    .lab-head {
+      padding:18px 20px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      background:linear-gradient(180deg,#fff,#f8fbff);
+    }
+
+    .lab-title {
+      margin:0;
+      font-size:25px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#dbeafe;
+      color:#1d4ed8;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .lab-body {
+      padding:20px;
+      display:grid;
+      grid-template-columns:1.06fr .94fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    @media (max-width:980px) {
+      .lab-body { grid-template-columns:1fr; }
+    }
+
+    label {
+      display:block;
+      margin:12px 0 5px;
+      font-weight:800;
+    }
+
+    input,select,textarea,button {
+      font:inherit;
+    }
+
+    input,select,textarea {
+      width:100%;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      padding:10px 12px;
+      background:#fff;
+    }
+
+    textarea.editor {
+      min-height:190px;
+      resize:vertical;
+      background:var(--dark2);
+      color:#e5e7eb;
+      border:1px solid #334155;
+      border-radius:16px;
+      padding:14px 14px 14px 50px;
+      line-height:1.55;
+      font-family:Consolas,Menlo,Monaco,monospace;
+      font-size:15px;
+      direction:ltr;
+      text-align:left;
+      tab-size:2;
+      background-image:linear-gradient(to right,#0b1220 0,#0b1220 38px,#1f2937 39px,#111827 40px);
+    }
+
+    .editor-wrap {
+      position:relative;
+    }
+
+    .line-hint {
+      position:absolute;
+      top:14px;
+      left:12px;
+      color:#64748b;
+      font-family:Consolas,Menlo,Monaco,monospace;
+      font-size:15px;
+      line-height:1.55;
+      user-select:none;
+      pointer-events:none;
+      white-space:pre;
+      text-align:right;
+      width:22px;
+    }
+
+    button {
+      border:0;
+      border-radius:13px;
+      padding:10px 16px;
+      color:white;
+      background:var(--blue);
+      cursor:pointer;
+      font-weight:800;
+      margin:10px 8px 0 0;
+      box-shadow:0 8px 18px rgba(37,99,235,.18);
+    }
+
+    button:hover { background:var(--blue2); }
+
+    button.secondary {
+      background:#475569;
+      box-shadow:none;
+    }
+
+    button.secondary:hover { background:#334155; }
+
+    button.ghost {
+      background:#fff;
+      color:var(--blue);
+      border:1px solid #bfdbfe;
+      box-shadow:none;
+    }
+
+    button.ghost:hover { background:#eff6ff; }
+
+    button.danger {
+      background:#dc2626;
+      box-shadow:none;
+    }
+
+    button.danger:hover { background:#b91c1c; }
+
+    .predict {
+      background:linear-gradient(135deg,#ecfdf5,#f0fdf4);
+      border:1px solid #bbf7d0;
+      border-left:6px solid var(--green);
+      border-radius:16px;
+      padding:14px;
+      margin-bottom:14px;
+    }
+
+    .predict input {
+      margin-top:8px;
+    }
+
+    .modify {
+      background:linear-gradient(135deg,#fffbeb,#fff7ed);
+      border:1px solid #fde68a;
+      border-left:6px solid var(--amber);
+      border-radius:16px;
+      padding:14px;
+      margin-top:14px;
+    }
+
+    .observe {
+      background:#f8fafc;
+      border:1px dashed #94a3b8;
+      border-radius:16px;
+      padding:14px;
+      min-height:82px;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+
+    .console {
+      background:var(--console);
+      color:#d1fae5;
+      border:1px solid #1e293b;
+      border-radius:16px;
+      padding:14px;
+      min-height:100px;
+      font-family:Consolas,Menlo,Monaco,monospace;
+      font-size:15px;
+      line-height:1.6;
+      white-space:pre-wrap;
+      direction:ltr;
+      text-align:left;
+    }
+
+    .console .error { color:#fecaca; }
+    .console .prompt { color:#60a5fa; }
+
+    .preview {
+      background:#fff;
+      border:1px solid #cbd5e1;
+      border-radius:16px;
+      padding:14px;
+      min-height:100px;
+    }
+
+    .explain-list {
+      display:grid;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .explain-item {
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+    }
+
+    .quiz {
+      margin-top:16px;
+      padding:14px;
+      border:1px solid #ddd6fe;
+      border-radius:16px;
+      background:#faf5ff;
+    }
+
+    .quiz label {
+      font-weight:500;
+      margin:6px 0;
+    }
+
+    .radio-row,.check-row {
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin:8px 0;
+    }
+
+    .radio-row label,.check-row label {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:500;
+      margin:0;
+    }
+
+    .radio-row input,.check-row input { width:auto; }
+
+    .status {
+      margin-top:10px;
+      font-weight:800;
+    }
+
+    .ok { color:var(--green); }
+    .bad { color:var(--red); }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin:12px 0;
+    }
+
+    th,td {
+      border:1px solid var(--line);
+      padding:10px;
+      vertical-align:top;
+    }
+
+    th {
+      background:#f1f5f9;
+      text-align:left;
+    }
+
+    .project-output {
+      background:#f8fafc;
+      border:1px dashed #94a3b8;
+      border-radius:16px;
+      padding:14px;
+      min-height:92px;
+      margin-top:8px;
+    }
+
+    .result-card {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .score-big {
+      font-size:34px;
+      font-weight:900;
+      color:var(--blue);
+      line-height:1.2;
+    }
+
+    .mini-progress {
+      height:10px;
+      background:#e5e7eb;
+      border-radius:999px;
+      overflow:hidden;
+      margin:8px 0;
+    }
+
+    .mini-bar {
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--blue),var(--purple));
+      transition:width .25s ease;
+    }
+
+    .small {
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    footer {
+      text-align:center;
+      color:var(--muted);
+      padding:40px 20px;
+    }
+
+    .section-done {
+      float:right;
+      margin-top:-2px;
+      background:#f8fafc;
+      color:#334155;
+      border:1px solid #cbd5e1;
+      box-shadow:none;
+      padding:6px 10px;
+      font-size:14px;
+    }
+
+    .section-done.done {
+      background:var(--green-soft);
+      color:var(--green);
+      border-color:#a7f3d0;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="topline">
+      <div class="brand"><span class="brand-icon">⌨️</span> MWIT Interactive Web Programming Workbook</div>
+      <div class="chapter-badge">Chapter 1 · Input, Calculation, Output & Local Storage</div>
+    </div>
+    <h1>สร้างเว็บแอปที่รับข้อมูล คำนวณ แสดงผล และจำข้อมูลได้</h1>
+    <p>บทเรียนแบบลงมือทดลอง: นักเรียนอ่านคำอธิบาย ทายผลลัพธ์ กด Run แก้โค้ด สังเกตผล และนำความรู้ไปสร้าง Mini Project ของตนเอง</p>
+  </div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <a href="#intro">เริ่มต้น</a>
+    <a href="#lab1">Lab 1 Input</a>
+    <a href="#lab2">Lab 2 Number()</a>
+    <a href="#lab3">Lab 3 if/else</a>
+    <a href="#lab4">Lab 4 Display</a>
+    <a href="#lab5">Lab 5 Local Storage</a>
+    <a href="#project">Mini Project</a>
+    <a href="#reflection">Reflection</a>
+    <div class="progress-shell">
+      <span id="progressText">0%</span>
+      <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+    </div>
+  </div>
+</nav>
+
+<main>
+<section id="intro">
+  <button class="section-done" onclick="markDone('intro', this)">ทำส่วนนี้แล้ว</button>
+  <h2>เริ่มต้น: เว็บแอปหนึ่งตัวทำงานอย่างไร?</h2>
+  <div class="card mission">
+    <p class="lead"><strong>เป้าหมายของบทนี้:</strong> จากเดิมที่เราเขียนเว็บให้แสดงข้อมูลได้ วันนี้เราจะทำให้เว็บรับข้อมูลจากผู้ใช้ คำนวณ แสดงผล และบันทึกข้อมูลไว้ในเครื่องของผู้ใช้ด้วย <code>localStorage</code></p>
+  </div>
+
+  <h3>ภาพรวมการทำงาน</h3>
+  <pre><code>Input       ผู้ใช้กรอกข้อมูล เช่น ชื่อ คะแนน จำนวนชั่วโมง
+Process     JavaScript อ่านค่า คำนวณ และตัดสินใจ
+Output      แสดงผลลัพธ์กลับไปยังหน้าเว็บ
+Storage     บันทึกข้อมูลไว้ใน Browser ด้วย Local Storage</code></pre>
+
+  <div class="grid three">
+    <div class="card">
+      <h3>Input</h3>
+      <p>ช่องรับข้อมูล เช่น <code>input</code>, <code>select</code>, <code>radio</code>, <code>checkbox</code>, <code>textarea</code></p>
+    </div>
+    <div class="card">
+      <h3>Process</h3>
+      <p>การประมวลผล เช่น <code>Number()</code>, <code>if/else</code>, การคำนวณ และการสร้างคำแนะนำ</p>
+    </div>
+    <div class="card">
+      <h3>Storage</h3>
+      <p>การบันทึกข้อมูลไว้ใน Browser ด้วย <code>localStorage</code> เพื่อให้ข้อมูลยังอยู่หลัง Refresh</p>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <strong>วิธีเรียน:</strong> ในแต่ละ Lab ให้ทำตามลำดับ <strong>Predict → Run → Observe → Modify → Quiz</strong> อย่ารีบกด Run ก่อนคิด เพราะเป้าหมายคือเข้าใจว่าโค้ดทำงานอย่างไร
+  </div>
+</section>
+
+<section id="lab1">
+  <button class="section-done" onclick="markDone('lab1', this)">ทำส่วนนี้แล้ว</button>
+  <h2>Lab 1: อ่านค่าจาก input</h2>
+  <p>เมื่อผู้ใช้พิมพ์ข้อความในช่อง input เราสามารถใช้ JavaScript อ่านค่าที่ผู้ใช้กรอกได้ด้วย <code>.value</code></p>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h3 class="lab-title"><span class="pill">Run & Modify</span> อ่านชื่อจาก textbox</h3>
+      <span class="small">ลองเปลี่ยนชื่อในช่อง input แล้วกด Run</span>
+    </div>
+
+    <div class="lab-body">
+      <div>
+        <label for="lab1Name">ชื่อ</label>
+        <input id="lab1Name" type="text" value="Somchai">
+
+        <label for="code1">โค้ด JavaScript</label>
+        <div class="editor-wrap">
+          <div id="lines1" class="line-hint">1
+2
+3</div>
+          <textarea id="code1" class="editor" oninput="updateLines('code1','lines1')"></textarea>
+        </div>
+
+        <button onclick="runCode('code1','out1')">▶ Run</button>
+        <button class="ghost" onclick="resetCode(1)">Reset</button>
+      </div>
+
+      <div>
+        <div class="predict">
+          <strong>Predict:</strong> ถ้าช่องชื่อเป็น “Somchai” ผลลัพธ์ควรเป็นอะไร?
+          <input id="predict1" type="text" placeholder="พิมพ์คำตอบของคุณ...">
+          <button class="ghost" onclick="checkPredict('predict1','Hello Somchai','predictStatus1')">ตรวจคำตอบ</button>
+          <div id="predictStatus1" class="status"></div>
+        </div>
+
+        <h3>Observe: Console Output</h3>
+        <div id="out1" class="console">ยังไม่ได้ Run</div>
+
+        <div class="modify">
+          <strong>Modify:</strong> เปลี่ยน <code>"Hello "</code> เป็น <code>"สวัสดี "</code> แล้วกด Run ใหม่
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explain-list">
+    <div class="explain-item"><code>document.getElementById("lab1Name")</code> คือการเลือก element ที่มี id เป็น <code>lab1Name</code></div>
+    <div class="explain-item"><code>.value</code> คือค่าที่อยู่ในช่อง input ณ ตอนที่โค้ดทำงาน</div>
+    <div class="explain-item"><code>output(...)</code> เป็นฟังก์ชันพิเศษในบทเรียนนี้ ใช้แสดงผลในกล่อง Console Output</div>
+  </div>
+
+  <div class="quiz">
+    <strong>Mini Quiz:</strong> คำสั่งใดใช้อ่านค่าที่ผู้ใช้กรอกใน input?
+    <div class="radio-row">
+      <label><input type="radio" name="q1" value="a"> innerHTML</label>
+      <label><input type="radio" name="q1" value="b"> value</label>
+      <label><input type="radio" name="q1" value="c"> style</label>
+      <label><input type="radio" name="q1" value="d"> alert</label>
+    </div>
+    <button onclick="checkQuiz('q1','b','q1status')">ตรวจคำตอบ</button>
+    <div id="q1status" class="status"></div>
+  </div>
+</section>
+
+<section id="lab2">
+  <button class="section-done" onclick="markDone('lab2', this)">ทำส่วนนี้แล้ว</button>
+  <h2>Lab 2: แปลงข้อความเป็นตัวเลขด้วย Number()</h2>
+  <p>ค่าที่อ่านจาก input มักเป็นข้อความ ถึงแม้ input จะเป็น <code>type="number"</code> ก็ตาม ถ้าต้องการนำไปบวก ลบ คูณ หาร ควรใช้ <code>Number()</code></p>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h3 class="lab-title"><span class="pill">Run & Modify</span> บวกเลขจาก input</h3>
+      <span class="small">ลองลบ Number() ออก แล้วสังเกตผล</span>
+    </div>
+
+    <div class="lab-body">
+      <div>
+        <label for="lab2A">ตัวเลขที่ 1</label>
+        <input id="lab2A" type="number" value="10">
+
+        <label for="lab2B">ตัวเลขที่ 2</label>
+        <input id="lab2B" type="number" value="20">
+
+        <label for="code2">โค้ด JavaScript</label>
+        <div class="editor-wrap">
+          <div id="lines2" class="line-hint">1</div>
+          <textarea id="code2" class="editor" oninput="updateLines('code2','lines2')"></textarea>
+        </div>
+
+        <button onclick="runCode('code2','out2')">▶ Run</button>
+        <button class="ghost" onclick="resetCode(2)">Reset</button>
+      </div>
+
+      <div>
+        <div class="predict">
+          <strong>Predict:</strong> ถ้า a = 10 และ b = 20 ผลบวกจะเป็นอะไร?
+          <input id="predict2" type="text" placeholder="พิมพ์คำตอบ เช่น 30">
+          <button class="ghost" onclick="checkPredict('predict2','30','predictStatus2')">ตรวจคำตอบ</button>
+          <div id="predictStatus2" class="status"></div>
+        </div>
+
+        <h3>Observe: Console Output</h3>
+        <div id="out2" class="console">ยังไม่ได้ Run</div>
+
+        <div class="modify">
+          <strong>Modify:</strong> ลองลบ <code>Number(...)</code> ออก เหลือแค่ <code>document.getElementById(...).value</code> แล้วกด Run ใหม่ ผลลัพธ์ต่างกันอย่างไร?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre><code>Number("20")   // ได้ตัวเลข 20
+"10" + "20"    // ได้ข้อความ "1020"
+10 + 20        // ได้ตัวเลข 30</code></pre>
+
+  <div class="quiz">
+    <strong>Mini Quiz:</strong> ถ้าอ่านค่าจาก input แล้วต้องนำไปคำนวณ ควรใช้คำสั่งใด?
+    <div class="radio-row">
+      <label><input type="radio" name="q2" value="a"> String()</label>
+      <label><input type="radio" name="q2" value="b"> Number()</label>
+      <label><input type="radio" name="q2" value="c"> alert()</label>
+      <label><input type="radio" name="q2" value="d"> console()</label>
+    </div>
+    <button onclick="checkQuiz('q2','b','q2status')">ตรวจคำตอบ</button>
+    <div id="q2status" class="status"></div>
+  </div>
+</section>
+
+<section id="lab3">
+  <button class="section-done" onclick="markDone('lab3', this)">ทำส่วนนี้แล้ว</button>
+  <h2>Lab 3: ใช้ if/else เพื่อสร้างคำแนะนำ</h2>
+  <p><code>if/else</code> ทำให้เว็บตัดสินใจได้ เช่น ถ้าคะแนนถึงเกณฑ์ให้แสดง “ผ่าน” ถ้ายังไม่ถึงเกณฑ์ให้แสดงคำแนะนำ</p>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h3 class="lab-title"><span class="pill">Run & Modify</span> ตรวจคะแนนผ่าน/ไม่ผ่าน</h3>
+      <span class="small">ลองเปลี่ยนคะแนนและเกณฑ์ผ่าน</span>
+    </div>
+
+    <div class="lab-body">
+      <div>
+        <label for="lab3Score">คะแนน</label>
+        <input id="lab3Score" type="number" value="45">
+
+        <label for="code3">โค้ด JavaScript</label>
+        <div class="editor-wrap">
+          <div id="lines3" class="line-hint">1</div>
+          <textarea id="code3" class="editor" oninput="updateLines('code3','lines3')"></textarea>
+        </div>
+
+        <button onclick="runCode('code3','out3')">▶ Run</button>
+        <button class="ghost" onclick="resetCode(3)">Reset</button>
+      </div>
+
+      <div>
+        <div class="predict">
+          <strong>Predict:</strong> ถ้าคะแนนเป็น 45 ผลลัพธ์ควรเป็นอะไร?
+          <input id="predict3" type="text" placeholder="พิมพ์คำตอบของคุณ...">
+          <button class="ghost" onclick="checkContains('predict3','ยังไม่ผ่าน','predictStatus3')">ตรวจคำตอบ</button>
+          <div id="predictStatus3" class="status"></div>
+        </div>
+
+        <h3>Observe: Console Output</h3>
+        <div id="out3" class="console">ยังไม่ได้ Run</div>
+
+        <div class="modify">
+          <strong>Modify:</strong> เปลี่ยนเกณฑ์ผ่านจาก <code>50</code> เป็น <code>70</code> แล้วทดลองคะแนน 65 และ 75
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <strong>Mini Quiz:</strong> เครื่องหมายใดหมายถึง “มากกว่าหรือเท่ากับ”?
+    <div class="radio-row">
+      <label><input type="radio" name="q3" value="a"> &gt;</label>
+      <label><input type="radio" name="q3" value="b"> &lt;=</label>
+      <label><input type="radio" name="q3" value="c"> &gt;=</label>
+      <label><input type="radio" name="q3" value="d"> ==</label>
+    </div>
+    <button onclick="checkQuiz('q3','c','q3status')">ตรวจคำตอบ</button>
+    <div id="q3status" class="status"></div>
+  </div>
+</section>
+
+<section id="lab4">
+  <button class="section-done" onclick="markDone('lab4', this)">ทำส่วนนี้แล้ว</button>
+  <h2>Lab 4: แสดงผลบนหน้าเว็บด้วย innerHTML</h2>
+  <p>เมื่อคำนวณเสร็จแล้ว เราสามารถแสดงผลเป็นข้อความหรือ HTML ได้ ถ้าต้องการให้มีหัวข้อ ย่อหน้า หรือรูปแบบ HTML ให้ใช้ <code>innerHTML</code></p>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h3 class="lab-title"><span class="pill">Run & Modify</span> สร้างผลลัพธ์แบบ HTML</h3>
+      <span class="small">ลองเพิ่มย่อหน้าใหม่ใน message</span>
+    </div>
+
+    <div class="lab-body">
+      <div>
+        <label for="lab4Subject">วิชา</label>
+        <input id="lab4Subject" type="text" value="คณิตศาสตร์">
+
+        <label for="lab4Hours">จำนวนชั่วโมงที่มี</label>
+        <input id="lab4Hours" type="number" value="6">
+
+        <label for="code4">โค้ด JavaScript</label>
+        <div class="editor-wrap">
+          <div id="lines4" class="line-hint">1</div>
+          <textarea id="code4" class="editor" oninput="updateLines('code4','lines4')"></textarea>
+        </div>
+
+        <button onclick="runCode('code4','out4','preview4')">▶ Run</button>
+        <button class="ghost" onclick="resetCode(4)">Reset</button>
+      </div>
+
+      <div>
+        <div class="predict">
+          <strong>Predict:</strong> ผลลัพธ์จะเป็นข้อความธรรมดาหรือกลายเป็นหัวข้อและย่อหน้า?
+          <input id="predict4" type="text" placeholder="พิมพ์คำตอบของคุณ...">
+          <button class="ghost" onclick="checkContains('predict4','หัวข้อ','predictStatus4')">ตรวจคำตอบ</button>
+          <div id="predictStatus4" class="status"></div>
+        </div>
+
+        <h3>Console Output</h3>
+        <div id="out4" class="console">ยังไม่ได้ Run</div>
+
+        <h3>HTML Preview</h3>
+        <div id="preview4" class="preview">ยังไม่มี Preview</div>
+
+        <div class="modify">
+          <strong>Modify:</strong> เพิ่มบรรทัด <code>&lt;p&gt;ตั้งใจอ่านให้สม่ำเสมอ&lt;/p&gt;</code> ในตัวแปร <code>message</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <strong>Mini Quiz:</strong> ถ้าต้องการแสดงข้อความที่มีแท็ก HTML เช่น <code>&lt;h3&gt;</code> ควรใช้คำสั่งใด?
+    <div class="radio-row">
+      <label><input type="radio" name="q4" value="a"> textContent</label>
+      <label><input type="radio" name="q4" value="b"> innerHTML</label>
+      <label><input type="radio" name="q4" value="c"> value</label>
+      <label><input type="radio" name="q4" value="d"> Number()</label>
+    </div>
+    <button onclick="checkQuiz('q4','b','q4status')">ตรวจคำตอบ</button>
+    <div id="q4status" class="status"></div>
+  </div>
+</section>
+
+<section id="lab5">
+  <button class="section-done" onclick="markDone('lab5', this)">ทำส่วนนี้แล้ว</button>
+  <h2>Lab 5: บันทึกข้อมูลด้วย Local Storage</h2>
+  <p><code>localStorage</code> ใช้บันทึกข้อมูลไว้ใน Browser ข้อมูลจะยังอยู่แม้ Refresh หน้าเว็บหรือปิดแล้วเปิดใหม่ แต่ข้อมูลนี้ไม่ได้ส่งไปให้เพื่อนหรือเก็บบน Cloud</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>คำสั่งพื้นฐาน</h3>
+      <table>
+        <tr><th>คำสั่ง</th><th>ความหมาย</th></tr>
+        <tr><td><code>localStorage.setItem(key, value)</code></td><td>บันทึกข้อมูล</td></tr>
+        <tr><td><code>localStorage.getItem(key)</code></td><td>อ่านข้อมูล</td></tr>
+        <tr><td><code>localStorage.removeItem(key)</code></td><td>ลบข้อมูล</td></tr>
+      </table>
+    </div>
+    <div class="card danger">
+      <h3>ข้อควรระวัง</h3>
+      <p>ไม่ควรเก็บรหัสผ่าน ข้อมูลลับ หรือข้อมูลส่วนบุคคลที่อ่อนไหวใน Local Storage</p>
+    </div>
+  </div>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h3 class="lab-title"><span class="pill">Run & Modify</span> Save → Refresh → Load</h3>
+      <span class="small">ทดลองบันทึกแล้ว Refresh หน้าเว็บ</span>
+    </div>
+
+    <div class="lab-body">
+      <div>
+        <label for="lab5Text">ข้อความที่ต้องการบันทึก</label>
+        <input id="lab5Text" type="text" value="Hello Local Storage">
+
+        <label for="code5">โค้ด JavaScript</label>
+        <div class="editor-wrap">
+          <div id="lines5" class="line-hint">1</div>
+          <textarea id="code5" class="editor" oninput="updateLines('code5','lines5')"></textarea>
+        </div>
+
+        <button onclick="runCode('code5','out5')">▶ Run / Save</button>
+        <button class="secondary" onclick="loadSimpleStorage()">Load myText</button>
+        <button class="danger" onclick="clearSimpleStorage()">Clear myText</button>
+        <button class="ghost" onclick="resetCode(5)">Reset</button>
+      </div>
+
+      <div>
+        <div class="predict">
+          <strong>Predict:</strong> ถ้ากด Save แล้ว Refresh หน้าเว็บ ข้อมูลควรยังอยู่หรือหายไป?
+          <input id="predict5" type="text" placeholder="พิมพ์คำตอบของคุณ...">
+          <button class="ghost" onclick="checkContains('predict5','อยู่','predictStatus5')">ตรวจคำตอบ</button>
+          <div id="predictStatus5" class="status"></div>
+        </div>
+
+        <h3>Console Output</h3>
+        <div id="out5" class="console">ยังไม่ได้ Run</div>
+
+        <h3>Storage Status</h3>
+        <div id="storageSimpleStatus" class="observe">ยังไม่ได้ตรวจสอบ</div>
+
+        <div class="modify">
+          <strong>Modify:</strong> เปลี่ยน key จาก <code>"myText"</code> เป็น <code>"favoriteSubject"</code> แล้วสังเกตว่า Load myText ยังโหลดข้อมูลเดิมได้หรือไม่
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Object → JSON → Local Storage</h3>
+  <p>Local Storage เก็บค่าเป็นข้อความ ถ้าต้องการเก็บข้อมูลหลายช่อง ควรรวมเป็น object แล้วใช้ <code>JSON.stringify()</code> ก่อนบันทึก และใช้ <code>JSON.parse()</code> เมื่อต้องการแปลงกลับมาเป็น object</p>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h3 class="lab-title"><span class="pill">Run & Modify</span> เก็บข้อมูลหลายช่องด้วย JSON</h3>
+      <span class="small">ลองแก้ชื่อ วิชา หรือคะแนนในโค้ด</span>
+    </div>
+
+    <div class="lab-body">
+      <div>
+        <label for="code6">โค้ด JavaScript</label>
+        <div class="editor-wrap">
+          <div id="lines6" class="line-hint">1</div>
+          <textarea id="code6" class="editor" oninput="updateLines('code6','lines6')"></textarea>
+        </div>
+
+        <button onclick="runCode('code6','out6')">▶ Run / Save Object</button>
+        <button class="secondary" onclick="loadObjectStorage()">Load studentData</button>
+        <button class="danger" onclick="clearObjectStorage()">Clear studentData</button>
+        <button class="ghost" onclick="resetCode(6)">Reset</button>
+      </div>
+
+      <div>
+        <div class="predict">
+          <strong>Predict:</strong> ก่อนเก็บ object ลง Local Storage ต้องแปลงเป็นอะไร?
+          <input id="predict6" type="text" placeholder="พิมพ์คำตอบของคุณ...">
+          <button class="ghost" onclick="checkContains('predict6','JSON','predictStatus6')">ตรวจคำตอบ</button>
+          <div id="predictStatus6" class="status"></div>
+        </div>
+
+        <h3>Console Output</h3>
+        <div id="out6" class="console">ยังไม่ได้ Run</div>
+
+        <h3>Loaded Object</h3>
+        <div id="objectStatus" class="observe">ยังไม่ได้โหลด</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <strong>Mini Quiz:</strong> ถ้าต้องการเก็บ object ลง Local Storage ควรใช้คำสั่งใดก่อน?
+    <div class="radio-row">
+      <label><input type="radio" name="q5" value="a"> JSON.stringify()</label>
+      <label><input type="radio" name="q5" value="b"> JSON.parse()</label>
+      <label><input type="radio" name="q5" value="c"> Number()</label>
+      <label><input type="radio" name="q5" value="d"> innerHTML</label>
+    </div>
+    <button onclick="checkQuiz('q5','a','q5status')">ตรวจคำตอบ</button>
+    <div id="q5status" class="status"></div>
+  </div>
+</section>
+
+<section id="project">
+  <button class="section-done" onclick="markDone('project', this)">ทำส่วนนี้แล้ว</button>
+  <h2>Mini Project: Personal Study Planner</h2>
+  <div class="card mission">
+    <p class="lead"><strong>ภารกิจ:</strong> สร้างเว็บแอปที่รับข้อมูลแผนการอ่านหนังสือ คำนวณเวลาเฉลี่ยต่อบท แสดงคำแนะนำ และบันทึกข้อมูลล่าสุดไว้ใน Local Storage</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>ข้อมูลที่ต้องรับเข้า</h3>
+      <ul>
+        <li>ชื่อนักเรียน</li>
+        <li>วิชาที่ต้องการอ่าน</li>
+        <li>จำนวนบทที่ต้องอ่าน</li>
+        <li>จำนวนชั่วโมงที่มี</li>
+        <li>ระดับความยากของวิชา</li>
+        <li>เป้าหมายการอ่าน</li>
+        <li>วิธีอ่านที่วางแผนจะใช้</li>
+        <li>บันทึกเพิ่มเติม</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>ฟังก์ชันที่ต้องทำได้</h3>
+      <ul>
+        <li>อ่านค่าจาก input ได้ถูกต้อง</li>
+        <li>ตรวจสอบข้อมูลก่อนคำนวณ</li>
+        <li>คำนวณเวลาเฉลี่ยต่อบท</li>
+        <li>แสดงคำแนะนำ</li>
+        <li>Save / Load / Clear ด้วย Local Storage</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>ทดลองตัวอย่างก่อนสร้างเอง</h3>
+  <div class="grid">
+    <div class="card">
+      <label for="name">ชื่อนักเรียน</label>
+      <input type="text" id="name" placeholder="เช่น สมชาย">
+
+      <label for="subject">วิชา</label>
+      <input type="text" id="subject" placeholder="เช่น คณิตศาสตร์">
+
+      <label for="chapters">จำนวนบทที่ต้องอ่าน</label>
+      <input type="number" id="chapters" min="1" placeholder="เช่น 5">
+
+      <label for="hours">จำนวนชั่วโมงที่มี</label>
+      <input type="number" id="hours" min="0" step="0.5" placeholder="เช่น 8">
+
+      <label for="difficulty">ระดับความยากของวิชา</label>
+      <select id="difficulty">
+        <option value="">-- เลือก --</option>
+        <option value="easy">ง่าย</option>
+        <option value="medium">ปานกลาง</option>
+        <option value="hard">ยาก</option>
+      </select>
+
+      <label>เป้าหมายการอ่าน</label>
+      <div class="radio-row">
+        <label><input type="radio" name="goal" value="ทบทวนพื้นฐาน"> ทบทวนพื้นฐาน</label>
+        <label><input type="radio" name="goal" value="เตรียมสอบ"> เตรียมสอบ</label>
+        <label><input type="radio" name="goal" value="ทำแบบฝึกหัด"> ทำแบบฝึกหัด</label>
+      </div>
+
+      <label>วิธีอ่านที่วางแผนจะใช้</label>
+      <div class="check-row">
+        <label><input type="checkbox" name="method" value="อ่านสรุป"> อ่านสรุป</label>
+        <label><input type="checkbox" name="method" value="ทำโจทย์"> ทำโจทย์</label>
+        <label><input type="checkbox" name="method" value="ดูวิดีโอ"> ดูวิดีโอ</label>
+        <label><input type="checkbox" name="method" value="ติวกับเพื่อน"> ติวกับเพื่อน</label>
+      </div>
+
+      <label for="note">บันทึกเพิ่มเติม</label>
+      <textarea id="note" placeholder="เช่น บทที่ 3 ยังไม่เข้าใจ ควรใช้เวลามากขึ้น"></textarea>
+
+      <button onclick="calculatePlan()">คำนวณและแสดงผล</button>
+      <button onclick="savePlan()">บันทึกลง Local Storage</button>
+      <button class="secondary" onclick="loadPlan()">โหลดข้อมูลเดิม</button>
+      <button class="danger" onclick="clearPlan()">ลบข้อมูลที่บันทึกไว้</button>
+    </div>
+
+    <div class="card">
+      <h3>ผลลัพธ์</h3>
+      <div id="result" class="project-output">ผลลัพธ์จะแสดงที่นี่หลังจากกดปุ่มคำนวณ</div>
+
+      <h3>สถานะ Local Storage</h3>
+      <div id="storageStatus" class="project-output">ยังไม่ได้ตรวจสอบข้อมูล</div>
+
+      <h3>Challenge สำหรับผู้เรียนเร็ว</h3>
+      <ul>
+        <li>เพิ่มประวัติการบันทึกหลายรายการ</li>
+        <li>เพิ่มสีตามความเร่งด่วน</li>
+        <li>เพิ่มปุ่ม Export ข้อมูลเป็นข้อความ</li>
+        <li>เพิ่มระบบนับจำนวนครั้งที่เปิดเว็บนี้</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="reflection">
+  <button class="section-done" onclick="markDone('reflection', this)">ทำส่วนนี้แล้ว</button>
+  <h2>Checkoff และ Reflection</h2>
+
+  <h3>Checkoff</h3>
+  <ul>
+    <li>อธิบายได้ว่า input แต่ละชนิดเหมาะกับข้อมูลแบบใด</li>
+    <li>อ่านค่าจาก input ด้วย <code>.value</code> ได้</li>
+    <li>แปลงข้อมูลเป็นตัวเลขด้วย <code>Number()</code> ได้</li>
+    <li>ใช้ <code>if / else</code> เพื่อสร้างคำแนะนำได้</li>
+    <li>แสดงผลบนหน้าเว็บด้วย <code>innerHTML</code> หรือ <code>textContent</code> ได้</li>
+    <li>ใช้ <code>localStorage.setItem()</code>, <code>getItem()</code>, <code>removeItem()</code> ได้</li>
+    <li>อธิบายได้ว่า <code>JSON.stringify()</code> และ <code>JSON.parse()</code> ใช้ทำอะไร</li>
+  </ul>
+
+  <h3>Reflection</h3>
+  <ol>
+    <li>วันนี้เว็บแอปของคุณรับข้อมูลอะไรจากผู้ใช้บ้าง?</li>
+    <li>ข้อมูลใดต้องแปลงเป็นตัวเลขก่อนนำไปคำนวณ?</li>
+    <li>Local Storage แตกต่างจากตัวแปร JavaScript อย่างไร?</li>
+    <li>Local Storage เหมาะกับข้อมูลประเภทใด และไม่เหมาะกับข้อมูลประเภทใด?</li>
+    <li>ถ้าต้องการให้เพื่อนหลายคนเห็นข้อมูลเดียวกัน Local Storage เพียงพอหรือไม่ เพราะอะไร?</li>
+    <li>ถ้าใช้ AI ช่วยเขียนโค้ด คุณตรวจสอบความถูกต้องอย่างไร?</li>
+  </ol>
+
+  <div class="card warn">
+    <strong>ส่งงาน:</strong> ส่งไฟล์โปรเจกต์ของตนเอง เช่น <code>index.html</code>, <code>style.css</code>, <code>script.js</code> พร้อมตอบ Reflection ตามที่ครูกำหนด
+  </div>
+</section>
+</main>
+
+<footer>
+  MWIT Interactive Web Programming Workbook · Chapter 1
+</footer>
+
+<script>
+const defaultCodes = {
+  1: `const name = document.getElementById("lab1Name").value;
+
+output("Hello " + name);`,
+  2: `const a = Number(document.getElementById("lab2A").value);
+const b = Number(document.getElementById("lab2B").value);
+
+const sum = a + b;
+
+output("ผลบวกคือ " + sum);
+output("ชนิดข้อมูลของ a คือ " + typeof a);`,
+  3: `const score = Number(document.getElementById("lab3Score").value);
+
+if (score >= 50) {
+  output("ผ่าน");
+} else {
+  output("ยังไม่ผ่าน ควรทบทวนเพิ่มเติม");
+}`,
+  4: `const subject = document.getElementById("lab4Subject").value;
+const hours = Number(document.getElementById("lab4Hours").value);
+
+const message = \`
+  <h3>แผนการอ่าน</h3>
+  <p>วิชา: \${subject}</p>
+  <p>เวลาที่มี: \${hours} ชั่วโมง</p>
+\`;
+
+preview(message);`,
+  5: `const text = document.getElementById("lab5Text").value;
+
+localStorage.setItem("myText", text);
+
+output("บันทึกแล้ว: " + text);`,
+  6: `const student = {
+  name: "Mali",
+  subject: "Science",
+  score: 85
+};
+
+const jsonText = JSON.stringify(student);
+localStorage.setItem("studentData", jsonText);
+
+output("Object ถูกแปลงเป็น JSON:");
+output(jsonText);`
+};
+
+const doneSections = new Set(JSON.parse(localStorage.getItem("mwitWorkbookDone") || "[]"));
+const allSections = ["intro","lab1","lab2","lab3","lab4","lab5","project","reflection"];
+
+function init() {
+  for (let i = 1; i <= 6; i++) resetCode(i);
+  document.querySelectorAll(".section-done").forEach(btn => {
+    const id = btn.closest("section").id;
+    if (doneSections.has(id)) {
+      btn.classList.add("done");
+      btn.textContent = "ทำส่วนนี้แล้ว ✓";
+    }
+  });
+  updateProgress();
+  updateStorageStatus();
+  loadSimpleStorage(false);
+}
+
+function updateLines(textareaId, lineId) {
+  const textarea = document.getElementById(textareaId);
+  const lineBox = document.getElementById(lineId);
+  const count = textarea.value.split("\n").length;
+  lineBox.textContent = Array.from({length: count}, (_, i) => i + 1).join("\n");
+}
+
+function resetCode(num) {
+  const textarea = document.getElementById("code" + num);
+  textarea.value = defaultCodes[num];
+  updateLines("code" + num, "lines" + num);
+}
+
+function runCode(codeId, outputId, previewId) {
+  const code = document.getElementById(codeId).value;
+  const outputBox = document.getElementById(outputId);
+  outputBox.innerHTML = "";
+  let lines = [];
+
+  let previewBox = null;
+  if (previewId) {
+    previewBox = document.getElementById(previewId);
+    previewBox.innerHTML = "กำลังรอ Preview...";
+  }
+
+  function output(message) {
+    lines.push(String(message));
+    renderConsole(outputBox, lines);
+  }
+
+  function preview(html) {
+    if (previewBox) {
+      previewBox.innerHTML = html;
+    }
+    output("Preview updated.");
+  }
+
+  try {
+    const runner = new Function("output", "preview", code);
+    runner(output, preview);
+    if (lines.length === 0) {
+      output("โค้ดทำงานเสร็จแล้ว แต่ไม่มีคำสั่ง output()");
+    }
+  } catch (error) {
+    outputBox.innerHTML = `<span class="error">เกิดข้อผิดพลาด: ${escapeHTML(error.message)}</span>`;
+  }
+}
+
+function renderConsole(box, lines) {
+  box.innerHTML = lines.map(line => `<span class="prompt">&gt;</span> ${escapeHTML(line)}`).join("<br>");
+}
+
+function escapeHTML(text) {
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function checkPredict(inputId, expected, statusId) {
+  const value = document.getElementById(inputId).value.trim();
+  const status = document.getElementById(statusId);
+  if (normalize(value) === normalize(expected)) {
+    status.innerHTML = '<span class="ok">ถูกต้อง ✓</span>';
+  } else {
+    status.innerHTML = `<span class="bad">ลองคิดอีกครั้ง คำตอบที่คาดหวังคือ "${expected}"</span>`;
+  }
+}
+
+function checkContains(inputId, keyword, statusId) {
+  const value = document.getElementById(inputId).value.trim();
+  const status = document.getElementById(statusId);
+  if (normalize(value).includes(normalize(keyword))) {
+    status.innerHTML = '<span class="ok">คำตอบมีแนวคิดถูกต้อง ✓</span>';
+  } else {
+    status.innerHTML = `<span class="bad">ลองตอบโดยใช้แนวคิดว่า "${keyword}"</span>`;
+  }
+}
+
+function normalize(text) {
+  return String(text).trim().toLowerCase().replace(/\s+/g,"");
+}
+
+function checkQuiz(name, answer, statusId) {
+  const selected = document.querySelector(`input[name="${name}"]:checked`);
+  const status = document.getElementById(statusId);
+  if (!selected) {
+    status.innerHTML = '<span class="bad">กรุณาเลือกคำตอบก่อน</span>';
+    return;
+  }
+  if (selected.value === answer) {
+    status.innerHTML = '<span class="ok">ถูกต้อง ✓</span>';
+  } else {
+    status.innerHTML = '<span class="bad">ยังไม่ถูก ลองทบทวนคำอธิบายด้านบนอีกครั้ง</span>';
+  }
+}
+
+function markDone(id, btn) {
+  if (doneSections.has(id)) {
+    doneSections.delete(id);
+    btn.classList.remove("done");
+    btn.textContent = "ทำส่วนนี้แล้ว";
+  } else {
+    doneSections.add(id);
+    btn.classList.add("done");
+    btn.textContent = "ทำส่วนนี้แล้ว ✓";
+  }
+  localStorage.setItem("mwitWorkbookDone", JSON.stringify([...doneSections]));
+  updateProgress();
+}
+
+function updateProgress() {
+  const percent = Math.round((doneSections.size / allSections.length) * 100);
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("progressText").textContent = percent + "%";
+}
+
+function loadSimpleStorage(showAlert = true) {
+  const value = localStorage.getItem("myText");
+  const status = document.getElementById("storageSimpleStatus");
+  if (!status) return;
+  if (value === null) {
+    status.textContent = "ยังไม่มีข้อมูล myText ใน Local Storage";
+  } else {
+    status.textContent = "โหลดข้อมูลได้: " + value;
+    document.getElementById("lab5Text").value = value;
+  }
+}
+
+function clearSimpleStorage() {
+  localStorage.removeItem("myText");
+  document.getElementById("storageSimpleStatus").textContent = "ลบ myText แล้ว";
+}
+
+function loadObjectStorage() {
+  const jsonText = localStorage.getItem("studentData");
+  const status = document.getElementById("objectStatus");
+  if (jsonText === null) {
+    status.textContent = "ยังไม่มีข้อมูล studentData";
+    return;
+  }
+  try {
+    const student = JSON.parse(jsonText);
+    status.innerHTML = `
+      <p><strong>ชื่อ:</strong> ${escapeHTML(student.name)}</p>
+      <p><strong>วิชา:</strong> ${escapeHTML(student.subject)}</p>
+      <p><strong>คะแนน:</strong> ${escapeHTML(student.score)}</p>
+    `;
+  } catch (error) {
+    status.textContent = "อ่าน JSON ไม่สำเร็จ: " + error.message;
+  }
+}
+
+function clearObjectStorage() {
+  localStorage.removeItem("studentData");
+  document.getElementById("objectStatus").textContent = "ลบ studentData แล้ว";
+}
+
+function getSelectedGoal() {
+  const selected = document.querySelector('input[name="goal"]:checked');
+  return selected ? selected.value : "";
+}
+
+function getSelectedMethods() {
+  const checkboxes = document.querySelectorAll('input[name="method"]:checked');
+  return Array.from(checkboxes).map(item => item.value);
+}
+
+function getFormData() {
+  return {
+    name: document.getElementById("name").value.trim(),
+    subject: document.getElementById("subject").value.trim(),
+    chapters: Number(document.getElementById("chapters").value),
+    hours: Number(document.getElementById("hours").value),
+    difficulty: document.getElementById("difficulty").value,
+    goal: getSelectedGoal(),
+    methods: getSelectedMethods(),
+    note: document.getElementById("note").value.trim(),
+    savedAt: new Date().toLocaleString("th-TH")
+  };
+}
+
+function validatePlan(plan) {
+  if (plan.name === "") { alert("กรุณากรอกชื่อนักเรียน"); return false; }
+  if (plan.subject === "") { alert("กรุณากรอกวิชา"); return false; }
+  if (plan.chapters <= 0 || Number.isNaN(plan.chapters)) { alert("กรุณากรอกจำนวนบทที่ต้องอ่านให้ถูกต้อง"); return false; }
+  if (plan.hours <= 0 || Number.isNaN(plan.hours)) { alert("กรุณากรอกจำนวนชั่วโมงที่มีให้ถูกต้อง"); return false; }
+  if (plan.difficulty === "") { alert("กรุณาเลือกระดับความยาก"); return false; }
+  if (plan.goal === "") { alert("กรุณาเลือกเป้าหมายการอ่าน"); return false; }
+  return true;
+}
+
+function getAdvice(hoursPerChapter, difficulty) {
+  let advice = "";
+  if (hoursPerChapter >= 2) {
+    advice = "คุณมีเวลาค่อนข้างเพียงพอ ควรวางแผนอ่านอย่างสม่ำเสมอและทบทวนหลังอ่านจบแต่ละบท";
+  } else if (hoursPerChapter >= 1) {
+    advice = "เวลาค่อนข้างจำกัด ควรเลือกอ่านหัวข้อสำคัญก่อน และใช้การทำโจทย์เพื่อตรวจสอบความเข้าใจ";
+  } else {
+    advice = "เวลาน้อยมาก ควรจัดลำดับความสำคัญ เลือกอ่านบทที่จำเป็นที่สุด และขอคำแนะนำจากครูหรือเพื่อน";
+  }
+  if (difficulty === "hard") {
+    advice += " เนื่องจากวิชานี้ยาก ควรเผื่อเวลาทบทวนเพิ่มเติม";
+  }
+  return advice;
+}
+
+function calculatePlan() {
+  const plan = getFormData();
+  if (!validatePlan(plan)) return null;
+
+  const hoursPerChapter = plan.hours / plan.chapters;
+  const advice = getAdvice(hoursPerChapter, plan.difficulty);
+  const methodsText = plan.methods.length > 0 ? plan.methods.join(", ") : "ยังไม่ได้เลือก";
+  const percent = Math.min(100, Math.round((hoursPerChapter / 2) * 100));
+
+  document.getElementById("result").innerHTML = `
+    <div class="result-card">
+      <span class="pill">ผลลัพธ์</span>
+      <h3>แผนการอ่านของ ${escapeHTML(plan.name)}</h3>
+      <p><strong>วิชา:</strong> ${escapeHTML(plan.subject)}</p>
+      <p><strong>จำนวนบท:</strong> ${plan.chapters} บท</p>
+      <p><strong>เวลาที่มี:</strong> ${plan.hours} ชั่วโมง</p>
+      <p><strong>เวลาเฉลี่ยต่อบท:</strong></p>
+      <div class="score-big">${hoursPerChapter.toFixed(2)} ชั่วโมง/บท</div>
+      <p><strong>เป้าหมาย:</strong> ${escapeHTML(plan.goal)}</p>
+      <p><strong>วิธีอ่าน:</strong> ${escapeHTML(methodsText)}</p>
+      <p><strong>คำแนะนำ:</strong> ${escapeHTML(advice)}</p>
+      <p><strong>บันทึกเพิ่มเติม:</strong> ${escapeHTML(plan.note || "-")}</p>
+      <p class="small">แถบด้านล่างแสดงความเพียงพอของเวลาโดยประมาณ</p>
+      <div class="mini-progress"><div class="mini-bar" style="width:${percent}%"></div></div>
+    </div>
+  `;
+  return plan;
+}
+
+function savePlan() {
+  const plan = calculatePlan();
+  if (plan === null) return;
+  localStorage.setItem("studyPlan", JSON.stringify(plan));
+  updateStorageStatus("บันทึกข้อมูลเรียบร้อยแล้ว เมื่อ Refresh หรือเปิดหน้านี้ใหม่ สามารถกดโหลดข้อมูลเดิมได้");
+}
+
+function loadPlan() {
+  const savedText = localStorage.getItem("studyPlan");
+  if (savedText === null) {
+    updateStorageStatus("ยังไม่มีข้อมูลที่บันทึกไว้ใน Local Storage");
+    return;
+  }
+
+  const plan = JSON.parse(savedText);
+  document.getElementById("name").value = plan.name || "";
+  document.getElementById("subject").value = plan.subject || "";
+  document.getElementById("chapters").value = plan.chapters || "";
+  document.getElementById("hours").value = plan.hours || "";
+  document.getElementById("difficulty").value = plan.difficulty || "";
+  document.getElementById("note").value = plan.note || "";
+
+  document.querySelectorAll('input[name="goal"]').forEach(radio => {
+    radio.checked = radio.value === plan.goal;
+  });
+  document.querySelectorAll('input[name="method"]').forEach(checkbox => {
+    checkbox.checked = Array.isArray(plan.methods) && plan.methods.includes(checkbox.value);
+  });
+
+  updateStorageStatus("โหลดข้อมูลเดิมสำเร็จ บันทึกล่าสุดเมื่อ " + (plan.savedAt || "ไม่ทราบเวลา"));
+  calculatePlan();
+}
+
+function clearPlan() {
+  localStorage.removeItem("studyPlan");
+  updateStorageStatus("ลบข้อมูลที่บันทึกไว้แล้ว");
+}
+
+function updateStorageStatus(message) {
+  const box = document.getElementById("storageStatus");
+  if (!box) return;
+  if (message) {
+    box.innerHTML = `<p>${escapeHTML(message)}</p>`;
+  } else {
+    const savedText = localStorage.getItem("studyPlan");
+    box.innerHTML = savedText ? "<p>พบข้อมูลเดิมใน Local Storage สามารถกดปุ่มโหลดข้อมูลเดิมได้</p>" : "<p>ยังไม่พบข้อมูลเดิมใน Local Storage</p>";
+  }
+}
+
+window.addEventListener("load", init);
+</script>
+</body>
+</html>
