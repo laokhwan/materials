@@ -3,555 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MWIT Interactive Web Programming Workbook - Chapter 1 Full HTML CSS JS</title>
+  <title>MWIT Interactive Web Programming Lab</title>
   <style>
-    :root {
-      --bg:#f6f8fc;
-      --card:#ffffff;
-      --ink:#0f172a;
-      --muted:#64748b;
-      --line:#dbe3ef;
-      --blue:#2563eb;
-      --blue2:#1d4ed8;
-      --purple:#7c3aed;
-      --soft:#eff6ff;
-      --green:#059669;
-      --green-soft:#ecfdf5;
-      --amber:#b45309;
-      --amber-soft:#fffbeb;
-      --red:#dc2626;
-      --red-soft:#fef2f2;
-      --dark:#0f172a;
-      --dark2:#111827;
-      --console:#020617;
+    :root{
+      --bg:#f5f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#d8dee9;
+      --blue:#2563eb; --blue2:#1d4ed8; --soft:#eff6ff; --green:#059669; --amber:#b45309;
+      --red:#dc2626; --code:#111827;
     }
-
-    * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-
-    body {
-      margin:0;
-      background:var(--bg);
-      color:var(--ink);
-      font-family:"Sarabun","Noto Sans Thai","Segoe UI",sans-serif;
-      font-size:17px;
-      line-height:1.7;
-    }
-
-    header {
-      background:linear-gradient(135deg,#0f172a,#1d4ed8 55%,#7c3aed);
-      color:#fff;
-      padding:32px 24px;
-      box-shadow:0 10px 30px rgba(15,23,42,.25);
-    }
-
-    .wrap { max-width:1200px; margin:0 auto; }
-
-    .topline {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-      flex-wrap:wrap;
-      margin-bottom:16px;
-    }
-
-    .brand {
-      font-weight:800;
-      letter-spacing:.2px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .brand-icon {
-      width:36px;height:36px;border-radius:10px;
-      display:grid;place-items:center;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.25);
-    }
-
-    h1 {
-      font-size:clamp(30px,4.6vw,52px);
-      line-height:1.15;
-      margin:0 0 10px;
-    }
-
-    header p {
-      max-width:940px;
-      margin:0;
-      font-size:20px;
-      opacity:.96;
-    }
-
-    .chapter-badge {
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.25);
-      padding:6px 12px;
-      border-radius:999px;
-      font-weight:700;
-      margin-bottom:14px;
-    }
-
-    nav {
-      position:sticky;
-      top:0;
-      z-index:50;
-      background:rgba(255,255,255,.95);
-      backdrop-filter:blur(10px);
-      border-bottom:1px solid var(--line);
-    }
-
-    nav .wrap {
-      padding:10px 20px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      overflow-x:auto;
-    }
-
-    nav a {
-      text-decoration:none;
-      color:var(--ink);
-      padding:8px 12px;
-      border-radius:999px;
-      white-space:nowrap;
-      font-size:15px;
-      font-weight:700;
-    }
-
-    nav a:hover { background:var(--soft); color:var(--blue); }
-
-    .progress-shell {
-      min-width:170px;
-      margin-left:auto;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      color:var(--muted);
-      font-size:14px;
-      font-weight:700;
-    }
-
-    .progress {
-      width:90px;height:8px;background:#e2e8f0;
-      border-radius:999px;overflow:hidden;
-    }
-
-    .progress-bar {
-      height:100%;width:0%;
-      background:linear-gradient(90deg,var(--blue),var(--purple));
-      transition:width .25s ease;
-    }
-
-    main { max-width:1200px; margin:24px auto 80px; padding:0 20px; }
-
-    section {
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:28px;
-      margin:22px 0;
-      box-shadow:0 12px 32px rgba(15,23,42,.06);
-    }
-
-    h2 { font-size:32px; line-height:1.25; margin:0 0 14px; }
-    h3 { font-size:23px; margin:22px 0 10px; }
-    .lead { font-size:20px; }
-
-    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
-    .three { grid-template-columns:repeat(3,minmax(0,1fr)); }
-
-    @media (max-width:980px) {
-      .grid,.three { grid-template-columns:1fr; }
-      section { padding:20px; }
-      .progress-shell { display:none; }
-    }
-
-    .card {
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:16px;
-      background:#fff;
-    }
-
-    .mission { border-left:6px solid var(--blue); background:var(--soft); }
-    .tip { border-left:6px solid var(--green); background:var(--green-soft); }
-    .warn { border-left:6px solid var(--amber); background:var(--amber-soft); }
-    .dangerbox { border-left:6px solid var(--red); background:var(--red-soft); }
-
-    code {
-      font-family:Consolas,Menlo,Monaco,monospace;
-      background:#eef2ff;
-      color:#1e3a8a;
-      padding:2px 6px;
-      border-radius:6px;
-      font-size:.92em;
-    }
-
-    pre {
-      background:var(--dark);
-      color:#e5e7eb;
-      padding:16px;
-      border-radius:16px;
-      overflow:auto;
-      font-family:Consolas,Menlo,Monaco,monospace;
-      font-size:15px;
-      line-height:1.55;
-      text-align:left;
-      direction:ltr;
-    }
-
-    .lab {
-      border:1px solid #bfdbfe;
-      border-radius:24px;
-      overflow:hidden;
-      background:#fff;
-      margin:22px 0;
-      box-shadow:0 12px 28px rgba(37,99,235,.08);
-    }
-
-    .lab-head {
-      padding:18px 20px;
-      border-bottom:1px solid var(--line);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap;
-      background:linear-gradient(180deg,#fff,#f8fbff);
-    }
-
-    .lab-title {
-      margin:0;
-      font-size:25px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .pill {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:#dbeafe;
-      color:#1d4ed8;
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:14px;
-      font-weight:800;
-      white-space:nowrap;
-    }
-
-    .lab-body {
-      padding:20px;
-      display:grid;
-      grid-template-columns:1.08fr .92fr;
-      gap:18px;
-      align-items:start;
-    }
-
-    @media (max-width:1050px) { .lab-body { grid-template-columns:1fr; } }
-
-    label { display:block; margin:12px 0 5px; font-weight:800; }
-
-    input,select,textarea,button { font:inherit; }
-
-    input,select,textarea {
-      width:100%;
-      border:1px solid #cbd5e1;
-      border-radius:12px;
-      padding:10px 12px;
-      background:#fff;
-    }
-
-    textarea.codebox {
-      min-height:160px;
-      resize:vertical;
-      background:var(--dark2);
-      color:#e5e7eb;
-      border:1px solid #334155;
-      border-radius:16px;
-      padding:14px;
-      line-height:1.55;
-      font-family:Consolas,Menlo,Monaco,monospace;
-      font-size:15px;
-      direction:ltr;
-      text-align:left;
-      tab-size:2;
-    }
-
-    .editor-wrap { position:relative; margin-bottom:10px; }
-    .line-hint { display:none; }
-
-    .tabs {
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-      margin:8px 0 10px;
-    }
-
-    .tab {
-      padding:7px 12px;
-      border:1px solid #bfdbfe;
-      background:#fff;
-      color:#1d4ed8;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:800;
-      font-size:14px;
-      margin:0;
-      box-shadow:none;
-    }
-
-    .tab.active {
-      color:#fff;
-      background:var(--blue);
-      border-color:var(--blue);
-    }
-
-    .code-panel { display:none; }
-    .code-panel.active { display:block; }
-
-    button {
-      border:0;
-      border-radius:13px;
-      padding:10px 16px;
-      color:white;
-      background:var(--blue);
-      cursor:pointer;
-      font-weight:800;
-      margin:10px 8px 0 0;
-      box-shadow:0 8px 18px rgba(37,99,235,.18);
-    }
-
-    button:hover { background:var(--blue2); }
-    button.secondary { background:#475569; box-shadow:none; }
-    button.secondary:hover { background:#334155; }
-    button.ghost {
-      background:#fff;color:var(--blue);
-      border:1px solid #bfdbfe;box-shadow:none;
-    }
-    button.ghost:hover { background:#eff6ff; }
-    button.danger { background:#dc2626; box-shadow:none; }
-    button.danger:hover { background:#b91c1c; }
-
-    .predict {
-      background:linear-gradient(135deg,#ecfdf5,#f0fdf4);
-      border:1px solid #bbf7d0;
-      border-left:6px solid var(--green);
-      border-radius:16px;
-      padding:14px;
-      margin-bottom:14px;
-    }
-
-    .predict input { margin-top:8px; }
-
-    .modify {
-      background:linear-gradient(135deg,#fffbeb,#fff7ed);
-      border:1px solid #fde68a;
-      border-left:6px solid var(--amber);
-      border-radius:16px;
-      padding:14px;
-      margin-top:14px;
-    }
-
-    .observe {
-      background:#f8fafc;
-      border:1px dashed #94a3b8;
-      border-radius:16px;
-      padding:14px;
-      min-height:82px;
-      overflow:auto;
-      white-space:pre-wrap;
-    }
-
-    .console {
-      background:var(--console);
-      color:#d1fae5;
-      border:1px solid #1e293b;
-      border-radius:16px;
-      padding:14px;
-      min-height:100px;
-      font-family:Consolas,Menlo,Monaco,monospace;
-      font-size:15px;
-      line-height:1.6;
-      white-space:pre-wrap;
-      direction:ltr;
-      text-align:left;
-    }
-
-    .console .error { color:#fecaca; }
-    .console .prompt { color:#60a5fa; }
-
-    .preview {
-      background:#fff;
-      border:1px solid #cbd5e1;
-      border-radius:16px;
-      padding:14px;
-      min-height:140px;
-    }
-
-    .preview-frame {
-      border:1px solid #cbd5e1;
-      border-radius:16px;
-      min-height:220px;
-      width:100%;
-      background:#fff;
-    }
-
-    .explain-list { display:grid; gap:8px; margin-top:12px; }
-
-    .explain-item {
-      background:#f8fafc;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-    }
-
-    .quiz {
-      margin-top:16px;
-      padding:14px;
-      border:1px solid #ddd6fe;
-      border-radius:16px;
-      background:#faf5ff;
-    }
-
-    .quiz label { font-weight:500; margin:6px 0; }
-
-    .radio-row,.check-row {
-      display:flex;
-      gap:14px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin:8px 0;
-    }
-
-    .radio-row label,.check-row label {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      font-weight:500;
-      margin:0;
-    }
-
-    .radio-row input,.check-row input { width:auto; }
-
-    .status { margin-top:10px; font-weight:800; }
-    .ok { color:var(--green); }
-    .bad { color:var(--red); }
-
-    table { width:100%; border-collapse:collapse; margin:12px 0; }
-
-    th,td {
-      border:1px solid var(--line);
-      padding:10px;
-      vertical-align:top;
-    }
-
-    th { background:#f1f5f9; text-align:left; }
-
-    .project-output {
-      background:#f8fafc;
-      border:1px dashed #94a3b8;
-      border-radius:16px;
-      padding:14px;
-      min-height:92px;
-      margin-top:8px;
-    }
-
-    .result-card {
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-    }
-
-    .score-big {
-      font-size:34px;
-      font-weight:900;
-      color:var(--blue);
-      line-height:1.2;
-    }
-
-    .mini-progress {
-      height:10px;background:#e5e7eb;
-      border-radius:999px;overflow:hidden;margin:8px 0;
-    }
-
-    .mini-bar {
-      height:100%;width:0%;
-      background:linear-gradient(90deg,var(--blue),var(--purple));
-      transition:width .25s ease;
-    }
-
-    .small { color:var(--muted); font-size:15px; }
-
-
-    .copy-row {
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin:8px 0 10px;
-    }
-
-    .copy-row button {
-      margin:0;
-      padding:7px 11px;
-      font-size:14px;
-      box-shadow:none;
-    }
-
-    .file-note {
-      background:#f8fafc;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:10px 12px;
-      color:#334155;
-      font-size:15px;
-      margin:8px 0 12px;
-    }
-
-    footer { text-align:center; color:var(--muted); padding:40px 20px; }
-
-    .section-done {
-      float:right;
-      margin-top:-2px;
-      background:#f8fafc;
-      color:#334155;
-      border:1px solid #cbd5e1;
-      box-shadow:none;
-      padding:6px 10px;
-      font-size:14px;
-    }
-
-    .section-done.done {
-      background:var(--green-soft);
-      color:var(--green);
-      border-color:#a7f3d0;
-    }
-
-    .mini-demo-note {
-      font-size:14px;
-      color:#64748b;
-      margin-top:6px;
-    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun","Noto Sans Thai","Segoe UI",sans-serif;font-size:17px;line-height:1.65}
+    header{background:linear-gradient(135deg,#0f172a,#1d4ed8,#7c3aed);color:#fff;padding:34px 20px}
+    .wrap{max-width:1200px;margin:auto}
+    h1{font-size:clamp(30px,5vw,52px);line-height:1.15;margin:0 0 10px}
+    h2{font-size:30px;margin:0 0 12px}
+    h3{font-size:22px;margin:22px 0 10px}
+    header p{font-size:20px;max-width:900px;margin:0;opacity:.95}
+    nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+    nav .wrap{display:flex;gap:8px;overflow-x:auto;padding:10px 20px}
+    nav a{text-decoration:none;color:var(--ink);font-weight:700;white-space:nowrap;padding:8px 12px;border-radius:999px}
+    nav a:hover{background:var(--soft);color:var(--blue)}
+    main{max-width:1200px;margin:24px auto 80px;padding:0 20px}
+    section{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;margin:22px 0;box-shadow:0 10px 28px rgba(15,23,42,.05)}
+    .box{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff}
+    .mission{border-left:6px solid var(--blue);background:var(--soft)}
+    .tip{border-left:6px solid var(--green);background:#ecfdf5}
+    .warn{border-left:6px solid var(--amber);background:#fffbeb}
+    .danger{border-left:6px solid var(--red);background:#fef2f2}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media(max-width:900px){.grid,.three{grid-template-columns:1fr}section{padding:18px}}
+    code{background:#eef2ff;color:#1e3a8a;padding:2px 6px;border-radius:6px;font-family:Consolas,monospace}
+    pre{background:#0f172a;color:#e5e7eb;padding:14px;border-radius:14px;overflow:auto;font-family:Consolas,monospace;font-size:15px}
+    .lab{border:1px solid #bfdbfe;border-radius:22px;overflow:hidden;margin:22px 0;background:#fff}
+    .lab-head{padding:18px 20px;background:linear-gradient(180deg,#fff,#f8fbff);border-bottom:1px solid var(--line)}
+    .lab-head p{margin:6px 0 0;color:var(--muted)}
+    .lab-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:18px}
+    @media(max-width:1000px){.lab-body{grid-template-columns:1fr}}
+    label{display:block;font-weight:800;margin:10px 0 6px}
+    textarea.editor{width:100%;min-height:190px;background:var(--code);color:#e5e7eb;border:1px solid #334155;border-radius:14px;padding:12px;font-family:Consolas,Menlo,monospace;font-size:15px;line-height:1.5;resize:vertical;direction:ltr;text-align:left;tab-size:2}
+    textarea.editor.html{min-height:260px}
+    textarea.editor.css{min-height:220px}
+    textarea.editor.js{min-height:220px}
+    button{border:0;border-radius:12px;background:var(--blue);color:#fff;padding:10px 14px;font:inherit;font-weight:800;cursor:pointer;margin:8px 6px 8px 0}
+    button:hover{background:var(--blue2)}
+    button.secondary{background:#475569}
+    button.secondary:hover{background:#334155}
+    button.ghost{background:#fff;color:var(--blue);border:1px solid #bfdbfe}
+    button.ghost:hover{background:#eff6ff}
+    .preview{width:100%;height:420px;border:1px solid #cbd5e1;border-radius:14px;background:#fff}
+    .copy-row{display:flex;gap:8px;flex-wrap:wrap}
+    .file-note{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:10px;color:#334155;font-size:15px;margin:10px 0}
+    .predict,.challenge{border-radius:14px;padding:12px;margin:10px 0}
+    .predict{border:1px solid #bbf7d0;background:#ecfdf5;border-left:6px solid var(--green)}
+    .challenge{border:1px solid #fde68a;background:#fffbeb;border-left:6px solid var(--amber)}
+    table{width:100%;border-collapse:collapse;margin:12px 0}
+    th,td{border:1px solid var(--line);padding:10px;vertical-align:top}
+    th{background:#f1f5f9;text-align:left}
+    footer{text-align:center;color:var(--muted);padding:36px}
   </style>
 </head>
-
 <body>
 <header>
   <div class="wrap">
-    <div class="topline">
-      <div class="brand"><span class="brand-icon">⌨️</span> MWIT Interactive Web Programming Workbook</div>
-      <div class="chapter-badge">Chapter 1 · HTML + CSS + JavaScript</div>
-    </div>
-    <h1>สร้างเว็บแอปที่รับข้อมูล คำนวณ แสดงผล และจำข้อมูลได้</h1>
-    <p>เวอร์ชันนี้ให้นักเรียนเห็นครบทั้ง HTML, CSS และ JavaScript พร้อมทดลองแก้โค้ดแล้ว Run เพื่อดูผลลัพธ์ทันที</p>
+    <h1>MWIT Interactive Web Programming Lab</h1>
+    <p>บทเรียนแบบทดลองจริง: นักเรียนแก้ HTML, CSS และ JavaScript ได้ กด Run เพื่อดูผลทันที และ Copy โค้ดไปใช้ใน VS Code แบบแยกไฟล์ได้จริง</p>
   </div>
 </header>
 
@@ -560,461 +75,65 @@
     <a href="#intro">เริ่มต้น</a>
     <a href="#lab1">Lab 1 Input</a>
     <a href="#lab2">Lab 2 CSS</a>
-    <a href="#lab3">Lab 3 Number()</a>
+    <a href="#lab3">Lab 3 Calculate</a>
     <a href="#lab4">Lab 4 if/else</a>
     <a href="#lab5">Lab 5 Local Storage</a>
     <a href="#project">Mini Project</a>
-    <a href="#reflection">Reflection</a>
-    <div class="progress-shell">
-      <span id="progressText">0%</span>
-      <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
-    </div>
   </div>
 </nav>
 
 <main>
 <section id="intro">
-  <button class="section-done" onclick="markDone('intro', this)">ทำส่วนนี้แล้ว</button>
-  <h2>เริ่มต้น: เว็บแอปไม่ได้มีแค่ JavaScript</h2>
-  <div class="card mission">
-    <p class="lead"><strong>เป้าหมายของบทนี้:</strong> นักเรียนจะเห็นว่าเว็บแอปหนึ่งหน้าเกิดจากการทำงานร่วมกันของ <strong>HTML</strong>, <strong>CSS</strong> และ <strong>JavaScript</strong></p>
-  </div>
-
+  <h2>เริ่มต้น: 3 ไฟล์หลักของเว็บแอป</h2>
   <div class="grid three">
-    <div class="card">
-      <h3>HTML</h3>
-      <p>สร้างโครงสร้างของหน้าเว็บ เช่น หัวข้อ ช่องกรอกข้อมูล ปุ่ม และพื้นที่แสดงผล</p>
-      <code>&lt;input&gt;</code> <code>&lt;button&gt;</code> <code>&lt;div&gt;</code>
-    </div>
-    <div class="card">
-      <h3>CSS</h3>
-      <p>กำหนดหน้าตา เช่น สี ขนาด ระยะห่าง เส้นขอบ และรูปแบบของกล่องข้อมูล</p>
-      <code>background</code> <code>border</code> <code>padding</code>
-    </div>
-    <div class="card">
-      <h3>JavaScript</h3>
-      <p>ทำให้เว็บโต้ตอบได้ เช่น อ่านค่าจาก input คำนวณ แสดงผล และบันทึกข้อมูล</p>
-      <code>.value</code> <code>Number()</code> <code>localStorage</code>
-    </div>
+    <div class="box"><h3>index.html</h3><p>สร้างโครงสร้าง เช่น ช่องรับข้อมูล ปุ่ม และพื้นที่แสดงผล</p></div>
+    <div class="box"><h3>style.css</h3><p>กำหนดหน้าตา เช่น สี ขนาด ระยะห่าง เส้นขอบ และปุ่ม</p></div>
+    <div class="box"><h3>script.js</h3><p>ทำให้เว็บโต้ตอบได้ เช่น อ่านค่า input คำนวณ แสดงผล และบันทึกข้อมูล</p></div>
   </div>
-
-  <h3>ภาพรวม</h3>
-  <pre><code>HTML        สร้างช่องรับข้อมูลและปุ่ม
-CSS         ทำให้ช่องรับข้อมูลและปุ่มดูดี
-JavaScript  อ่านค่า input → คำนวณ → แสดงผล → บันทึกข้อมูล</code></pre>
-
-  <div class="card warn">
-    <strong>วิธีเรียน:</strong> ในแต่ละ Lab ให้ลองดูแท็บ HTML / CSS / JS แล้วกด Run นักเรียนสามารถแก้สีใน CSS แก้ข้อความใน HTML หรือแก้การคำนวณใน JavaScript แล้วดูผลได้ทันที โค้ดในแต่ละแท็บสามารถคัดลอกไปสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ใน VS Code ได้จริง
+  <div class="box warn">
+    <strong>วิธีใช้:</strong> ในแต่ละ Lab ให้แก้โค้ดในกล่อง HTML / CSS / JavaScript แล้วกด <strong>Run</strong> ถ้าต้องการนำไปทำต่อใน VS Code ให้กด Copy แต่ละไฟล์ แล้ววางในไฟล์ชื่อ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ในโฟลเดอร์เดียวกัน
   </div>
 </section>
 
-<section id="lab1">
-  <button class="section-done" onclick="markDone('lab1', this)">ทำส่วนนี้แล้ว</button>
-  <h2>Lab 1: สร้างช่องรับชื่อด้วย HTML และอ่านค่าด้วย JavaScript</h2>
-  <p>ก่อน JavaScript จะอ่านค่าได้ เราต้องมี HTML ที่สร้างช่อง input ก่อน และควรมี CSS เพื่อทำให้ช่อง input ดูชัดเจน</p>
-
-  <div class="lab">
-    <div class="lab-head">
-      <h3 class="lab-title"><span class="pill">HTML + CSS + JS</span> Textbox รับชื่อ</h3>
-      <span class="small">ลองแก้ placeholder, สี input หรือข้อความ Hello</span>
-    </div>
-
-    <div class="lab-body">
-      <div>
-        <div class="tabs">
-          <button class="tab active" onclick="showPanel('lab1','html')">HTML</button>
-          <button class="tab" onclick="showPanel('lab1','css')">CSS</button>
-          <button class="tab" onclick="showPanel('lab1','js')">JavaScript</button>
-        </div>
-        <div class="copy-row">
-          <button class="ghost" onclick="copyCode('lab1','html')">Copy index.html</button>
-          <button class="ghost" onclick="copyCode('lab1','css')">Copy style.css</button>
-          <button class="ghost" onclick="copyCode('lab1','js')">Copy script.js</button>
-        </div>
-        <div class="file-note">นำโค้ดไปใช้ใน VS Code ได้โดยสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ไว้ในโฟลเดอร์เดียวกัน</div>
-
-        <div id="lab1-html" class="code-panel active">
-          <label>HTML</label>
-          <div class="editor-wrap"><textarea id="code-lab1-html" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab1-css" class="code-panel">
-          <label>CSS</label>
-          <div class="editor-wrap"><textarea id="code-lab1-css" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab1-js" class="code-panel">
-          <label>JavaScript</label>
-          <div class="editor-wrap"><textarea id="code-lab1-js" class="codebox"></textarea></div>
-        </div>
-
-        <button onclick="runMiniApp('lab1')">▶ Run</button>
-        <button class="ghost" onclick="resetLab('lab1')">Reset</button>
-      </div>
-
-      <div>
-        <div class="predict">
-          <strong>Predict:</strong> ถ้ากรอกชื่อ “Somchai” แล้วกดปุ่มใน Preview ผลลัพธ์ควรเป็นอะไร?
-          <input id="predict1" type="text" placeholder="พิมพ์คำตอบของคุณ...">
-          <button class="ghost" onclick="checkPredict('predict1','Hello Somchai','predictStatus1')">ตรวจคำตอบ</button>
-          <div id="predictStatus1" class="status"></div>
-        </div>
-
-        <h3>Live Preview</h3>
-        <iframe id="frame-lab1" class="preview-frame" title="lab1 preview"></iframe>
-
-        <div class="modify">
-          <strong>Modify:</strong> ลองเปลี่ยนสีพื้นหลังของ <code>input</code> ใน CSS เป็น <code>#fff7ed</code> หรือเปลี่ยนข้อความ <code>Hello</code> ใน JavaScript เป็น <code>สวัสดี</code>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="explain-list">
-    <div class="explain-item"><code>&lt;input id="nameInput"&gt;</code> คือการสร้างช่องรับข้อความ และตั้ง id เพื่อให้ JavaScript เลือกใช้งานได้</div>
-    <div class="explain-item"><code>#nameInput</code> ใน CSS คือการตกแต่ง element ที่มี id เป็น <code>nameInput</code></div>
-    <div class="explain-item"><code>document.getElementById("nameInput").value</code> คือการอ่านค่าที่ผู้ใช้พิมพ์ใน textbox</div>
-  </div>
-</section>
-
-<section id="lab2">
-  <button class="section-done" onclick="markDone('lab2', this)">ทำส่วนนี้แล้ว</button>
-  <h2>Lab 2: ทบทวน CSS ผ่านการตกแต่ง input และปุ่ม</h2>
-  <p>CSS ทำให้เว็บใช้งานง่ายขึ้น เช่น ช่อง input ควรเห็นชัด ปุ่มควรดูเหมือนกดได้ และผลลัพธ์ควรอ่านง่าย</p>
-
-  <div class="lab">
-    <div class="lab-head">
-      <h3 class="lab-title"><span class="pill">CSS Focus</span> เปลี่ยนสี กล่อง และปุ่ม</h3>
-      <span class="small">ลองเปลี่ยน background, border-radius, button color</span>
-    </div>
-
-    <div class="lab-body">
-      <div>
-        <div class="tabs">
-          <button class="tab active" onclick="showPanel('lab2','html')">HTML</button>
-          <button class="tab" onclick="showPanel('lab2','css')">CSS</button>
-          <button class="tab" onclick="showPanel('lab2','js')">JavaScript</button>
-        </div>
-        <div class="copy-row">
-          <button class="ghost" onclick="copyCode('lab2','html')">Copy index.html</button>
-          <button class="ghost" onclick="copyCode('lab2','css')">Copy style.css</button>
-          <button class="ghost" onclick="copyCode('lab2','js')">Copy script.js</button>
-        </div>
-        <div class="file-note">นำโค้ดไปใช้ใน VS Code ได้โดยสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ไว้ในโฟลเดอร์เดียวกัน</div>
-
-        <div id="lab2-html" class="code-panel active">
-          <label>HTML</label>
-          <div class="editor-wrap"><textarea id="code-lab2-html" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab2-css" class="code-panel">
-          <label>CSS</label>
-          <div class="editor-wrap"><textarea id="code-lab2-css" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab2-js" class="code-panel">
-          <label>JavaScript</label>
-          <div class="editor-wrap"><textarea id="code-lab2-js" class="codebox"></textarea></div>
-        </div>
-
-        <button onclick="runMiniApp('lab2')">▶ Run</button>
-        <button class="ghost" onclick="resetLab('lab2')">Reset</button>
-      </div>
-
-      <div>
-        <div class="predict">
-          <strong>Predict:</strong> ถ้าเปลี่ยน <code>button</code> เป็นสีม่วง ปุ่มใน Preview จะเปลี่ยนไหม?
-          <input id="predict2" type="text" placeholder="พิมพ์คำตอบของคุณ...">
-          <button class="ghost" onclick="checkContains('predict2','เปลี่ยน','predictStatus2')">ตรวจคำตอบ</button>
-          <div id="predictStatus2" class="status"></div>
-        </div>
-
-        <h3>Live Preview</h3>
-        <iframe id="frame-lab2" class="preview-frame" title="lab2 preview"></iframe>
-
-        <div class="modify">
-          <strong>Modify:</strong> เปลี่ยน <code>background</code> ของ <code>.card</code> เป็นสีอื่น และเปลี่ยน <code>border-radius</code> จาก <code>16px</code> เป็น <code>4px</code> หรือ <code>30px</code>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="lab3">
-  <button class="section-done" onclick="markDone('lab3', this)">ทำส่วนนี้แล้ว</button>
-  <h2>Lab 3: รับตัวเลขและคำนวณด้วย Number()</h2>
-  <p>ถ้าต้องนำค่าจาก input ไปคำนวณ ต้องใช้ <code>Number()</code> เพื่อแปลงข้อความเป็นตัวเลขก่อน</p>
-
-  <div class="lab">
-    <div class="lab-head">
-      <h3 class="lab-title"><span class="pill">Calculate</span> บวกเลขจาก input</h3>
-      <span class="small">ลองลบ Number() แล้วสังเกตผล</span>
-    </div>
-
-    <div class="lab-body">
-      <div>
-        <div class="tabs">
-          <button class="tab active" onclick="showPanel('lab3','html')">HTML</button>
-          <button class="tab" onclick="showPanel('lab3','css')">CSS</button>
-          <button class="tab" onclick="showPanel('lab3','js')">JavaScript</button>
-        </div>
-        <div class="copy-row">
-          <button class="ghost" onclick="copyCode('lab3','html')">Copy index.html</button>
-          <button class="ghost" onclick="copyCode('lab3','css')">Copy style.css</button>
-          <button class="ghost" onclick="copyCode('lab3','js')">Copy script.js</button>
-        </div>
-        <div class="file-note">นำโค้ดไปใช้ใน VS Code ได้โดยสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ไว้ในโฟลเดอร์เดียวกัน</div>
-
-        <div id="lab3-html" class="code-panel active">
-          <label>HTML</label>
-          <div class="editor-wrap"><textarea id="code-lab3-html" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab3-css" class="code-panel">
-          <label>CSS</label>
-          <div class="editor-wrap"><textarea id="code-lab3-css" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab3-js" class="code-panel">
-          <label>JavaScript</label>
-          <div class="editor-wrap"><textarea id="code-lab3-js" class="codebox"></textarea></div>
-        </div>
-
-        <button onclick="runMiniApp('lab3')">▶ Run</button>
-        <button class="ghost" onclick="resetLab('lab3')">Reset</button>
-      </div>
-
-      <div>
-        <div class="predict">
-          <strong>Predict:</strong> 10 + 20 จะได้ 30 หรือ 1020?
-          <input id="predict3" type="text" placeholder="พิมพ์คำตอบ เช่น 30">
-          <button class="ghost" onclick="checkPredict('predict3','30','predictStatus3')">ตรวจคำตอบ</button>
-          <div id="predictStatus3" class="status"></div>
-        </div>
-
-        <h3>Live Preview</h3>
-        <iframe id="frame-lab3" class="preview-frame" title="lab3 preview"></iframe>
-
-        <div class="modify">
-          <strong>Modify:</strong> ใน JavaScript ลองลบ <code>Number(...)</code> ออก แล้วกด Run จากนั้นกดปุ่มบวกเลขใน Preview เพื่อดูความแตกต่าง
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="lab4">
-  <button class="section-done" onclick="markDone('lab4', this)">ทำส่วนนี้แล้ว</button>
-  <h2>Lab 4: ใช้ select และ if/else เพื่อสร้างคำแนะนำ</h2>
-  <p>เว็บแอปที่ดีมักไม่ได้แค่คำนวณ แต่ยังให้คำแนะนำตามข้อมูลที่ผู้ใช้เลือกได้ด้วย</p>
-
-  <div class="lab">
-    <div class="lab-head">
-      <h3 class="lab-title"><span class="pill">Condition</span> เลือกระดับความยาก</h3>
-      <span class="small">ลองเพิ่ม option ใน HTML และเงื่อนไขใน JS</span>
-    </div>
-
-    <div class="lab-body">
-      <div>
-        <div class="tabs">
-          <button class="tab active" onclick="showPanel('lab4','html')">HTML</button>
-          <button class="tab" onclick="showPanel('lab4','css')">CSS</button>
-          <button class="tab" onclick="showPanel('lab4','js')">JavaScript</button>
-        </div>
-        <div class="copy-row">
-          <button class="ghost" onclick="copyCode('lab4','html')">Copy index.html</button>
-          <button class="ghost" onclick="copyCode('lab4','css')">Copy style.css</button>
-          <button class="ghost" onclick="copyCode('lab4','js')">Copy script.js</button>
-        </div>
-        <div class="file-note">นำโค้ดไปใช้ใน VS Code ได้โดยสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ไว้ในโฟลเดอร์เดียวกัน</div>
-
-        <div id="lab4-html" class="code-panel active">
-          <label>HTML</label>
-          <div class="editor-wrap"><textarea id="code-lab4-html" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab4-css" class="code-panel">
-          <label>CSS</label>
-          <div class="editor-wrap"><textarea id="code-lab4-css" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab4-js" class="code-panel">
-          <label>JavaScript</label>
-          <div class="editor-wrap"><textarea id="code-lab4-js" class="codebox"></textarea></div>
-        </div>
-
-        <button onclick="runMiniApp('lab4')">▶ Run</button>
-        <button class="ghost" onclick="resetLab('lab4')">Reset</button>
-      </div>
-
-      <div>
-        <div class="predict">
-          <strong>Predict:</strong> ถ้าเลือก “ยาก” คำแนะนำควรเป็นอย่างไร?
-          <input id="predict4" type="text" placeholder="พิมพ์คำตอบของคุณ...">
-          <button class="ghost" onclick="checkContains('predict4','เพิ่ม','predictStatus4')">ตรวจคำตอบ</button>
-          <div id="predictStatus4" class="status"></div>
-        </div>
-
-        <h3>Live Preview</h3>
-        <iframe id="frame-lab4" class="preview-frame" title="lab4 preview"></iframe>
-
-        <div class="modify">
-          <strong>Modify:</strong> เพิ่ม option ใหม่ใน HTML เช่น <code>very-hard</code> แล้วเพิ่มเงื่อนไขใน JavaScript ให้แสดงคำแนะนำพิเศษ
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="lab5">
-  <button class="section-done" onclick="markDone('lab5', this)">ทำส่วนนี้แล้ว</button>
-  <h2>Lab 5: บันทึกข้อมูลด้วย Local Storage</h2>
-  <p><code>localStorage</code> ใช้บันทึกข้อมูลไว้ใน Browser ข้อมูลจะยังอยู่แม้ Refresh หน้าเว็บ แต่ข้อมูลนี้อยู่เฉพาะเครื่องและ Browser นั้น ๆ</p>
-
-  <div class="lab">
-    <div class="lab-head">
-      <h3 class="lab-title"><span class="pill">Local Storage</span> Save → Refresh → Load</h3>
-      <span class="small">ทดลอง Save แล้ว Refresh หน้าเว็บ</span>
-    </div>
-
-    <div class="lab-body">
-      <div>
-        <div class="tabs">
-          <button class="tab active" onclick="showPanel('lab5','html')">HTML</button>
-          <button class="tab" onclick="showPanel('lab5','css')">CSS</button>
-          <button class="tab" onclick="showPanel('lab5','js')">JavaScript</button>
-        </div>
-        <div class="copy-row">
-          <button class="ghost" onclick="copyCode('lab5','html')">Copy index.html</button>
-          <button class="ghost" onclick="copyCode('lab5','css')">Copy style.css</button>
-          <button class="ghost" onclick="copyCode('lab5','js')">Copy script.js</button>
-        </div>
-        <div class="file-note">นำโค้ดไปใช้ใน VS Code ได้โดยสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ไว้ในโฟลเดอร์เดียวกัน</div>
-
-        <div id="lab5-html" class="code-panel active">
-          <label>HTML</label>
-          <div class="editor-wrap"><textarea id="code-lab5-html" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab5-css" class="code-panel">
-          <label>CSS</label>
-          <div class="editor-wrap"><textarea id="code-lab5-css" class="codebox"></textarea></div>
-        </div>
-
-        <div id="lab5-js" class="code-panel">
-          <label>JavaScript</label>
-          <div class="editor-wrap"><textarea id="code-lab5-js" class="codebox"></textarea></div>
-        </div>
-
-        <button onclick="runMiniApp('lab5')">▶ Run</button>
-        <button class="ghost" onclick="resetLab('lab5')">Reset</button>
-      </div>
-
-      <div>
-        <div class="predict">
-          <strong>Predict:</strong> ถ้ากด Save แล้ว Refresh หน้าเว็บ จากนั้นกด Load ข้อมูลควรยังอยู่ไหม?
-          <input id="predict5" type="text" placeholder="พิมพ์คำตอบของคุณ...">
-          <button class="ghost" onclick="checkContains('predict5','อยู่','predictStatus5')">ตรวจคำตอบ</button>
-          <div id="predictStatus5" class="status"></div>
-        </div>
-
-        <h3>Live Preview</h3>
-        <iframe id="frame-lab5" class="preview-frame" title="lab5 preview"></iframe>
-
-        <div class="modify">
-          <strong>Modify:</strong> เปลี่ยน key จาก <code>"note"</code> เป็น <code>"myPlan"</code> ทั้งใน Save และ Load แล้วทดลองอีกครั้ง
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="card tip">
-      <h3>คำสั่งสำคัญ</h3>
-      <p><code>localStorage.setItem("note", text)</code> บันทึกข้อมูล</p>
-      <p><code>localStorage.getItem("note")</code> โหลดข้อมูล</p>
-      <p><code>localStorage.removeItem("note")</code> ลบข้อมูล</p>
-    </div>
-    <div class="card dangerbox">
-      <h3>ข้อควรระวัง</h3>
-      <p>ไม่ควรเก็บรหัสผ่านหรือข้อมูลส่วนบุคคลที่อ่อนไหวใน Local Storage</p>
-    </div>
-  </div>
-</section>
+<div id="labs"></div>
 
 <section id="project">
-  <button class="section-done" onclick="markDone('project', this)">ทำส่วนนี้แล้ว</button>
   <h2>Mini Project: Personal Study Planner</h2>
-  <div class="card mission">
-    <p class="lead"><strong>ภารกิจ:</strong> สร้างเว็บแอปที่รับข้อมูลแผนการอ่านหนังสือ คำนวณเวลาเฉลี่ยต่อบท แสดงคำแนะนำ และบันทึกข้อมูลล่าสุดไว้ใน Local Storage โดยแยกไฟล์เป็น <code>index.html</code>, <code>style.css</code>, <code>script.js</code></p>
+  <div class="box mission">
+    <p><strong>ภารกิจ:</strong> ให้นักเรียนสร้างเว็บแอปที่รับข้อมูลแผนการอ่านหนังสือ คำนวณเวลาเฉลี่ยต่อบท แสดงคำแนะนำ และบันทึกข้อมูลล่าสุดด้วย Local Storage</p>
   </div>
-
   <div class="grid">
-    <div class="card">
+    <div class="box">
       <h3>HTML ควรมี</h3>
       <ul>
-        <li><code>input type="text"</code> สำหรับชื่อและวิชา</li>
-        <li><code>input type="number"</code> สำหรับจำนวนบทและจำนวนชั่วโมง</li>
-        <li><code>select</code> สำหรับระดับความยาก</li>
-        <li><code>radio</code> สำหรับเป้าหมายการอ่าน</li>
-        <li><code>checkbox</code> สำหรับวิธีอ่าน</li>
-        <li><code>textarea</code> สำหรับบันทึกเพิ่มเติม</li>
-        <li><code>button</code> สำหรับ Calculate / Save / Load / Clear</li>
+        <li>input สำหรับชื่อ วิชา จำนวนบท จำนวนชั่วโมง</li>
+        <li>select สำหรับระดับความยาก</li>
+        <li>button สำหรับ Calculate / Save / Load / Clear</li>
+        <li>div สำหรับแสดงผลลัพธ์</li>
       </ul>
     </div>
-    <div class="card">
+    <div class="box">
       <h3>CSS ควรมี</h3>
       <ul>
-        <li>กำหนดฟอนต์และพื้นหลังของหน้าเว็บ</li>
-        <li>ตกแต่งกล่องฟอร์มด้วย <code>padding</code>, <code>border</code>, <code>border-radius</code></li>
-        <li>ตกแต่ง input และ button ให้ใช้งานง่าย</li>
-        <li>ทำกล่องแสดงผลให้เด่นและอ่านง่าย</li>
+        <li>ตกแต่งพื้นหลังและกล่องฟอร์ม</li>
+        <li>ตกแต่ง input, select, button</li>
+        <li>ทำกล่องแสดงผลให้อ่านง่าย</li>
       </ul>
     </div>
   </div>
-
-  <h3>ตัวอย่างแนวทางไฟล์</h3>
-  <pre><code>study-planner
-├── index.html   // โครงสร้างฟอร์ม
-├── style.css    // สี รูปแบบ ระยะห่าง
-└── script.js    // อ่านค่า คำนวณ แสดงผล บันทึกข้อมูล</code></pre>
-</section>
-
-<section id="reflection">
-  <button class="section-done" onclick="markDone('reflection', this)">ทำส่วนนี้แล้ว</button>
-  <h2>Checkoff และ Reflection</h2>
-
-  <h3>Checkoff</h3>
-  <ul>
-    <li>อธิบายได้ว่า HTML, CSS และ JavaScript มีหน้าที่ต่างกันอย่างไร</li>
-    <li>สร้าง input ด้วย HTML ได้อย่างน้อย 3 ชนิด</li>
-    <li>ตกแต่ง input และ button ด้วย CSS ได้</li>
-    <li>อ่านค่าจาก input ด้วย JavaScript ได้</li>
-    <li>แปลงข้อมูลเป็นตัวเลขด้วย <code>Number()</code> ได้</li>
-    <li>ใช้ <code>if / else</code> เพื่อสร้างคำแนะนำได้</li>
-    <li>ใช้ <code>localStorage</code> เพื่อ Save / Load / Clear ข้อมูลได้</li>
-  </ul>
-
-  <h3>Reflection</h3>
-  <ol>
-    <li>HTML ส่วนใดในเว็บของคุณเป็น input?</li>
-    <li>CSS ส่วนใดที่ช่วยให้เว็บอ่านง่ายหรือใช้งานง่ายขึ้น?</li>
-    <li>JavaScript อ่านค่าจาก input ใดบ้าง?</li>
-    <li>ข้อมูลใดต้องใช้ <code>Number()</code> ก่อนคำนวณ?</li>
-    <li>Local Storage เหมาะกับข้อมูลประเภทใด และไม่เหมาะกับข้อมูลประเภทใด?</li>
-    <li>ถ้าใช้ AI ช่วยเขียนโค้ด คุณตรวจสอบความถูกต้องอย่างไร?</li>
-  </ol>
 </section>
 </main>
 
-<footer>
-  MWIT Interactive Web Programming Workbook · Chapter 1 Full HTML CSS JS
-</footer>
+<footer>MWIT Interactive Web Programming Lab</footer>
 
 <script>
-const defaultLabs = {
-  lab1: {
-    html: `<!DOCTYPE html>
+const labs = [
+  {
+    id:"lab1", title:"Lab 1: สร้างช่องรับชื่อและอ่านค่าด้วย JavaScript",
+    desc:"เรียนรู้ว่า HTML สร้าง input, CSS ตกแต่ง input และ JavaScript อ่านค่าด้วย .value",
+    predict:"ถ้าพิมพ์ชื่อ Somchai แล้วกดปุ่ม ผลลัพธ์ควรเป็นอะไร?",
+    challenge:"เปลี่ยน placeholder ใน HTML, เปลี่ยนสีปุ่มใน CSS, และเปลี่ยนข้อความ Hello ใน JavaScript เป็น สวัสดี",
+    html:`<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -1036,7 +155,7 @@ const defaultLabs = {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css: `body {
+    css:`body {
   font-family: sans-serif;
   background: #eff6ff;
   padding: 20px;
@@ -1072,15 +191,19 @@ button {
   background: #f8fafc;
   border: 1px dashed #94a3b8;
 }`,
-    js: `function sayHello() {
+    js:`function sayHello() {
   const name = document.getElementById("nameInput").value;
 
   document.getElementById("result").textContent =
     "Hello " + name;
 }`
   },
-  lab2: {
-    html: `<!DOCTYPE html>
+  {
+    id:"lab2", title:"Lab 2: ทบทวน CSS ผ่านการตกแต่ง input และปุ่ม",
+    desc:"ทดลองเปลี่ยนสี กล่อง เส้นขอบ และปุ่ม เพื่อดูว่า CSS ส่งผลต่อหน้าตาเว็บอย่างไร",
+    predict:"ถ้าเปลี่ยน background ของ button เป็น #7c3aed ปุ่มจะเปลี่ยนเป็นสีอะไร?",
+    challenge:"ลองเปลี่ยนสีพื้นหลัง body, เพิ่ม border-radius ของ .card หรือเปลี่ยนสีข้อความ #result",
+    html:`<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -1102,7 +225,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css: `body {
+    css:`body {
   font-family: sans-serif;
   background: #f8fafc;
   padding: 20px;
@@ -1137,15 +260,19 @@ button {
   color: #1d4ed8;
   font-weight: bold;
 }`,
-    js: `function showFavorite() {
+    js:`function showFavorite() {
   const favorite = document.getElementById("favorite").value;
 
   document.getElementById("result").textContent =
     "คุณชอบ: " + favorite;
 }`
   },
-  lab3: {
-    html: `<!DOCTYPE html>
+  {
+    id:"lab3", title:"Lab 3: รับตัวเลขและคำนวณด้วย Number()",
+    desc:"ค่าจาก input เป็นข้อความ ถ้าต้องนำไปคำนวณควรใช้ Number() เพื่อแปลงเป็นตัวเลข",
+    predict:"ถ้า num1 = 10 และ num2 = 20 ผลบวกควรเป็น 30 หรือ 1020?",
+    challenge:"ลองลบ Number() ออก แล้วสังเกตผลลัพธ์ จากนั้นใส่ Number() กลับคืน",
+    html:`<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -1170,7 +297,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css: `body {
+    css:`body {
   font-family: sans-serif;
   background: #ecfdf5;
   padding: 20px;
@@ -1203,7 +330,7 @@ button {
   background: #f0fdf4;
   border: 1px solid #86efac;
 }`,
-    js: `function calculate() {
+    js:`function calculate() {
   const a = Number(document.getElementById("num1").value);
   const b = Number(document.getElementById("num2").value);
 
@@ -1213,8 +340,12 @@ button {
     "ผลบวกคือ " + sum;
 }`
   },
-  lab4: {
-    html: `<!DOCTYPE html>
+  {
+    id:"lab4", title:"Lab 4: ใช้ select และ if/else เพื่อสร้างคำแนะนำ",
+    desc:"ใช้ select ให้ผู้ใช้เลือกข้อมูล และใช้ if/else ให้เว็บแสดงคำแนะนำตามเงื่อนไข",
+    predict:"ถ้าเลือก ยาก เว็บควรแนะนำให้เพิ่มเวลาอ่านหรือไม่?",
+    challenge:"เพิ่ม option ใหม่ เช่น ยากมาก แล้วเพิ่มเงื่อนไขใน JavaScript",
+    html:`<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -1240,7 +371,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css: `body {
+    css:`body {
   font-family: sans-serif;
   background: #fff7ed;
   padding: 20px;
@@ -1274,7 +405,7 @@ button {
   padding: 12px;
   background: #fffbeb;
 }`,
-    js: `function showAdvice() {
+    js:`function showAdvice() {
   const difficulty = document.getElementById("difficulty").value;
   let advice = "";
 
@@ -1289,8 +420,12 @@ button {
   document.getElementById("result").textContent = advice;
 }`
   },
-  lab5: {
-    html: `<!DOCTYPE html>
+  {
+    id:"lab5", title:"Lab 5: บันทึกข้อมูลด้วย Local Storage",
+    desc:"ใช้ localStorage บันทึกข้อมูลไว้ใน Browser เพื่อให้ข้อมูลยังอยู่หลัง Refresh",
+    predict:"ถ้ากด Save แล้ว Refresh หน้าเว็บ จากนั้นกด Load ข้อมูลควรยังอยู่หรือไม่?",
+    challenge:"เปลี่ยน key จาก note เป็น myPlan ทั้งใน saveNote() และ loadNote()",
+    html:`<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -1314,7 +449,7 @@ button {
   <script src="script.js"></script>
 </body>
 </html>`,
-    css: `body {
+    css:`body {
   font-family: sans-serif;
   background: #f5f3ff;
   padding: 20px;
@@ -1349,7 +484,7 @@ button {
   padding: 12px;
   background: #faf5ff;
 }`,
-    js: `function saveNote() {
+    js:`function saveNote() {
   const text = document.getElementById("noteInput").value;
 
   localStorage.setItem("note", text);
@@ -1371,48 +506,67 @@ function clearNote() {
   document.getElementById("result").textContent = "ลบข้อมูลแล้ว";
 }`
   }
-};
+];
 
-const doneSections = new Set(JSON.parse(localStorage.getItem("mwitWorkbookDoneFull") || "[]"));
-const allSections = ["intro","lab1","lab2","lab3","lab4","lab5","project","reflection"];
-
-function init() {
-  Object.keys(defaultLabs).forEach(resetLab);
-  document.querySelectorAll(".section-done").forEach(btn => {
-    const id = btn.closest("section").id;
-    if (doneSections.has(id)) {
-      btn.classList.add("done");
-      btn.textContent = "ทำส่วนนี้แล้ว ✓";
-    }
-  });
-  updateProgress();
+function escapeHtml(text){
+  return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
-function showPanel(lab, panel) {
-  document.querySelectorAll(`#${lab} .tab`).forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
-  ["html","css","js"].forEach(type => {
-    document.getElementById(`${lab}-${type}`).classList.toggle("active", type === panel);
-  });
+function renderLabs(){
+  const root = document.getElementById("labs");
+  root.innerHTML = labs.map((lab, index)=>`
+    <section id="${lab.id}">
+      <h2>${lab.title}</h2>
+      <p>${lab.desc}</p>
+      <div class="lab">
+        <div class="lab-head">
+          <h3>${lab.title}</h3>
+          <p>แก้โค้ดได้ทั้ง 3 ส่วน แล้วกด Run เพื่อดูผล</p>
+        </div>
+        <div class="lab-body">
+          <div>
+            <div class="file-note">Copy โค้ดไปใช้ใน VS Code ได้โดยสร้างไฟล์ <code>index.html</code>, <code>style.css</code>, <code>script.js</code> ในโฟลเดอร์เดียวกัน</div>
+
+            <label>index.html</label>
+            <textarea id="${lab.id}-html" class="editor html">${escapeHtml(lab.html)}</textarea>
+            <button class="ghost" onclick="copyCode('${lab.id}','html')">Copy index.html</button>
+
+            <label>style.css</label>
+            <textarea id="${lab.id}-css" class="editor css">${escapeHtml(lab.css)}</textarea>
+            <button class="ghost" onclick="copyCode('${lab.id}','css')">Copy style.css</button>
+
+            <label>script.js</label>
+            <textarea id="${lab.id}-js" class="editor js">${escapeHtml(lab.js)}</textarea>
+            <button class="ghost" onclick="copyCode('${lab.id}','js')">Copy script.js</button>
+
+            <div>
+              <button onclick="runLab('${lab.id}')">▶ Run</button>
+              <button class="secondary" onclick="resetLab('${lab.id}')">Reset</button>
+            </div>
+          </div>
+          <div>
+            <div class="predict"><strong>Predict:</strong> ${lab.predict}</div>
+            <h3>Live Preview</h3>
+            <iframe id="${lab.id}-frame" class="preview" title="${lab.id} preview"></iframe>
+            <div class="challenge"><strong>Challenge:</strong> ${lab.challenge}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `).join("");
 }
 
-function resetLab(lab) {
-  ["html","css","js"].forEach(type => {
-    const el = document.getElementById(`code-${lab}-${type}`);
-    if (el) {
-      el.value = defaultLabs[lab][type];
-    }
-  });
-  runMiniApp(lab);
-}
-
-function runMiniApp(lab) {
-  const html = document.getElementById(`code-${lab}-html`).value;
-  const css = document.getElementById(`code-${lab}-css`).value;
-  const js = document.getElementById(`code-${lab}-js`).value;
-  const frame = document.getElementById(`frame-${lab}`);
+function runLab(id){
+  const html = document.getElementById(`${id}-html`).value;
+  const css = document.getElementById(`${id}-css`).value;
+  const js = document.getElementById(`${id}-js`).value;
+  const frame = document.getElementById(`${id}-frame`);
 
   let doc = html;
+
+  // Remove external links/scripts for preview, then inject current CSS/JS.
+  doc = doc.replace(/<link[^>]*href=["']style\.css["'][^>]*>/i, "");
+  doc = doc.replace(/<script[^>]*src=["']script\.js["'][^>]*><\/script>/i, "");
 
   if (doc.includes("</head>")) {
     doc = doc.replace("</head>", `<style>${css}</style></head>`);
@@ -1429,62 +583,25 @@ function runMiniApp(lab) {
   frame.srcdoc = doc;
 }
 
-function copyCode(lab, type) {
-  const value = document.getElementById(`code-${lab}-${type}`).value;
-  navigator.clipboard.writeText(value).then(() => {
-    alert("คัดลอกโค้ดแล้ว");
-  }).catch(() => {
+function resetLab(id){
+  const lab = labs.find(item => item.id === id);
+  document.getElementById(`${id}-html`).value = lab.html;
+  document.getElementById(`${id}-css`).value = lab.css;
+  document.getElementById(`${id}-js`).value = lab.js;
+  runLab(id);
+}
+
+function copyCode(id,type){
+  const text = document.getElementById(`${id}-${type}`).value;
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("คัดลอกแล้ว");
+  }).catch(()=>{
     alert("คัดลอกอัตโนมัติไม่สำเร็จ กรุณาเลือกข้อความแล้วกด Ctrl+C");
   });
 }
 
-function updateLines() {}
-
-function checkPredict(inputId, expected, statusId) {
-  const value = document.getElementById(inputId).value.trim();
-  const status = document.getElementById(statusId);
-  if (normalize(value) === normalize(expected)) {
-    status.innerHTML = '<span class="ok">ถูกต้อง ✓</span>';
-  } else {
-    status.innerHTML = `<span class="bad">ลองคิดอีกครั้ง คำตอบที่คาดหวังคือ "${expected}"</span>`;
-  }
-}
-
-function checkContains(inputId, keyword, statusId) {
-  const value = document.getElementById(inputId).value.trim();
-  const status = document.getElementById(statusId);
-  if (normalize(value).includes(normalize(keyword))) {
-    status.innerHTML = '<span class="ok">คำตอบมีแนวคิดถูกต้อง ✓</span>';
-  } else {
-    status.innerHTML = `<span class="bad">ลองตอบโดยใช้แนวคิดว่า "${keyword}"</span>`;
-  }
-}
-
-function normalize(text) {
-  return String(text).trim().toLowerCase().replace(/\s+/g,"");
-}
-
-function markDone(id, btn) {
-  if (doneSections.has(id)) {
-    doneSections.delete(id);
-    btn.classList.remove("done");
-    btn.textContent = "ทำส่วนนี้แล้ว";
-  } else {
-    doneSections.add(id);
-    btn.classList.add("done");
-    btn.textContent = "ทำส่วนนี้แล้ว ✓";
-  }
-  localStorage.setItem("mwitWorkbookDoneFull", JSON.stringify([...doneSections]));
-  updateProgress();
-}
-
-function updateProgress() {
-  const percent = Math.round((doneSections.size / allSections.length) * 100);
-  document.getElementById("progressBar").style.width = percent + "%";
-  document.getElementById("progressText").textContent = percent + "%";
-}
-
-window.addEventListener("load", init);
+renderLabs();
+labs.forEach(lab => runLab(lab.id));
 </script>
 </body>
 </html>
