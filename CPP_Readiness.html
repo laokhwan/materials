@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C++ Readiness</title>
+<style>
+:root{--navy:#0b2854;--blue:#1769e0;--blue2:#eaf3ff;--ink:#16233b;--muted:#61708a;--line:#dce5f0;--bg:#f5f8fc;--card:#fff;--green:#137a4a;--orange:#b45b00;--red:#c93636;--code:#101b2d}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Thai","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
+button,a{font:inherit}.top{height:64px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 22px;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px #0002}
+.brand{font-weight:800;font-size:22px;white-space:nowrap}.brand small{font-size:12px;font-weight:600;opacity:.85;margin-left:7px}
+.toplinks{margin-left:auto;display:flex;gap:8px}.toplinks button{border:1px solid #ffffff33;background:#ffffff10;color:#fff;border-radius:9px;padding:9px 12px;cursor:pointer}.toplinks button:hover{background:#ffffff20}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 64px)}
+.side{background:#fff;border-right:1px solid var(--line);padding:14px 10px;position:sticky;top:64px;height:calc(100vh - 64px);overflow:auto}
+.module-btn{width:100%;border:0;background:transparent;text-align:left;padding:10px;border-radius:10px;cursor:pointer;margin:2px 0;color:var(--ink);display:flex;gap:10px;align-items:flex-start}
+.module-btn:hover{background:#f1f6fd}.module-btn.active{background:var(--blue);color:#fff}
+.num{width:28px;height:28px;border-radius:8px;background:#e9f1ff;color:#145cc3;display:grid;place-items:center;font-weight:800;flex:0 0 auto}.active .num{background:#fff;color:var(--blue)}
+.module-btn b{display:block;font-size:14px}.module-btn span:last-child small{display:block;font-size:11px;opacity:.75;font-weight:500}
+.main{padding:26px clamp(16px,3vw,42px) 60px;max-width:1150px;width:100%;margin:auto}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:5px}.title{font-size:30px;margin:0}.subtitle{margin:2px 0 18px;color:var(--muted)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:18px}.tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 12px;cursor:pointer;color:#33415b}.tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0;box-shadow:0 2px 8px #19324d0b}.card h2,.card h3{margin-top:0}.lead{font-size:17px;color:#3a4962}
+.two{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.codewrap{position:relative}.copy{position:absolute;right:9px;top:9px;border:1px solid #ffffff33;background:#ffffff16;color:#fff;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:12px}
+pre{background:var(--code);color:#eef6ff;border-radius:11px;padding:18px;overflow:auto;margin:0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}
+.explain{background:#fff9e8;border:1px solid #f0dfae}.mistake{background:#fff1f1;border:1px solid #f3caca}.mistake h3{color:var(--red)} ul{padding-left:22px;margin-bottom:0}li{margin:6px 0}
+.practice-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.legend{font-size:13px;color:var(--muted)}.problems{display:grid;gap:10px}
+.problem{border:1px solid var(--line);border-radius:11px;padding:13px 14px;background:#fff;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}.pri{font-size:18px}.problem b{display:block}.meta{font-size:12px;color:var(--muted)}.open{display:inline-block;text-decoration:none;background:var(--blue);color:#fff;padding:7px 10px;border-radius:8px;font-size:13px;white-space:nowrap}.statement{font-size:13px;color:#45546d;margin-top:5px}.fullstatement{margin-top:10px;padding:10px 12px;background:#f7faff;border-radius:8px;border-left:3px solid var(--blue)}.fullstatement>div{margin:3px 0}.fullstatement>div:first-child{font-weight:700;color:#263a59}
+.note{border-left:4px solid var(--blue);padding:10px 14px;background:var(--blue2);border-radius:8px}
+.navrow{display:flex;justify-content:space-between;margin-top:22px}.navrow button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 13px;cursor:pointer}.navrow .next{background:var(--blue);color:#fff;border-color:var(--blue)}
+.modal{display:none;position:fixed;inset:0;background:#071326aa;z-index:50;padding:24px;overflow:auto}.modal.show{display:block}.sheet{max-width:900px;margin:30px auto;background:#fff;border-radius:16px;padding:24px;position:relative}.close{position:absolute;right:15px;top:13px;border:0;background:#eef3fa;border-radius:8px;padding:7px 10px;cursor:pointer}.quickgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.quickgrid pre{font-size:12px}.mobile-select{display:none}
+footer{color:var(--muted);font-size:12px;text-align:center;margin-top:35px}
+@media(max-width:800px){
+ .top{height:auto;min-height:58px;padding:10px 14px}.brand{font-size:18px}.brand small{display:none}.toplinks button:first-child{display:none}
+ .layout{display:block}.side{display:none}.main{padding:16px 13px 45px}.mobile-select{display:block;margin-bottom:13px}.mobile-select select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}
+ .title{font-size:25px}.two,.quickgrid{grid-template-columns:1fr}.problem{grid-template-columns:auto 1fr}.problem .open{grid-column:2}.tabs{flex-wrap:nowrap;overflow:auto;padding-bottom:10px}.tab{white-space:nowrap}
+}
+@media print{.top,.side,.mobile-select,.tabs,.navrow,.copy,.open{display:none!important}.layout{display:block}.main{max-width:none;padding:0}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="brand">C++ Readiness</div>
+ <div class="toplinks"><button onclick="showAllProblems()">Practice Problems</button><button onclick="openQuick()">C++ Quick Reference</button></div>
+</header>
+<div class="layout">
+ <aside class="side" id="sidebar"></aside>
+ <main class="main">
+   <div class="mobile-select"><select id="mobileModule" onchange="selectModule(+this.value)"></select></div>
+   <div id="content"></div>
+ </main>
+</div>
+
+<div class="modal" id="quickModal" onclick="if(event.target===this)closeQuick()">
+ <div class="sheet">
+  <button class="close" onclick="closeQuick()">✕ ปิด</button>
+  <h2>C++ Quick Reference</h2>
+  <p class="lead">เปิดดู syntax ที่จำเป็นระหว่างทำโจทย์ได้ทันที</p>
+  <div class="quickgrid">
+   <div class="card"><h3>Program + I/O</h3><pre>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    int a, b;
+    cin &gt;&gt; a &gt;&gt; b;
+    cout &lt;&lt; a + b &lt;&lt; '\n';
+    return 0;
+}</pre></div>
+   <div class="card"><h3>Data Types</h3><pre>int x = 10;
+long long n = 10000000000LL;
+double d = 3.14;
+char c = 'A';
+bool ok = true;
+string s = "hello";</pre></div>
+   <div class="card"><h3>Operators</h3><pre>+  -  *  /  %
+== != &lt; &lt;= &gt; &gt;=
+&amp;&amp;  ||  !
+
+sum += x;
+count++;
+i--;</pre></div>
+   <div class="card"><h3>Control Flow</h3><pre>if (condition) { ... }
+else { ... }
+
+for (int i=0; i&lt;n; i++) { ... }
+
+while (condition) { ... }</pre></div>
+   <div class="card"><h3>Array / String</h3><pre>int a[1000];
+a[i];
+
+string s;
+s[i];
+s.size();
+
+for (char c : s) { ... }</pre></div>
+   <div class="card"><h3>vector + STL</h3><pre>vector&lt;int&gt; a(n);
+vector&lt;int&gt; b;
+b.push_back(x);
+
+sort(a.begin(), a.end());
+count(a.begin(), a.end(), x);
+find(a.begin(), a.end(), x);</pre></div>
+   <div class="card"><h3>pair / set / map</h3><pre>pair&lt;int,int&gt; p = {x, i};
+
+set&lt;int&gt; s;
+s.insert(x);
+
+map&lt;string,int&gt; cnt;
+cnt[word]++;</pre></div>
+   <div class="card mistake"><h3>Common Mistakes</h3><ul><li><code>=</code> vs <code>==</code></li><li>index คือ 0..n-1</li><li>int / int ตัดทศนิยม</li><li>ข้อมูลติดลบ: อย่าเริ่ม max = 0</li><li>vector a(n) มี n ตัวแล้ว</li><li>find ต้องตรวจ end() ก่อน</li></ul></div>
+  </div>
+ </div>
+</div>
+
+<script>
+const modules = [{"id": 1, "title": "Getting Started", "th": "พื้นฐานการเขียนโปรแกรม", "tabs": [["โครงสร้างโปรแกรม", "โครงสร้างพื้นฐานของ C++", "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // เขียนคำสั่งที่นี่\n    return 0;\n}", ["`#include <bits/stdc++.h>` รวมไลบรารีที่ใช้บ่อย เหมาะกับ competitive programming บน GCC", "`using namespace std;` ทำให้เขียน `cin`, `cout`, `string`, `vector` ได้โดยไม่ต้องเติม `std::`", "`int main()` คือจุดเริ่มต้นของโปรแกรม", "คำสั่งส่วนใหญ่ลงท้ายด้วย `;` และ `{ }` กำหนดขอบเขตของ block"], "ลืม `;` หรือปีกกา `{ }` ทำให้เกิด Compilation Error (CE)"], ["ชนิดข้อมูลและตัวแปร", "เลือกชนิดข้อมูลให้เหมาะกับข้อมูล", "int age = 16;\nlong long population = 8000000000LL;\ndouble height = 1.68;\nchar grade = 'A';\nbool passed = true;\nstring name = \"Mali\";", ["`int` จำนวนเต็มทั่วไป", "`long long` จำนวนเต็มที่อาจมีค่ามาก", "`double` จำนวนจริง/ทศนิยม", "`char` ตัวอักษร 1 ตัว ใช้ single quote เช่น `'A'`", "`bool` มีค่า `true` หรือ `false`", "`string` ข้อความ ใช้ double quote เช่น `\"hello\"`"], "`char c = \"A\";` ไม่ถูก เพราะ `\"A\"` เป็น string; ถ้าเป็น char ใช้ `'A'`"], ["Input / Output", "รับข้อมูลด้วย cin และแสดงผลด้วย cout", "int a, b;\ncin >> a >> b;\n\nint sum = a + b;\ncout << sum << '\\n';", ["`cin >>` อ่านข้อมูลตามลำดับ", "`cout <<` แสดงผล", "`'\\n'` ขึ้นบรรทัดใหม่", "ระบบ grader ตรวจ output ตามรูปแบบโจทย์ จึงไม่ควรพิมพ์ข้อความเพิ่มเอง"], "อย่าพิมพ์ `Enter a:` ถ้าโจทย์ไม่ได้กำหนดให้แสดง"], ["Operators", "คำนวณ เปรียบเทียบ และปรับค่าตัวแปร", "a + b    a - b    a * b\na / b    a % b\n\nx == 5   x != 5   x <= 5\nx > 0 && x < 10\nx == 0 || x == 1\n\nsum += x;   // sum = sum + x\nsum -= x;   // sum = sum - x\ncount++;    // count = count + 1\ni--;        // i = i - 1", ["`+ - * / %` ใช้คำนวณ; `%` คือเศษจากการหาร", "ถ้าทั้งสองข้างเป็น `int`, `a / b` จะเป็น integer division", "`== != < <= > >=` ใช้เปรียบเทียบ", "`&&` AND, `||` OR, `!` NOT", "`+= -= *= /=` ใช้ปรับค่าตัวแปรเดิม", "`++` เพิ่ม 1 และ `--` ลด 1"], "`=` คือกำหนดค่า แต่ `==` คือเปรียบเทียบ"], ["แบบฝึกหัด", "ลองใช้พื้นฐานให้คล่อง", null, [], null]]}, {"id": 2, "title": "Conditions & Loops", "th": "เงื่อนไขและวนรอบ", "tabs": [["if / else", "เลือกทำงานตามเงื่อนไข", "if (score >= 80) {\n    cout << \"A\";\n}\nelse if (score >= 70) {\n    cout << \"B\";\n}\nelse {\n    cout << \"C\";\n}", ["ตรวจเงื่อนไขจากบนลงล่าง", "เมื่อเข้า branch หนึ่งแล้ว จะไม่ตรวจ `else if`/`else` ที่ตามมา", "เงื่อนไขต้องให้ผลเป็น `true` หรือ `false`", "ใช้ `{ }` แม้มีคำสั่งเดียว ช่วยลด bug"], "`if (x = 5)` เป็นการกำหนดค่า ไม่ใช่เปรียบเทียบ; ต้องใช้ `if (x == 5)`"], ["Logical Operators", "รวมหลายเงื่อนไข", "if (n % 3 == 0 && n % 5 == 0) {\n    cout << \"YES\";\n}\n\nif (x < 0 || x > 100) {\n    cout << \"OUT\";\n}\n\nif (!found) {\n    cout << \"NOT FOUND\";\n}", ["`A && B` จริงเมื่อ A และ B จริงทั้งคู่", "`A || B` จริงเมื่ออย่างน้อยหนึ่งเงื่อนไขจริง", "`!A` กลับค่าความจริงของ A"], "คำว่า “และ” มักใช้ `&&`; คำว่า “หรือ” มักใช้ `||` แต่ต้องอ่านความหมายโจทย์ให้ชัด"], ["for loop", "ใช้เมื่อรู้จำนวนรอบหรือช่วง index", "for (int i = 0; i < n; i++) {\n    cout << i << '\\n';\n}", ["`int i = 0` ทำครั้งเดียวก่อนเริ่ม", "`i < n` ตรวจทุกครั้งก่อนเข้ารอบ", "`i++` ทำหลังจบรอบ", "ถ้ามีสมาชิก `n` ตัว index มักเป็น `0 ... n-1`"], "`i <= n` มักทำให้เข้าถึง index `n` ซึ่งเกินขอบเขต"], ["while loop", "ใช้เมื่อยังไม่รู้จำนวนรอบล่วงหน้า", "int x;\ncin >> x;\n\nwhile (x != -1) {\n    cout << x << '\\n';\n    cin >> x;\n}", ["ตรวจเงื่อนไขก่อนทุกรอบ", "เหมาะกับข้อมูลที่มี sentinel เช่น `-1` เพื่อบอกจบ", "ภายใน loop ต้องมีสิ่งที่ทำให้เงื่อนไขเปลี่ยนได้"], "ถ้าลืม update/อ่านค่าใหม่ อาจเกิด infinite loop"], ["แบบฝึกหัด", "ฝึกเงื่อนไขและ loop", null, [], null]]}, {"id": 3, "title": "Programming Patterns", "th": "รูปแบบการแก้ปัญหาพื้นฐาน", "tabs": [["Accumulation", "สะสมผลรวม", "long long sum = 0;\n\nfor (int i = 0; i < n; i++) {\n    int x;\n    cin >> x;\n    sum += x;\n}\n\ncout << sum << '\\n';", ["เริ่ม `sum` ที่ 0", "อ่านค่าแล้วสะสมด้วย `sum += x`", "ถ้าผลรวมอาจมาก ใช้ `long long`"], "อย่าลืม initialize ตัวแปรสะสมก่อนใช้"], ["Counting", "นับจำนวนค่าที่ตรงเงื่อนไข", "int countEven = 0;\n\nfor (int i = 0; i < n; i++) {\n    int x;\n    cin >> x;\n    if (x % 2 == 0) {\n        countEven++;\n    }\n}", ["counter มักเริ่มที่ 0", "เพิ่ม counter เฉพาะเมื่อเงื่อนไขเป็นจริง", "`count++` เท่ากับ `count = count + 1`"], "แยกให้ออกระหว่าง “นับจำนวน” กับ “หาผลรวม”"], ["Min / Max", "หาค่าน้อยที่สุดและมากที่สุด", "long long x;\ncin >> x;\n\nlong long mn = x;\nlong long mx = x;\n\nfor (int i = 1; i < n; i++) {\n    cin >> x;\n    if (x < mn) mn = x;\n    if (x > mx) mx = x;\n}", ["ใช้ข้อมูลตัวแรก initialize `mn` และ `mx`", "จากนั้นอ่านอีก `n-1` ค่า", "วิธีนี้ปลอดภัยแม้ข้อมูลทั้งหมดเป็นลบ"], "ถ้าข้อมูลอาจติดลบ อย่าเริ่ม `mx = 0`"], ["Searching", "ค้นหาค่าและตำแหน่ง", "int firstPos = -1;\n\nfor (int i = 0; i < n; i++) {\n    if (a[i] == target && firstPos == -1) {\n        firstPos = i;\n    }\n}", ["กำหนดค่าพิเศษ เช่น `-1` เพื่อหมายถึงยังไม่พบ", "ถ้าต้องการตำแหน่งแรก ให้บันทึกเพียงครั้งแรก", "โจทย์บางข้อใช้ `break` ได้เมื่อพบแล้ว"], "อ่านโจทย์ให้ชัดว่าต้องการ index แบบ 0-based หรือ position แบบ 1-based"], ["แบบฝึกหัด", "ฝึก sum / count / min-max / search", null, [], null]]}, {"id": 4, "title": "Arrays & Strings", "th": "อาร์เรย์และสตริง", "tabs": [["Array", "เก็บข้อมูลหลายค่าชนิดเดียวกัน", "int a[1000];\n\nfor (int i = 0; i < n; i++) {\n    cin >> a[i];\n}\n\ncout << a[0] << '\\n';", ["index เริ่มที่ 0", "ถ้ามี `n` ตัว ใช้ index `0 ... n-1`", "array แบบนี้มีขนาดคงที่"], "Standard C++ ไม่รองรับ `int a[n]` เมื่อ `n` รู้ตอน runtime; ใช้ vector จะเหมาะกว่า"], ["Reverse / Index", "ใช้ index เดินหน้าและย้อนกลับ", "for (int i = n - 1; i >= 0; i--) {\n    cout << a[i] << ' ';\n}", ["สมาชิกสุดท้ายอยู่ที่ `n-1`", "ย้อนกลับใช้ `i--`", "ตรวจขอบเขตทุกครั้ง"], "เริ่มที่ `i = n` จะเกินขอบเขต"], ["string / char", "ข้อความและตัวอักษร", "string s;\ncin >> s;\n\ncout << s[0] << '\\n';\ncout << s.size() << '\\n';\n\nfor (char c : s) {\n    cout << c << '\\n';\n}", ["`string` เข้าถึงตัวอักษรด้วย index ได้", "`s.size()` คือจำนวนตัวอักษร", "`for (char c : s)` เดินดูตัวอักษรทีละตัว"], "`cin >> s` อ่านเพียง token; ถ้าต้องอ่านทั้งบรรทัดจึงใช้ `getline`"], ["ข้อ 9 — Palindrome", "เปรียบเทียบจากสองด้าน", "bool ok = true;\n\nfor (int i = 0; i < (int)s.size() / 2; i++) {\n    if (s[i] != s[s.size() - 1 - i]) {\n        ok = false;\n        break;\n    }\n}", ["เปรียบเทียบตัวแรกกับตัวสุดท้าย แล้วขยับเข้ากลาง", "ตรวจเพียงครึ่งหนึ่งของ string ก็พอ", "`break` ออกจาก loop เมื่อรู้คำตอบแล้ว"], "ถ้า `if` มีหลายคำสั่ง ต้องครอบด้วย `{ }` มิฉะนั้น `break` อาจทำงานทุกครั้ง"], ["แบบฝึกหัด", "ฝึก array และ string", null, [], null]]}, {"id": 5, "title": "Functions", "th": "ฟังก์ชัน", "tabs": [["Function Basics", "แยกงานเป็นส่วนย่อย", "bool isEven(int x) {\n    return x % 2 == 0;\n}\n\nint main() {\n    int n;\n    cin >> n;\n\n    if (isEven(n)) {\n        cout << \"EVEN\";\n    }\n}", ["รูปแบบคือ `return_type name(parameters)`", "parameter คือข้อมูลที่ส่งเข้า function", "`return` ส่งค่ากลับและจบการทำงานของ function"], "ตัวแปรที่ประกาศใน function เป็น local variable ใช้ภายนอกไม่ได้"], ["Pass by Value", "ส่งสำเนาเข้า function", "void addOne(int x) {\n    x++;\n}\n\nint n = 5;\naddOne(n);\n// n ยังเป็น 5", ["parameter `int x` เป็นสำเนา", "แก้ `x` ภายใน function ไม่กระทบตัวแปรต้นฉบับ"], "เหมาะเมื่อไม่ต้องการแก้ข้อมูลต้นฉบับ"], ["Reference", "ให้ function อ้างถึงตัวแปรจริง", "void addOne(int &x) {\n    x++;\n}\n\nint n = 5;\naddOne(n);\n// n เป็น 6", ["`&` ใน parameter หมายถึง reference", "การแก้ `x` จะเปลี่ยนตัวแปรต้นฉบับ", "สำหรับข้อมูลใหญ่ที่อ่านอย่างเดียว มักใช้ `const T&`"], "อย่าสับสน reference ใน parameter กับ pointer; คอร์สนี้ใช้ reference เป็นหลัก"], ["Pointer Recognition", "รู้จัก syntax ที่อาจพบในค่าย", "int x = 10;\nint *p = &x;\n\ncout << *p << '\\n';  // 10\n*p = 20;              // x กลายเป็น 20", ["`&x` คือ address ของ x", "`int *p` ประกาศ pointer", "`*p` เข้าถึงค่าที่ pointer ชี้อยู่", "ใน readiness นี้เน้นอ่าน syntax ได้ ไม่ลงลึก pointer arithmetic"], "ไม่จำเป็นต้องใช้ pointer แก้โจทย์พื้นฐานในชุดนี้"], ["แบบฝึกหัด", "ฝึกเขียนและเรียกใช้ function", null, [], null]]}, {"id": 6, "title": "Integrated Practice", "th": "ฝึกบูรณาการและ Debugging", "tabs": [["Read → Code → Test", "workflow สำหรับโจทย์แข่งขัน", "1. อ่าน Input / Output / Constraints\n2. คิดตัวอย่างเล็ก ๆ ด้วยมือ\n3. เขียนโปรแกรม\n4. Compile และ test\n5. Submit\n6. ถ้าไม่ AC → วิเคราะห์และแก้", ["อย่าเริ่ม code ก่อนเข้าใจ input/output", "สร้าง test case เล็ก ๆ ของตัวเอง", "เมื่อผิด ให้แยกว่าเป็น syntax, runtime หรือ logic"], "เป้าหมายไม่ใช่เดาสุ่มแก้ code แต่หาสาเหตุของ error"], ["Verdicts", "อ่านผลจาก grader ให้เป็น", "AC   Accepted\nWA   Wrong Answer\nCE   Compilation Error\nTLE  Time Limit Exceeded\nRE   Runtime Error", ["AC: ผ่านชุดทดสอบ", "WA: โปรแกรมรันได้แต่คำตอบผิด", "CE: compile ไม่ผ่าน", "TLE: ใช้เวลามากเกินกำหนด", "RE: เกิด error ระหว่างรัน"], "WA ไม่ได้แปลว่า algorithm ผิดเสมอ อาจเป็น output format หรือ edge case"], ["Debugging Checklist", "ตรวจจุดที่พลาดบ่อย", "// 1) = หรือ == ?\nif (x == 5) { ... }\n\n// 2) index ถูกไหม?\nfor (int i = 0; i < n; i++)\n\n// 3) initialize แล้วหรือยัง?\nlong long sum = 0;\n\n// 4) overflow?\nlong long total = 1LL * a * b;", ["ตรวจ input/output ให้ตรง", "ตรวจ off-by-one และ `n-1`", "ตรวจ all-negative, n=1, no-match, duplicate, zero", "ตรวจ braces และ scope", "ถ้า WA ให้ trace ด้วย test case เล็ก"], "แก้ทีละสมมติฐาน จะเร็วกว่าการเปลี่ยนหลายจุดพร้อมกัน"], ["Mixed Practice", "รวมหลาย concept", null, [], null]]}, {"id": 7, "title": "Modern C++ (STL)", "th": "vector และ STL ที่ใช้บ่อย", "tabs": [["vector", "อาร์เรย์ที่ยืดหยุ่นกว่า", "vector<int> a(n);   // มี n elements\nvector<int> b;      // empty\n\nb.push_back(10);\nb.push_back(20);\n\ncout << b.size() << '\\n';\ncout << b[0] << '\\n';", ["`vector<int> a(n)` สร้างสมาชิก n ตัวแล้ว", "vector ว่างเพิ่มข้อมูลด้วย `push_back`", "เข้าถึงด้วย `[index]` เหมือน array", "`size()` คืนจำนวนสมาชิก"], "อย่าใช้ `vector<int> a(n)` แล้ว `push_back` อีก n ครั้ง เพราะ size จะกลายเป็น 2n"], ["Range-based for", "เดินดูสมาชิกแบบกระชับ", "for (int x : a) {\n    cout << x << ' ';\n}\n\nfor (int &x : a) {\n    x *= 2;\n}", ["`int x : a` ได้สำเนาของสมาชิก", "`int &x : a` อ้างถึงสมาชิกจริง จึงแก้ค่าได้", "ถ้าอ่านข้อมูลใหญ่โดยไม่แก้ อาจใช้ `const auto &x`"], "แม้ vector ถูกส่งเข้า function แบบ reference แต่ `for (int x : a)` ก็ยัง copy สมาชิกแต่ละตัว"], ["sort / reverse", "จัดลำดับข้อมูล", "sort(a.begin(), a.end());\n\nreverse(a.begin(), a.end());\n\nsort(a.begin(), a.end(), greater<int>());", ["`begin()` คือจุดเริ่ม", "`end()` คือหนึ่งตำแหน่งถัดจากสมาชิกสุดท้าย", "`sort` ปกติเรียงน้อยไปมาก", "`greater<int>()` ใช้เรียงมากไปน้อย"], "`end()` ไม่ใช่ index ของสมาชิกสุดท้าย"], ["count / find", "นับและค้นหาด้วย STL", "int k = count(a.begin(), a.end(), target);\n\nauto it = find(a.begin(), a.end(), target);\n\nif (it != a.end()) {\n    int index = it - a.begin();\n}", ["`count` คืนจำนวนครั้งที่พบ", "`find` คืน iterator ไปยังตำแหน่งแรกที่พบ", "ถ้าไม่พบ `find` จะคืน `a.end()`", "สำหรับ vector ลบด้วย `a.begin()` เพื่อหา index ได้"], "ห้าม dereference `*it` ก่อนตรวจว่า `it != a.end()`"], ["แบบฝึกหัด", "ฝึก vector และ STL", null, [], null]]}, {"id": 8, "title": "Useful STL", "th": "pair, set และ map", "tabs": [["pair", "เก็บข้อมูลสองค่าคู่กัน", "pair<int, string> p = {90, \"Ann\"};\n\ncout << p.first << '\\n';\ncout << p.second << '\\n';\n\nvector<pair<int,int>> a;", ["เข้าถึงด้วย `.first` และ `.second`", "pair ใช้เก็บข้อมูลที่สัมพันธ์กัน เช่น `(score, index)`", "`sort` pair จะเทียบ first ก่อน แล้วจึง second"], "สำหรับคอร์สนี้ใช้ `.first/.second` เป็นหลัก ไม่จำเป็นต้องจำ structured binding"], ["set", "เก็บค่าที่ไม่ซ้ำ", "set<int> s;\n\ns.insert(5);\ns.insert(2);\ns.insert(5);\n\ncout << s.size();   // 2\n\nif (s.find(2) != s.end()) {\n    cout << \"found\";\n}", ["set เก็บค่า unique", "ค่าถูกเรียงลำดับ", "ไม่มีการเข้าถึงด้วย index แบบ `s[0]`", "เหมาะกับโจทย์นับจำนวนค่าที่แตกต่างกัน"], "ถ้าต้องการเพียงค่าที่ไม่ซ้ำ set ช่วยลด code ได้มาก"], ["map", "เก็บ key → value", "map<string, int> cnt;\n\ncnt[\"apple\"]++;\ncnt[\"banana\"]++;\n\ncout << cnt[\"apple\"];", ["เหมาะกับ frequency table", "key ของ map ถูกเรียงลำดับ", "`cnt[key]++` สะดวกมากสำหรับนับความถี่", "ถ้า key ยังไม่มี `operator[]` จะสร้างค่าเริ่มต้นให้"], "ถ้าต้องการเพียงตรวจว่ามี key หรือไม่ โดยไม่สร้าง key ใหม่ ใช้ `find` หรือ `count`"], ["เลือกใช้ให้เหมาะ", "มองจากสิ่งที่โจทย์ต้องการ", "vector  → ลำดับข้อมูล + index\npair    → ข้อมูล 2 ค่าเป็นคู่\nset     → ค่าที่ไม่ซ้ำ\nmap     → key → value / frequency", ["ไม่จำเป็นต้องใช้ STL ที่ซับซ้อนถ้า loop ธรรมดาอ่านง่ายกว่า", "เลือกโครงสร้างข้อมูลจากงานที่ต้องทำ", "เป้าหมายคืออ่านและใช้ syntax พื้นฐานได้ก่อนเข้าค่าย"], "อย่าใช้เครื่องมือเพียงเพราะเพิ่งเรียนมา"], ["แบบฝึกหัด", "ฝึกเลือกใช้ STL", null, [], null]]}, {"id": 9, "title": "Review & Extra Practice", "th": "ทบทวนและโจทย์เพิ่มเติม", "tabs": [["Must Do", "โจทย์ที่ควรพยายามทำให้ได้ก่อน", null, [], null], ["Practice", "โจทย์ฝึกเพิ่ม", null, [], null], ["Challenge", "สำหรับผู้ที่ไปเร็วหรือฝึกต่อ", null, [], null]]}];
+const practice = {"1": [["⭐", "0000 — A+B Problem", "Programming.in.th", "I/O, arithmetic", "https://programming.in.th/tasks/0000"], ["⭐", "ข้อ 1 — Even or Odd", "โจทย์ในคอร์ส", "%, if", ""], ["🔹", "0008 — X2", "Programming.in.th", "expression, I/O", "https://programming.in.th/tasks/0008"]], "2": [["⭐", "0001 — Grading", "Programming.in.th", "if / else if", "https://programming.in.th/tasks/0001"], ["🔹", "ข้อ 2 — Divisible by 3 and 5", "โจทย์ในคอร์ส", "%, &&", ""], ["🔹", "0005 — Pythagorus", "Programming.in.th", "arithmetic, double", "https://programming.in.th/tasks/0005"]], "3": [["⭐", "ข้อ 3 — Sum of Multiples", "โจทย์ในคอร์ส", "loop, accumulation", ""], ["⭐", "ข้อ 4 — Count and Sum of Even Numbers", "โจทย์ในคอร์ส", "count, sum", ""], ["⭐", "0002 — Min Max", "Programming.in.th", "loop, min/max", "https://programming.in.th/tasks/0002"], ["🔹", "ข้อ 5 — Number Statistics", "โจทย์ในคอร์ส", "mixed patterns", ""], ["🔹", "0020 — Pet", "Programming.in.th", "sum, max, nested loop", "https://programming.in.th/tasks/0020"]], "4": [["⭐", "ข้อ 6 — Reverse Numbers", "โจทย์ในคอร์ส", "array, index", ""], ["⭐", "ข้อ 8 — Character Counter", "โจทย์ในคอร์ส", "string, char", ""], ["⭐", "ข้อ 9 — Palindrome", "โจทย์ในคอร์ส", "string, index", ""], ["🔹", "0004 — Character Checker", "Programming.in.th", "string, condition", "https://programming.in.th/tasks/0004"], ["🔹", "0010 — Trik", "Programming.in.th", "string, simulation", "https://programming.in.th/tasks/0010"]], "5": [["⭐", "isEven Function", "โจทย์ในคอร์ส", "function, return", ""], ["⭐", "Refactor Palindrome", "โจทย์ในคอร์ส", "function, string", ""]], "6": [["⭐", "ข้อ 7 — Maximum and First Position", "โจทย์ในคอร์ส", "array, max, index", ""], ["🔹", "0020 — Pet", "Programming.in.th", "nested loop, max", "https://programming.in.th/tasks/0020"], ["🚀", "0013 — Seven Dwarves", "Programming.in.th", "array, search", "https://programming.in.th/tasks/0013"], ["🚀", "0016 — Ptice", "Programming.in.th", "string, pattern", "https://programming.in.th/tasks/0016"]], "7": [["⭐", "ข้อ 10 — Sort the Numbers", "โจทย์ในคอร์ส", "vector, sort", ""], ["⭐", "0009 — ABC", "Programming.in.th", "sort, string", "https://programming.in.th/tasks/0009"], ["⭐", "0011 — Modulo", "Programming.in.th", "%, distinct / set", "https://programming.in.th/tasks/0011"]], "8": [["🔹", "Distinct Values", "โจทย์ในคอร์ส", "set", ""], ["🔹", "Word Frequency", "โจทย์ในคอร์ส", "map", ""], ["🔹", "Value and Original Position", "โจทย์ในคอร์ส", "pair, sort", ""], ["🚀", "0014 — Great Common Divisor", "Programming.in.th", "while, %, Euclid", "https://programming.in.th/tasks/0014"], ["🔹", "0015 — Skocimis", "Programming.in.th", "arithmetic, max", "https://programming.in.th/tasks/0015"]], "9": [["⭐", "0000 — A+B Problem", "Programming.in.th", "I/O", "https://programming.in.th/tasks/0000"], ["⭐", "0001 — Grading", "Programming.in.th", "condition", "https://programming.in.th/tasks/0001"], ["⭐", "0002 — Min Max", "Programming.in.th", "loop, min/max", "https://programming.in.th/tasks/0002"], ["⭐", "0009 — ABC", "Programming.in.th", "sort", "https://programming.in.th/tasks/0009"], ["⭐", "0011 — Modulo", "Programming.in.th", "distinct", "https://programming.in.th/tasks/0011"], ["🔹", "0004 — Character Checker", "Programming.in.th", "string", "https://programming.in.th/tasks/0004"], ["🔹", "0010 — Trik", "Programming.in.th", "simulation", "https://programming.in.th/tasks/0010"], ["🔹", "0015 — Skocimis", "Programming.in.th", "arithmetic", "https://programming.in.th/tasks/0015"], ["🔹", "0020 — Pet", "Programming.in.th", "nested loop", "https://programming.in.th/tasks/0020"], ["🚀", "0013 — Seven Dwarves", "Programming.in.th", "search", "https://programming.in.th/tasks/0013"], ["🚀", "0014 — Great Common Divisor", "Programming.in.th", "Euclid", "https://programming.in.th/tasks/0014"], ["🚀", "0016 — Ptice", "Programming.in.th", "pattern", "https://programming.in.th/tasks/0016"], ["🚀", "0022 — ดาว (star)", "Programming.in.th", "nested loop, output", "https://programming.in.th/tasks/0022"], ["🚀", "0030 — 3-11", "Programming.in.th", "big integer as string, modulo", "https://programming.in.th/tasks/0030"], ["🚀", "ข้อ 11 — Divisible Counter", "โจทย์ในคอร์ส", "condition, loop, counting", ""], ["🚀", "ข้อ 12 — Most Frequent Character", "โจทย์ในคอร์ส", "string, counting, tie-break", ""], ["🚀", "ข้อ 13 — Sorted Unique Numbers", "โจทย์ในคอร์ส", "set หรือ vector + sort", ""]]};
+const customStatements = {"Even or Odd": "ข้อ 1 — Even or Odd\nโจทย์: รับจำนวนเต็ม n แล้วตรวจว่า n เป็นจำนวนคู่หรือจำนวนคี่\nInput: จำนวนเต็ม n จำนวน 1 ค่า\nOutput: แสดง EVEN ถ้า n เป็นจำนวนคู่ มิฉะนั้นแสดง ODD\nตัวอย่าง: Input: 17  →  Output: ODD", "Divisible by 3 and 5": "ข้อ 2 — Divisible by 3 and 5\nโจทย์: รับจำนวนเต็ม n แล้วตรวจว่า n หารด้วย 3 และ 5 ลงตัวพร้อมกันหรือไม่\nInput: จำนวนเต็ม n จำนวน 1 ค่า\nOutput: แสดง YES ถ้าหารด้วยทั้ง 3 และ 5 ลงตัว มิฉะนั้นแสดง NO\nตัวอย่าง: Input: 30  →  Output: YES", "Sum of Multiples": "ข้อ 3 — Sum of Multiples\nโจทย์: รับจำนวนเต็มบวก n แล้วหาผลรวมของจำนวนเต็มตั้งแต่ 1 ถึง n ที่หารด้วย 3 ลงตัว\nInput: จำนวนเต็มบวก n\nOutput: ผลรวมของจำนวนที่หารด้วย 3 ลงตัว\nตัวอย่าง: Input: 10  →  Output: 18", "Count and Sum of Even Numbers": "ข้อ 4 — Count and Sum of Even Numbers\nโจทย์: รับจำนวนเต็ม n และจำนวนเต็มอีก n จำนวน จงหาว่ามีจำนวนคู่ทั้งหมดกี่จำนวน และผลรวมของจำนวนคู่ทั้งหมดเป็นเท่าใด\nInput: บรรทัดแรกเป็น n; บรรทัดถัดไปเป็นจำนวนเต็ม n จำนวน\nOutput: แสดงจำนวนของเลขคู่และผลรวมของเลขคู่ คั่นด้วยช่องว่าง\nตัวอย่าง: Input: 5 / 3 8 2 7 4  →  Output: 3 14", "Number Statistics": "ข้อ 5 — Number Statistics\nโจทย์: รับจำนวนเต็ม n และข้อมูลจำนวนเต็ม n ค่า แล้วหาผลรวม จำนวนค่าบวก จำนวนค่าลบ และค่ามากที่สุด\nInput: บรรทัดแรกเป็น n; บรรทัดถัดไปเป็นจำนวนเต็ม n จำนวน\nOutput: แสดง sum, positiveCount, negativeCount และ maxValue ตามลำดับ\nหมายเหตุ: ค่า 0 ไม่นับเป็นจำนวนบวกหรือจำนวนลบ\nตัวอย่าง: Input: 6 / -5 8 0 -2 10 -4  →  Output: 7 2 3 10", "Reverse Numbers": "ข้อ 6 — Reverse Numbers\nโจทย์: รับจำนวนเต็ม n และจำนวนเต็ม n ค่า เก็บข้อมูลใน array แล้วแสดงข้อมูลย้อนลำดับ\nInput: บรรทัดแรกเป็น n; บรรทัดถัดไปเป็นจำนวนเต็ม n จำนวน\nOutput: แสดงข้อมูลจากตัวสุดท้ายกลับไปตัวแรก คั่นด้วยช่องว่าง\nตัวอย่าง: Input: 5 / 10 20 30 40 50  →  Output: 50 40 30 20 10", "Maximum and First Position": "ข้อ 7 — Maximum and First Position\nโจทย์: รับจำนวนเต็ม n และข้อมูลจำนวนเต็ม n ค่า จงหาค่ามากที่สุดและตำแหน่งแรกที่ค่านั้นปรากฏ\nInput: บรรทัดแรกเป็น n; บรรทัดถัดไปเป็นจำนวนเต็ม n จำนวน\nOutput: แสดงค่ามากที่สุดและ index แรกที่พบ โดยใช้ index เริ่มจาก 0\nตัวอย่าง: Input: 6 / 4 9 2 9 3 1  →  Output: 9 1", "Character Counter": "ข้อ 8 — Character Counter\nโจทย์: รับ string หนึ่งคำและตัวอักษรเป้าหมาย 1 ตัว แล้วนับว่าตัวอักษรนั้นปรากฏใน string กี่ครั้ง\nInput: string s และ char target\nOutput: จำนวนครั้งที่ target ปรากฏใน s\nตัวอย่าง: Input: BANANA A  →  Output: 3", "Palindrome": "ข้อ 9 — Palindrome\nโจทย์: รับ string หนึ่งคำ แล้วตรวจว่าอ่านจากซ้ายไปขวาและขวาไปซ้ายเหมือนกันหรือไม่\nInput: string s\nOutput: แสดง YES ถ้าเป็น palindrome มิฉะนั้นแสดง NO\nตัวอย่าง: Input: LEVEL  →  Output: YES", "Sort the Numbers": "ข้อ 10 — Sort the Numbers\nโจทย์: รับจำนวนเต็ม n และจำนวนเต็ม n ค่า เก็บใน vector แล้วเรียงจากน้อยไปมาก\nInput: บรรทัดแรกเป็น n; บรรทัดถัดไปเป็นจำนวนเต็ม n จำนวน\nOutput: แสดงจำนวนทั้งหมดหลังเรียงจากน้อยไปมาก คั่นด้วยช่องว่าง\nตัวอย่าง: Input: 5 / 8 3 9 1 3  →  Output: 1 3 3 8 9", "Divisible Counter": "ข้อ 11 — Divisible Counter\nโจทย์: รับจำนวนเต็มบวก n และ k จากนั้นรับจำนวนเต็มอีก n ค่า จงนับว่ามีกี่ค่าที่หารด้วย k ลงตัว\nInput: บรรทัดแรกเป็น n และ k; บรรทัดถัดไปเป็นจำนวนเต็ม n จำนวน\nOutput: จำนวนข้อมูลที่หารด้วย k ลงตัว\nตัวอย่าง: Input: 6 3 / 4 6 9 10 12 14  →  Output: 3", "Most Frequent Character": "ข้อ 12 — Most Frequent Character\nโจทย์: รับ string ที่ประกอบด้วยตัวอักษรภาษาอังกฤษตัวพิมพ์ใหญ่ A–Z จงหาตัวอักษรที่ปรากฏบ่อยที่สุด หากมีหลายตัวที่มีความถี่เท่ากัน ให้เลือกตัวอักษรที่มาก่อนตามลำดับตัวอักษร\nInput: string s\nOutput: ตัวอักษรที่พบบ่อยที่สุดและจำนวนครั้งที่พบ\nตัวอย่าง: Input: BANANA  →  Output: A 3", "Sorted Unique Numbers": "ข้อ 13 — Sorted Unique Numbers\nโจทย์: รับจำนวนเต็ม n และจำนวนเต็ม n ค่า จงแสดงค่าที่ไม่ซ้ำกันโดยเรียงจากน้อยไปมาก\nInput: บรรทัดแรกเป็น n; บรรทัดถัดไปเป็นจำนวนเต็ม n จำนวน\nOutput: ค่าที่ไม่ซ้ำกันเรียงจากน้อยไปมาก คั่นด้วยช่องว่าง\nตัวอย่าง: Input: 7 / 4 2 4 1 2 9 1  →  Output: 1 2 4 9"};
+let currentModule=1, currentTab=0;
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function inlineMd(s){return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>')}
+function renderSidebar(){
+ const side=document.getElementById('sidebar'), sel=document.getElementById('mobileModule');
+ side.innerHTML=''; sel.innerHTML='';
+ modules.forEach(m=>{
+  const b=document.createElement('button'); b.className='module-btn'+(m.id===currentModule?' active':'');
+  b.onclick=()=>selectModule(m.id);
+  b.innerHTML=`<span class="num">${m.id}</span><span><b>${esc(m.title)}</b><small>${esc(m.th)}</small></span>`;
+  side.appendChild(b);
+  const o=document.createElement('option');o.value=m.id;o.textContent=`Module ${m.id}: ${m.title}`;o.selected=m.id===currentModule;sel.appendChild(o);
+ });
+}
+function selectModule(id,tab=0){currentModule=id;currentTab=tab;renderSidebar();render();window.scrollTo({top:0,behavior:'smooth'})}
+function selectTab(i){currentTab=i;render();window.scrollTo({top:0,behavior:'smooth'})}
+function copyCode(btn){const pre=btn.parentElement.querySelector('pre');navigator.clipboard.writeText(pre.innerText);btn.textContent='คัดลอกแล้ว';setTimeout(()=>btn.textContent='คัดลอก',1200)}
+function codeBlock(code){return `<div class="codewrap"><button class="copy" onclick="copyCode(this)">คัดลอก</button><pre>${esc(code)}</pre></div>`}
+function practiceHtml(mid, filter=null){
+ let rows=(practice[mid]||[]);
+ if(filter) rows=rows.filter(r=>r[0]===filter);
+ return `<div class="card"><div class="practice-head"><div><h2 style="margin-bottom:2px">แบบฝึกหัด</h2><div class="legend">⭐ ควรทำให้ได้ก่อน · 🔹 ฝึกเพิ่ม · 🚀 Challenge</div></div></div>
+ <div class="problems" style="margin-top:14px">${rows.map(r=>{
+   const [pri,name,src,topics,url]=r; const base=name.replace(/^\d{4}\s+—\s+/,'').replace(/^ข้อ\s+\d+\s+—\s+/,'');
+   const st=customStatements[base]||'';
+   const stHtml=st ? `<div class="statement fullstatement">${st.split('\n').map((line,i)=>{
+      const p=line.indexOf(':');
+      if(p>0){ return `<div><b>${esc(line.slice(0,p))}:</b>${esc(line.slice(p+1))}</div>`; }
+      return `<div>${esc(line)}</div>`;
+   }).join('')}</div>` : '';
+   return `<div class="problem"><div class="pri">${pri}</div><div><b>${esc(name)}</b><div class="meta">${esc(src)} · ${esc(topics)}</div>${stHtml}</div>${url?`<a class="open" target="_blank" rel="noopener" href="${url}">เปิดโจทย์ ↗</a>`:''}</div>`
+ }).join('')}</div></div>`;
+}
+function render(){
+ const m=modules.find(x=>x.id===currentModule); const tab=m.tabs[currentTab]||m.tabs[0];
+ let tabs=m.tabs.map((t,i)=>`<button class="tab ${i===currentTab?'active':''}" onclick="selectTab(${i})">${m.id}.${i+1} ${esc(t[0])}</button>`).join('');
+ let body='';
+ const isPractice=/แบบฝึกหัด|Practice|Must Do|Challenge/.test(tab[0]);
+ if(isPractice){
+   let filter=tab[0]==='Must Do'?'⭐':tab[0]==='Practice'?'🔹':tab[0]==='Challenge'?'🚀':null;
+   body=practiceHtml(m.id,filter);
+ }else{
+   const [name,desc,code,bullets,mistake]=tab;
+   body=`<div class="card"><h2>${esc(name)}</h2><p class="lead">${esc(desc)}</p>
+     ${code?`<div class="two"><div>${codeBlock(code)}</div><div class="card explain" style="margin:0"><h3>คำอธิบาย</h3><ul>${bullets.map(x=>`<li>${inlineMd(x)}</li>`).join('')}</ul></div></div>`:''}
+     ${mistake?`<div class="card mistake"><h3>⚠ ข้อควรระวัง</h3><div>${inlineMd(mistake)}</div></div>`:''}
+   </div>`;
+ }
+ const prev=currentTab>0?`<button onclick="selectTab(${currentTab-1})">← หัวข้อก่อนหน้า</button>`:`<span></span>`;
+ const next=currentTab<m.tabs.length-1?`<button class="next" onclick="selectTab(${currentTab+1})">หัวข้อถัดไป →</button>`:`<span></span>`;
+ document.getElementById('content').innerHTML=`<div class="crumb">Module ${m.id}</div><h1 class="title">Module ${m.id}: ${esc(m.title)}</h1><div class="subtitle">${esc(m.th)}</div><div class="tabs">${tabs}</div>${body}<div class="navrow">${prev}${next}</div><footer>C++ Readiness · เรียนรู้ ทบทวน และฝึกเขียนโปรแกรมภาษา C++</footer>`;
+}
+function openQuick(){document.getElementById('quickModal').classList.add('show')}
+function closeQuick(){document.getElementById('quickModal').classList.remove('show')}
+function showAllProblems(){selectModule(9,1)}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeQuick()});
+renderSidebar();render();
+</script>
+</body></html>
